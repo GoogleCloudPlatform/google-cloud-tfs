@@ -27,6 +27,7 @@
       "name": "AllowReporting",
       "label": "Send anonymous usage statistics to Google",
       "type": "boolean",
+      "defaultValue": false,
       "required": true,
       "helpMarkDown": "Help make Google Cloud SDK better by automatically sending [anonymous usage statistics](https://cloud.google.com/sdk/usage-statistics) to Google."
     },
@@ -59,14 +60,6 @@
       "helpMarkDown": "The name of the configuration to create or activate."
     },
     {
-      "name": "UpdatePath",
-      "label": "Update Path",
-      "type": "boolean",
-      "defaultValue": "true",
-      "required": true,
-      "helpMarkDown": "If true, will add the Cloud SDK to the agent user's path environment variable."
-    },
-    {
       "name": "InstallPath",
       "label": "Install Path",
       "type": "string",
@@ -78,9 +71,19 @@
       "name": "ForceInstall",
       "label": "Force Install",
       "type": "boolean",
-      "defaultValue": "false",
+      "defaultValue": false,
       "required": true,
+      "groupName": "advanced",
       "helpMarkDown": "Check this to force an install of the Cloud SDK even if it already exists on the path."
+    },
+    {
+      "name": "CleanInstallPath",
+      "label": "Clean Install Path",
+      "type": "boolean",
+      "defaultValue": false,
+      "required": true,
+      "groupName": "advanced",
+      "helpMarkDown": "Check this to remove files from the target installation path."
     }
   ],
   "execution": {

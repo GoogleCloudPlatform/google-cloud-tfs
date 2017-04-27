@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="icon.png" />
     <Content Include="manifest.json" />
     <Content Include="task.json" />
   </ItemGroup>

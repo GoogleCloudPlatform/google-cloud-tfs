@@ -1,0 +1,22 @@
+{
+  "name": "deploy-gke-image-build-task",
+  "version": "0.0.1",
+  "description": "A TFS build task to deploy to google container engine.",
+  "license": "UNLICENSED",
+  "$todo:(jimwp) license": "Change license to Apache when opensource approved",
+  "author": "Google Cloud Tools",
+  "repository": "sso://team/cloudsharp-eng/cloud-tools-tfs",
+  "dependencies": {
+    "common": "file:../common",
+    "js-yaml": "^3.8.2",
+    "vsts-task-lib": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/escape-string-regexp": "0.0.30",
+    "@types/js-yaml": "^3.5.29",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.6",
+    "@types/q": "0.0.32",
+    "mocha": "^3.2.0"
+  }
+}

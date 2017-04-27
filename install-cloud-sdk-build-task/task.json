@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "07916dae-cb7c-45ad-937e-5eb34961e47b",
+  "name": "install-cloud-sdk-build-task",
+  "friendlyName": "Install Google Cloud SDK",
+  "author": "Google Cloud Tools",
+  "description": "Installs and configures the Google Cloud SDK",
+  "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks.",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Utility",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "groups": [
+    {
+      "name": "advanced",
+      "displayName": "Advanced",
+      "isExpanded": false,
+      "tags": []
+    }
+  ],
+  "inputs": [
+    {
+      "name": "AllowReporting",
+      "label": "Send anonymous usage statistics to Google",
+      "type": "boolean",
+      "required": true,
+      "helpMarkDown": "Help make Google Cloud SDK better by automatically sending [anonymous usage statistics](https://cloud.google.com/sdk/usage-statistics) to Google."
+    },
+    {
+      "name": "Project",
+      "label": "Project",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "Configure the Cloud SDK's current default project. If left blank, the current configuration will not change."
+    },
+    {
+      "name": "Region",
+      "label": "Region",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "Configure the Cloud SDK's current default compute/region. If left blank, the current configuration will not change."
+    },
+    {
+      "name": "Zone",
+      "label": "Zone",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "Configure the Cloud SDK's current default compute/zone. If left blank, the current configuration will not change."
+    },
+    {
+      "name": "Config",
+      "label": "Configuration",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "The name of the configuration to create or activate."
+    },
+    {
+      "name": "UpdatePath",
+      "label": "Update Path",
+      "type": "boolean",
+      "defaultValue": "true",
+      "required": true,
+      "helpMarkDown": "If true, will add the Cloud SDK to the agent user's path environment variable."
+    },
+    {
+      "name": "InstallPath",
+      "label": "Install Path",
+      "type": "string",
+      "required": false,
+      "groupName": "advanced",
+      "helpMarkDown": "The path on the agent to install the Cloud SDK. Defaults to '%LOCALAPPDATA%\\Google\\Cloud SDK'"
+    },
+    {
+      "name": "ForceInstall",
+      "label": "Force Install",
+      "type": "boolean",
+      "defaultValue": "false",
+      "required": true,
+      "helpMarkDown": "Check this to force an install of the Cloud SDK even if it already exists on the path."
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "install-cloud-sdk.ps1"
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "70d5eb24-96c7-461a-a95e-5f3f7dadf17a",
+  "name": "deploy-gae-build-task",
+  "friendlyName": "Deploy to Google App Engine",
+  "author": "Google Cloud Tools",
+  "description": "Deploy your app to Google App Engine",
+  "helpMarkDown": "[Google App Engine Console](http://console.cloud.google.com/appengine) [Google App Engine Docs](https://cloud.google.com/appengine/docs) [gcloud app deploy](https://cloud.google.com/sdk/gcloud/reference/app/deploy)",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Deploy",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "groups": [
+    {
+      "name": "copy",
+      "displayName": "Copy Options",
+      "isExpanded": true
+    },
+    {
+      "name": "advanced",
+      "displayName": "Advanced Options",
+      "isExpanded": false
+    }
+  ],
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "type": "connectedService:google-cloud-service-endpoint",
+      "label": "GCP connection",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use"
+    },
+    {
+      "name": "deploymentPath",
+      "type": "filePath",
+      "label": "Deployment source",
+      "defaultValue": "$(Build.StagingDirectory)",
+      "required": true,
+      "helpMarkDown": "The location of the files to deploy."
+    },
+    {
+      "name": "yamlFileName",
+      "type": "pickList",
+      "options": {
+        "app.yaml": "app.yaml",
+        "index.yaml": "index.yaml",
+        "cron.yaml": "cron.yaml",
+        "dispatch.yaml": "dispatch.yaml",
+        "dos.yaml": "dos.yaml",
+        "queue.yaml": "queue.yaml"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "label": "YAML file name",
+      "defaultValue": "app.yaml",
+      "required": true,
+      "helpMarkDown": "The name of the [YAML configuration file](https://cloud.google.com/appengine/docs/flexible/dotnet/configuration-files) to deploy. [app.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/configuring-your-app-with-app-yaml) or a custom filename defines the deployemnt of an app. [cron.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/scheduling-jobs-with-cron-yaml), [dispatch.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/how-requests-are-routed#routing_with_a_dispatch_file), [dos.yaml](https://cloud.google.com/appengine/docs/standard/python/config/dosref), [index.yaml](https://cloud.google.com/appengine/docs/flexible/go/configuring-datastore-indexes-with-index-yaml) and [queue.yaml](https://cloud.google.com/appengine/docs/standard/python/config/queueref) configure your app."
+    },
+    {
+      "name": "copyYaml",
+      "type": "boolean",
+      "label": "Copy YAML from source folder.",
+      "defaultValue": false,
+      "required": true,
+      "groupName": "copy",
+      "helpMarkDown": "Select this option if you need the task to copy your YAML file to yoru deployment source folder."
+    },
+    {
+      "name": "sourceFolder",
+      "type": "filePath",
+      "label": "Source folder",
+      "defaultValue": ".",
+      "required": true,
+      "groupName": "copy",
+      "visibleRule": "copyYaml = true",
+      "helpMarkDown": "The path to source folder to copy your YAML file from."
+    },
+    {
+      "name": "storageBucket",
+      "type": "string",
+      "label": "Staging GCS Bucket",
+      "defaultValue": "",
+      "required": false,
+      "groupName": "advanced",
+      "helpMarkDown": "The [Google Cloud Storage](https://cloud.google.com/storage/docs) bucket used to stage files associated with the deployment. If this argument is not specified, the application's default code bucket is used."
+    },
+    {
+      "name": "version",
+      "type": "string",
+      "label": "Version",
+      "defaultValue": "",
+      "required": false,
+      "groupName": "advanced",
+      "helpMarkDown": "The version of the app that will be created or replaced by this deployment. If you do not specify a version, one will be generated for you. e.g. $(Build.BuildNumber)"
+    },
+    {
+      "name": "promote",
+      "type": "boolean",
+      "label": "Promote",
+      "defaultValue": true,
+      "required": true,
+      "groupName": "advanced",
+      "helpMarkDown": "Promote the deployed version to receive all traffic."
+    },
+    {
+      "name": "stopPrevious",
+      "type": "boolean",
+      "label": "Stop Previous Version",
+      "defaultValue": false,
+      "required": true,
+      "visibleRule": "promote = true",
+      "groupName": "advanced",
+      "helpMarkDown": "Stop the previously running version when deploying a new version."
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "deploy-gae.js"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "contributions": [
+    {
+      "id": "container-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [ "ms.vss-distributed-task.tasks" ],
+      "properties": {
+        "name": "container-build-task"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "container-build.js"
+    },
+    {
+      "path": "container-build-helper.js"
+    },
+    {
+      "path": "default/cloudbuild.yaml"
+    },
+    {
+      "path": "task.json"
+    },
+    {
+      "path": "icon.png"
+    }
+  ]
+}

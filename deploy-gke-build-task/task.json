@@ -1,0 +1,118 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "161ebcb6-a26a-446b-9ace-57f98264c5f6",
+  "name": "deploy-gke-build-task",
+  "friendlyName": "Deploy to Google Container Engine",
+  "author": "Google Cloud Tools",
+  "description": "Deploys a Docker image from Google Container Registry to Google Container Engine.",
+  "helpMarkDown": "[Google Container Engine Console](https://console.cloud.google.com/kubernetes) [Google Container Engine Docs](https://cloud.google.com/container-engine/docs/)",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Deploy",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "groups": [],
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "type": "connectedService:google-cloud-service-endpoint",
+      "label": "GCP connection",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use"
+    },
+    {
+      "name": "zone",
+      "type": "string",
+      "label": "Zone",
+      "required": true,
+      "helpMarkDown": "The zone the cluster resides in."
+    },
+    {
+      "name": "cluster",
+      "type": "string",
+      "label": "Cluster Name",
+      "required": true,
+      "helpMarkDown": "The name of the cluster to deploy to."
+    },
+    {
+      "name": "deployType",
+      "type": "radio",
+      "label": "Deploy using",
+      "options": {
+        "values": "Input Values",
+        "config": "Configuration File"
+      },
+      "defaultValue": "values",
+      "required": true,
+      "helpMarkDown": "Use Configuration File if you have a kubernetes configuration file you wish to apply."
+    },
+    {
+      "name": "configPath",
+      "type": "filePath",
+      "label": "Config file path",
+      "required": true,
+      "visibleRule": "deployType = config",
+      "helpMarkDown": "The path of the kubernetes config file that defines your deployment. JSON and YAML formats accepted."
+    },
+    {
+      "name": "updateTag",
+      "type": "boolean",
+      "label": "Update Image Tag",
+      "defaultValue": false,
+      "required": true,
+      "visibleRule": "deployType = config",
+      "helpMarkDown": "Check this if you want to modify your config file by changing the tag of an image before deploying."
+    },
+    {
+      "name": "deploymentName",
+      "type": "string",
+      "label": "Deployment Name",
+      "required": true,
+      "visibleRule": "deployType = values",
+      "helpMarkDown": "The name of the deployment to run or update."
+    },
+    {
+      "name": "imageName",
+      "type": "string",
+      "label": "Image Name",
+      "defaultValue": "app",
+      "required": true,
+      "visibleRule": "deployType = values || updateTag = true",
+      "helpMarkDown": "The name of the container image to deploy."
+    },
+    {
+      "name": "imageTag",
+      "type": "string",
+      "label": "Image Tag",
+      "defaultValue": "latest",
+      "required": true,
+      "visibleRule": "deployType = values || updateTag = true",
+      "helpMarkDown": "The tag of the image to deploy."
+    },
+    {
+      "name": "replicas",
+      "type": "string",
+      "label": "Number of Replicas",
+      "defaultValue": "2",
+      "required": false,
+      "visibleRule": "deployType = values",
+      "helpMarkDown": "The number of replicas to run."
+    },
+    {
+      "name": "dryRun",
+      "type": "boolean",
+      "label": "Dry Run",
+      "required": true,
+      "defaultValue": false,
+      "helpMarkDown": "With dry run selected, no changes will actually be made to your cluster"
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "deploy-gke.js"
+    }
+  }
+}

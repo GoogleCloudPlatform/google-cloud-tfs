@@ -1,0 +1,90 @@
+{
+  "manifestVersion": 1,
+  "id": "google-cloud-tfs",
+  "name": "Cloud Tools for TFS",
+  "version": "0.0.2",
+  "publisher": "GoogleCloudTools",
+  "targets": [ { "id": "Microsoft.VisualStudio.Services" } ],
+  "description": "Tools for deploying to Google Cloud Platform.",
+  "icons": {
+    "large": "images/cloud_512x512.png",
+    "default": "images/cloud_128x128.png",
+    "task": "images/cloud_32x32.png"
+  },
+  "categories": [ "Build and release" ],
+  "tags": [
+    "google",
+    "cloud",
+    "gcp",
+    "gae",
+    "app engine"
+  ],
+  "content": {
+    "containerBuildDetails": { "path": "container-build-task/README.md" },
+    "deployGaeDetails": { "path": "deploy-gae-build-task/README.md" },
+    "deployGkeDetails": { "path": "deploy-gke-build-task/README.md" },
+    "setLoginDetails": { "path": "set-login-build-task/README.md" },
+    "details": {
+      "path": "DETAILS.md"
+    },
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "links": {
+    "license": {
+      "uri": "https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/LICENSE"
+    },
+    "$todo(przybjw)": "Update to real values.",
+    "getstarted": {
+      "uri": "https://cloud.google.com/tools/tfs/docs/quickstart"
+    },
+    "learn": { "uri": "https://cloud.google.com/tools/tfs/docs" },
+    "support": { "uri": "https://cloud.google.com/tools/tfs/docs/community" }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/GoogleCloudPlatform/google-cloud-tfs"
+  },
+  "branding": {
+    "theme": "light"
+  },
+  "contributions": [
+    {
+      "id": "service-endpoint",
+      "description": "Information for connecting to Google Cloud Platform",
+      "type": "ms.vss-endpoint.service-endpoint-type",
+      "targets": [ "ms.vss-endpoint.endpoint-types" ],
+      "properties": {
+        "name": "google-cloud-service-endpoint",
+        "displayName": "Google Cloud Platform",
+        "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
+        "url": {
+          "displayName": "Server Url",
+          "value": "https://accounts.google.com/o/oauth2"
+        },
+        "inputDescriptors": [],
+        "authenticationSchemes": [
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-cert",
+            "displayName": "Json Key File Contents",
+            "inputDescriptors": [
+              {
+                "id": "certificate",
+                "name": "Json Text",
+                "description": "The contents of the json key file",
+                "inputMode": "TextArea",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,118 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "e91f8584-1a79-4788-9737-8414f24600ff",
+  "name": "container-build-task",
+  "friendlyName": "Google Cloud Container Builder",
+  "author": "Google Cloud Tools",
+  "description": "Build a Docker image with Google Cloud Container Builder.",
+  "helpMarkDown": "Use [Google Cloud Container Builder](https://cloud.google.com/container-builder/docs) to build a Docker image and place it in [Google Container Registry](https://cloud.google.com/container-registry/docs).",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Package",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "groups": [
+    {
+      "name": "advanced",
+      "displayName": "Advanced",
+      "isExpanded": false,
+      "tags": []
+    }
+  ],
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "label": "GCP connection",
+      "type": "connectedService:google-cloud-service-endpoint",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use"
+    },
+    {
+      "name": "deploymentPath",
+      "label": "Image contents directory",
+      "type": "filePath",
+      "defaultValue": "$(Build.StagingDirectory)",
+      "required": true,
+      "helpMarkDown": "The location of the files to package in an image."
+    },
+    {
+      "name": "buildConfigType",
+      "label": "Cloud build file:",
+      "type": "radio",
+      "options": {
+        "default": "Default ASP.NET Core 1.0 Build",
+        "custom": "Custom Cloud Build",
+        "docker": "Existing Dockerfile"
+      },
+      "defaultValue": "default",
+      "required": true,
+      "helpMarkDown": "Select custom to use your own [cloud build configuration file](https://cloud.google.com/container-builder/docs/config). Select Existing Dockerfile to use a Dockerfile in your image contents directory."
+    },
+    {
+      "name": "cloudBuildFile",
+      "label": "Cloud Build File",
+      "type": "filePath",
+      "visibleRule": "buildConfigType = custom",
+      "required": true,
+      "helpMarkDown": "The YAML or JSON file that defines the cloud build."
+    },
+    {
+      "name": "substitutions",
+      "label": "Substitutions",
+      "type": "multiLine",
+      "visibleRule": "buildConfigType = custom",
+      "required": false,
+      "helpMarkDown": "A comma separated list of [custom substitutions](https://cloud.google.com/container-builder/docs/api/build-requests#substitutions) for your cloud build file. Takes the form `_VAR1=\"val1\",_VAR2=\"val2\"`"
+    },
+    {
+      "name": "registry",
+      "label": "Registry Server",
+      "type": "pickList",
+      "options": {
+        "gcr.io": "gcr.io",
+        "us.gcr.io": "us.gcr.io",
+        "eu.gcr.io": "eu.gcr.io",
+        "asia.gcr.io": "asia.gcr.io"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "defaultValue": "gcr.io",
+      "required": true,
+      "visibleRule": "buildConfigType = default || buildConfigType = docker",
+      "helpMarkDown": "The [Google Container Registry host](https://cloud.google.com/container-registry/docs/pushing) to push to."
+    },
+    {
+      "name": "imageName",
+      "label": "Repository (Image Name)",
+      "type": "string",
+      "required": true,
+      "visibleRule": "buildConfigType = default || buildConfigType = docker",
+      "helpMarkDown": "The name, aka repository, of the image to build and push to [Google Container Registry](https://cloud.google.com/container-registry/docs)."
+    },
+    {
+      "name": "imageTag",
+      "label": "Image Tag",
+      "type": "string",
+      "defaultValue": "latest",
+      "visibleRule": "buildConfigType = default || buildConfigType = docker",
+      "helpMarkDown": "The tag or version to apply to the new image."
+    },
+    {
+      "name": "imageVariable",
+      "label": "Full Image Tag Output Variable",
+      "type": "string",
+      "required": false,
+      "groupName": "advanced",
+      "helpMarkDown": "The name of the build variable the task will place the full image tag (e.g. us.gcr.io/my-project/my-image-name:image-tag)"
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "container-build.js"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "contributions": [
+    {
+      "id": "set-login-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [ "ms.vss-distributed-task.tasks" ],
+      "properties": {
+        "name": "set-login-build-task"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "set-login.js"
+    },
+    {
+      "path": "task.json"
+    },
+    {
+      "path": "icon.png"
+    }
+  ]
+}

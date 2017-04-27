@@ -1,0 +1,35 @@
+{
+  "contributions": [
+    {
+      "id": "deploy-gke-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [ "ms.vss-distributed-task.tasks" ],
+      "properties": {
+        "name": "deploy-gke-build-task"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "deploy-gke.js"
+    },
+    {
+      "path": "gke-apply.js"
+    },
+    {
+      "path": "gke-set-deployment.js"
+    },
+    {
+      "path": "interfaces.js"
+    },
+    {
+      "path": "strings.js"
+    },
+    {
+      "path": "task.json"
+    },
+    {
+      "path": "icon.png"
+    }
+  ]
+}

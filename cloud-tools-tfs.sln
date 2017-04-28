@@ -19,6 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		tsconfig.json = tsconfig.json
 	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		__JSONSchema = https://raw.githubusercontent.com/ILMTitan/tfs-cli/4f5b05447ed99ec2c205506d55ca2e677d1691a2/manifest.schema.json
+	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "deploy-gae-build-task", "deploy-gae-build-task\deploy-gae-build-task.njsproj", "{153A1216-9310-4CEB-888B-31EC531EB509}"
 	ProjectSection(ProjectDependencies) = postProject

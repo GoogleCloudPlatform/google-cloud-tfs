@@ -6,7 +6,7 @@ $allTasks = (
     "container-build-task",
     "deploy-gae-build-task",
     "set-login-build-task"
-    )
+)
 
 if($TasksToBuild -eq $null) {
     $tasks = $allTasks
@@ -138,7 +138,7 @@ function BuildCommon() {
 function InitPsTask($task) {
     pushd $task
     try {
-        if(-not (Test-Path ps_modules)) {
+        if (-not (Test-Path ps_modules)) {
             Write-Host "Start install VstsTaskSdk for $task"
             mkdir ps_modules
             cd ps_modules

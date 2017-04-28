@@ -32,6 +32,13 @@
       "helpMarkDown": "Help make Google Cloud SDK better by automatically sending [anonymous usage statistics](https://cloud.google.com/sdk/usage-statistics) to Google."
     },
     {
+      "name": "Config",
+      "label": "Configuration",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "The name of the configuration to create or activate. If left blank, the active config will be used"
+    },
+    {
       "name": "Project",
       "label": "Project",
       "type": "string",
@@ -53,19 +60,12 @@
       "helpMarkDown": "Configure the Cloud SDK's current default compute/zone. If left blank, the current configuration will not change."
     },
     {
-      "name": "Config",
-      "label": "Configuration",
-      "type": "string",
-      "required": false,
-      "helpMarkDown": "The name of the configuration to create or activate."
-    },
-    {
       "name": "InstallPath",
       "label": "Install Path",
       "type": "string",
       "required": false,
       "groupName": "advanced",
-      "helpMarkDown": "The path on the agent to install the Cloud SDK. Defaults to '%LOCALAPPDATA%\\Google\\Cloud SDK'"
+      "helpMarkDown": "The path on the agent to install the Cloud SDK. Defaults to '%LOCALAPPDATA%\\Google\\Cloud SDK'."
     },
     {
       "name": "ForceInstall",

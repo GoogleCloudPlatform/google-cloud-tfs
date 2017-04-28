@@ -32,7 +32,7 @@ the service account to deploy it with.
 
 
 
-[GCPLogo]: ../images/cloud_128x128.png
+[GCPLogo]: ../images/cloud_64x64.png
 [Build]: ../images/screenshots/dotnet-core-container-build-process.png
 [GcbTaskParams]: ../images/screenshots/container-build-inputs.png
 [AspNetCore]: https://www.asp.net/core

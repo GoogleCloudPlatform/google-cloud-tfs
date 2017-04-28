@@ -3,7 +3,8 @@
 This extension provides a service endpoint and build tasks to make deploying to
 Google Cloud Platform a breeze.
 
-[TODO(przybjw)]:#(Validate on site documentaion link)
+[TODO(przybjw)]: # (Validate on site documentaion link)
+
 Quickstart and How-To documentation can be found at
 https://cloud.google.com/tools/cloud-tools-tfs/docs/community
 
@@ -31,14 +32,18 @@ The extension installs the following tasks:
   ![Deploy tasks](images/screenshots/DeployTasksCatalog.png)
   ![Package tasks](images/screenshots/CloudContainerBuildCatalog.png)
   ![Utility tasks](images/screenshots/GetGcePasswordCatalog.png)
-  - **[Deploy to Google App Engine](deploy-gae-build-task/README.md)**: Deploy ASP.NET Core and other application to [Google App Engine][AppEngine]
-  - **[Deploy to Google Container Engine](deploy-gke-build-task/README.md)**: Deploy ASP.NET Core and other applications to [Google Container Engine][ContainerEngine]
-  - **[Google Cloud Container Builder](container-build-task/README.md)**: Build Docker container images with [Google Container Builder][ContainerBuilder]
-  - **[Get Google Compute VM password](set-login-build-task/README.md)**: Gets the IP address and user password for a [Google Compute Engine][ComputeEngine] virtual machine running windows.
-
+  - **[Deploy to Google App Engine][deploy-gae]**: Deploy ASP.NET Core and other application to [Google App Engine][AppEngine]
+  - **[Deploy to Google Container Engine][deploy-gke]**: Deploy ASP.NET Core and other applications to [Google Container Engine][ContainerEngine]
+  - **[Google Cloud Container Builder][container-build]**: Build Docker container images with [Google Container Builder][ContainerBuilder]
+  - **[Get Google Compute VM password][set-login-password]**: Gets the IP address and user password for a [Google Compute Engine][ComputeEngine] virtual machine running windows.
 
 [CloudSdk]: https://cloud.google.com/sdk/downloads
 [AppEngine]: https://cloud.google.com/appengine
 [ContainerEngine]: https://cloud.google.com/container-engine
 [ContainerBuilder]: https://cloud.google.com/container-builder
 [ComputeEngine]: https://cloud.google.com/compute
+
+[deploy-gae]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/deploy-gae-build-task/README.md
+[deploy-gke]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/deploy-gke-build-task/README.md
+[container-build]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/container-build-task/README.md
+[set-login-password]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/set-login-build-task/README.md

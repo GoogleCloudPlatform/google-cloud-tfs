@@ -47,8 +47,7 @@ file with the same name as this input will be updated.
 the new value of the configuration will be output to the build console.
 
 
-
-[GCPLogo]: ../images/cloud_128x128.png
+[GCPLogo]: ../images/cloud_64x64.png
 [DeployByValueParameters]: ../images/screenshots/deploy-gke-value-inputs.png
 [DeployByConfigParameters]: ../images/screenshots/deploy-gke-config-inputs.png
 [Kubernetes]: https://kubernetes.io

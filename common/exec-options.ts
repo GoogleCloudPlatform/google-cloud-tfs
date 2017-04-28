@@ -17,12 +17,15 @@
  * calls to gcloud and kubectl.
  * @author JimWP@google.com (Jim Przybylinski)
  */
+
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as task from 'vsts-task-lib/task';
 import {IExecOptions} from 'vsts-task-lib/toolrunner';
 
 import * as sc from './strings';
+
+import WritableStream = NodeJS.WritableStream;
 
 /**
  * This function creates exec options useful for calls to gcloud. It
@@ -35,7 +38,7 @@ import * as sc from './strings';
 export function getDefaultExecOptions(): IExecOptions {
   return {
     windowsVerbatimArguments: true,
-    errStream: process.stdout as stream.Writable,
+    errStream: process.stdout as WritableStream,
     env: {
       'CLOUDSDK_METRICS_ENVIRONMENT': 'cloud-tools-tfs',
       'CLOUDSDK_METRICS_ENVIRONMENT_VERSION': '0.0.1',

@@ -37,8 +37,7 @@ immediately.
 resources, but prevents a quick rollback.
 
 
-
-[GCPLogo]: ../images/cloud_128x128.png
+[GCPLogo]: ../images/cloud_64x64.png
 [Build]: ../images/screenshots/dotnet-core-build-process.png
 [GaeTaskParams]: ../images/screenshots/deploy-gae-inputs.png
 [GAE]: https://cloud.google.com/appengine

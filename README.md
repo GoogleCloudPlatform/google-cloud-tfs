@@ -34,7 +34,7 @@ install the extension from the extension management page of TFS or VSTS.
 
 Execute build script `./build/BuildExtension.ps1`. It will download needed
 modules, build the common files and build tasks, and then package everything
-into `./bin/Google Clout Tools.google-cloud-tfs-<version>.vsix`.
+into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 
 ## Contributing
 

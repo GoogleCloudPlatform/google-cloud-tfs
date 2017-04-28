@@ -2,10 +2,9 @@
   "name": "container-build-task",
   "version": "0.0.1",
   "description": "A TFS build task to package an image for google container engine.",
-  "license": "UNLICENSED",
-  "$todo:(jimwp) license": "Change license to Apache when opensource approved",
+  "license": "Apache-2.0",
   "author": "Google Cloud Tools",
-  "repository": "sso://team/cloudsharp-eng/cloud-tools-tfs",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
   "dependencies": {
     "common": "file:../common",
     "vsts-task-lib": "^1.1.0"

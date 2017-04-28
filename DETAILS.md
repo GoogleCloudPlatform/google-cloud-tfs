@@ -3,7 +3,7 @@
 This extension provides a service endpoint and build tasks to make deploying to
 Google Cloud Platform a breeze.
 
-[TODO(przybjw)]: # (Validate on site documentaion link)
+[TODO(przybjw)]: # (Validate on site documentation link)
 
 Quickstart and How-To documentation can be found at
 https://cloud.google.com/tools/cloud-tools-tfs/docs/community

@@ -25,6 +25,8 @@ import {Writable} from 'stream';
 
 import * as helper from './container-build-helper';
 
+import WritableStream = NodeJS.WritableStream;
+
 /**
  * Runs the script for the container-build-task
  */
@@ -104,7 +106,7 @@ async function run(): Promise<void> {
   }
 
   const execOptions: IExecOptions = getQuietExecOptions();
-  execOptions.errStream = process.stdout as Writable;
+  execOptions.errStream = (process.stdout as WritableStream) as Writable;
 
   await endpoint.usingAsync(async () => {
     await gcloud.exec(execOptions);

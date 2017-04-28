@@ -68,7 +68,7 @@
       "defaultValue": false,
       "required": true,
       "groupName": "copy",
-      "helpMarkDown": "Select this option if you need the task to copy your YAML file to yoru deployment source folder."
+      "helpMarkDown": "Select this option if you need the task to copy your YAML file to your deployment source folder."
     },
     {
       "name": "sourceFolder",

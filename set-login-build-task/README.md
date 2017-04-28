@@ -32,7 +32,7 @@ an ASP.NET application to your Google Compute VMs.
 
 
 
-[GCPLogo]: ../images/cloud_128x128.png
+[GCPLogo]: ../images/cloud_64x64.png
 [SetLoginParameters]: ../images/screenshots/set-login-inputs.png
 [GceBuildProcess]: ../images/screenshots/GceBuildProcess.png
 [WinRmTasks]: https://marketplace.visualstudio.com/items?itemName=ms-vscs-rm.iiswebapp

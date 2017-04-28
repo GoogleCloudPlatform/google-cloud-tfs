@@ -13,7 +13,8 @@ For Documentation on useing the extension, see [DETAILS.md](DETAILS.md)
 The latest stable version can be found on the
 [Visual Studio Marketplace][Marketplace].
 
-[TODO(przybjw)]:#(change to CI build server)
+[TODO(przybjw)]: # (change to CI build server)
+
 The latest development version is not available as a package.
 
 You can [build the vsix package from source](#Build), and then upload and
@@ -46,7 +47,7 @@ Questions can be asked on StackOverflow
   - [Ask a question][StackOverflowAsk]
   - [Browse asked questions][StackOverflowBrowse]
 
-[GCPLogo]: images/cloud_128x128.png
+[GCPLogo]: images/cloud_64x64.png
 [PowerShell]: https://msdn.microsoft.com/powershell
 [Node]: https://nodejs.org
 [npm]: https://www.npmjs.com
@@ -54,12 +55,9 @@ Questions can be asked on StackOverflow
 [tfs-cli]: https://github.com/Microsoft/tfs-cli
 [CloudSdk]: https://cloud.google.com/sdk/downloads
 
-[TODO(przybjw)]:#(verify GitHub issue tracker link.)
 [GitHubIssues]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/issues
 
-[TODO(przybjw)]:#(verify marketplace link.)
-[Marketplace]: https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.CloudToolsTFS
+[Marketplace]: https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.google-cloud-tfs
 
-[TODO(przybjw)]:#(verify StackOverflow tag.)
 [StackOverflowAsk]: http://stackoverflow.com/questions/ask?tags=google-cloud-tfs
 [StackOverflowBrowse]: http://stackoverflow.com/questions/tagged/google-cloud-tfs

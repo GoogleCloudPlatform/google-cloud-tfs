@@ -15,7 +15,7 @@ Cloud SDK.
 
 ![Install Cloud SDK Parameters][InstallCloudSdkParameters]
 
-  - **Send anonymous usage statiscistics to Google**: Help make Google Cloud SDK better
+  - **Send anonymous usage statistics to Google**: Help make Google Cloud SDK better
   by automatically sending [anonymous usage statistics][UsageStats]
   to Google.
   - **Config**: The name of the configuration to create or activate. If left blank, the

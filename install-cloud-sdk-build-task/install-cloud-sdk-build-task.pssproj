@@ -29,6 +29,7 @@
   <ItemGroup>
     <Content Include="icon.png" />
     <Content Include="manifest.json" />
+    <Content Include="README.md" />
     <Content Include="task.json" />
   </ItemGroup>
   <ItemGroup>

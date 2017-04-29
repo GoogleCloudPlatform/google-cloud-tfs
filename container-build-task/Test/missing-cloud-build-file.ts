@@ -17,12 +17,10 @@
  *   missing config path.
  * @author przybjw@google.com (Jim Przybylinski)
  */
+import {getDefaultAnswers, registerCommonMocks} from 'common/register-mocks';
 import * as path from 'path';
-import { TaskLibAnswers } from 'vsts-task-lib/mock-answer';
-import { TaskMockRunner } from 'vsts-task-lib/mock-run';
-import {
-  registerCommonMocks, getDefaultAnswers, getFsMock
-} from 'common/register-mocks';
+import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
+import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
 const taskPath = path.join(__dirname, '..', 'container-build.js');
 const runner = new TaskMockRunner(taskPath);

@@ -1,0 +1,22 @@
+{
+  "name": "cloud-sdk-tool-build-task",
+  "version": "0.0.1",
+  "description": "A TFS build task for installing the Google Cloud SDK as a tool.",
+  "author": {
+    "name": "Google Cloud Tools",
+    "url": "https://github.com/GoogleCloudPlatform"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
+  "dependencies": {
+    "common": "file:../common",
+    "vsts-task-lib": "^1.1.0",
+    "vsts-task-tool-lib": "^0.4.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.40",
+    "@types/node": "^7.0.6",
+    "@types/q": "0.0.32",
+    "mocha": "^3.2.0"
+  }
+}

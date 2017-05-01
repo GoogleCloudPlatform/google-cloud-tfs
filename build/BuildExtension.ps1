@@ -5,7 +5,8 @@ $allTasks = (
     "deploy-gke-build-task",
     "container-build-task",
     "deploy-gae-build-task",
-    "set-login-build-task"
+    "set-login-build-task",
+    "cloud-sdk-tool-build-task"
     )
 
 if($TasksToBuild -eq $null) {
@@ -83,7 +84,14 @@ function BuildTask($task) {
         cp ..\images\cloud_32x32.png icon.png
 
         # Get the modules needed for actually running the code.
-        $productionModules = (npm ls --prod --parseable | Split-Path -Leaf) -ne $task
+        cd node_modules
+        $productionModules = (npm ls --prod --parseable | Resolve-Path -Relative) -notmatch $task
+
+        # Create manifest.json in node_modules, so only production modules are
+        # included in the final package.
+        @{"files" = $productionModules | %{ @{"path"=$_} } } | ConvertTo-Json |
+          Out-File manifest.json -Encoding utf8
+        cd ..
 
         # Install build task to local tfs agent if it exists for rapid dev/test cycles.
         if (Test-Path env:TfsBuildAgentPath) {
@@ -91,7 +99,7 @@ function BuildTask($task) {
                 $env:TfsBuildAgentPath, "tasks", $task, "0.0.1")
             if (Test-Path $agentTaskDir) {
                 Write-Verbose "Copying scripts for task $task to $agentTaskDir"
-                # Execuled non-packaged files.
+                # Exclude non-packaged files.
                 $excludes = "node_modules", "obj", "bin", "Test", ".taskkey", "*.ts", "*.js.map", "package.json",
                     "tsconfig.json", "manifest.json", "*.njsproj"
                 cp * $agentTaskDir -Force -Recurse -Exclude $excludes
@@ -104,11 +112,6 @@ function BuildTask($task) {
                 }
             }
         }
-
-        # Create manifest.json in node_modules, so only production modules are
-        # included in the final package.
-        @{"files" = $productionModules | %{ @{"path"=$_} } } | ConvertTo-Json |
-          Out-File (Join-Path node_modules manifest.json) -Encoding utf8
     } finally {
         popd
     }

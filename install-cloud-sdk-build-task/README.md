@@ -17,7 +17,7 @@ Cloud SDK.
 
   - **Send anonymous usage statistics to Google**: Help make Google Cloud SDK better
   by automatically sending [anonymous usage statistics][UsageStats]
-  to Google.
+  to Google. The Cloud SDK configuration will be updated with this value on every run.
   - **Config**: The name of the configuration to create or activate. If left blank, the
   active config will be used.
   - **Project**: Configure the Cloud SDK's current default project. If left blank, the

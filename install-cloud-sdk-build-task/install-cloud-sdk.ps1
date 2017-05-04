@@ -39,6 +39,8 @@ try {
             Write-VstsTaskVerbose "Setting Environment Path"
             $env:Path = "$env:Path;$gcloudSdkPath"
             Set-VstsTaskVariable "Path" $env:Path
+            $disableReportingString = if($AllowReporting) {"false"} else {"true"}
+            gcloud config set disable_usage_reporting $disableReportingString
         }
     } else {
         $InstallerUri = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.zip"

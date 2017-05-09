@@ -15,7 +15,7 @@
  ##>
 
 [CmdletBinding()]
-Param([string[]] $TasksToBuild, [switch]$VerboseTest, [switch]$SkipTests, [switch]$SkipNpm)
+Param([string[]] $TasksToBuild, [switch]$VerboseTest, [switch]$SkipTests, [switch]$SkipNpm, [switch]$RevVersion)
 
 $allTasks = (
     "deploy-gke-build-task",
@@ -51,8 +51,13 @@ function Run($buildScriptPath)
         }
 
         Write-Host "Building package"
-        Write-Verbose "Running: tfx extension create --output-path bin"
-        tfx extension create --manifestGlobs **/manifest.json --output-path bin
+        if($RevVersion) {
+            Write-Verbose "Running: tfx extension create --manifestGlobs **/manifest.json --output-path bin --rev-version"
+            tfx extension create --manifestGlobs **/manifest.json --output-path bin --rev-version
+        } else {
+            Write-Verbose "Running: tfx extension create --manifestGlobs **/manifest.json --output-path bin"
+            tfx extension create --manifestGlobs **/manifest.json --output-path bin
+        }
         Write-Host "End build package"
     } finally {
         popd
@@ -107,7 +112,7 @@ function BuildTask($task) {
                 $env:TfsBuildAgentPath, "tasks", $task, "0.0.1")
             if (Test-Path $agentTaskDir) {
                 Write-Verbose "Copying scripts for task $task to $agentTaskDir"
-                # Execuled non-packaged files.
+                # Exclude non-packaged files.
                 $excludes = "node_modules", "obj", "bin", "Test", ".taskkey", "*.ts", "*.js.map", "package.json",
                     "tsconfig.json", "manifest.json", "*.njsproj"
                 cp * $agentTaskDir -Force -Recurse -Exclude $excludes

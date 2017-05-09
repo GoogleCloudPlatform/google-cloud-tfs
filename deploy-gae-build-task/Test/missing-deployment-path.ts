@@ -26,8 +26,6 @@ import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
 const runner = new TaskMockRunner(taskPath);
 
-const deployPath = path.resolve('Test', 'deploy');
-
 runner.setInput('serviceEndpoint', 'endpoint');
 runner.setInput('yamlFileName', 'app.yaml');
 runner.setInput('copyYaml', 'false');

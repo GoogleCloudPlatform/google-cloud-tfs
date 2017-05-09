@@ -6,7 +6,7 @@ build tasks for interacting with Google Cloud Platform.
 
 ## Documentation
 
-For Documentation on useing the extension, see [DETAILS.md](DETAILS.md)
+For Documentation on using the extension, see [DETAILS.md](DETAILS.md)
 
 ## Installation
 

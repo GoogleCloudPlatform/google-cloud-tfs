@@ -1,16 +1,24 @@
 {
+  "$schema": "https: //raw.githubusercontent.com/ILMTitan/tfs-cli/4f5b05447ed99ec2c205506d55ca2e677d1691a2/manifest.schema.json",
   "manifestVersion": 1,
   "id": "google-cloud-tfs",
   "name": "Cloud Tools for TFS",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "GoogleCloudTools",
   "targets": [ { "id": "Microsoft.VisualStudio.Services" } ],
   "description": "Tools for deploying to Google Cloud Platform.",
   "icons": {
     "large": "images/cloud_512x512.png",
     "default": "images/cloud_128x128.png",
+    "helpHeader": "images/cloud_64x64.png",
     "task": "images/cloud_32x32.png"
   },
+  "files": [
+    {
+      "path": "images/screenshots",
+      "addressable": true
+    }
+  ],
   "categories": [ "Build and release" ],
   "tags": [
     "google",

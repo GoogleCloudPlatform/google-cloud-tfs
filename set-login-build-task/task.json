@@ -47,16 +47,18 @@
     {
       "name": "passwordOutput",
       "type": "string",
-      "label": "Password Variable",
+      "label": "Password Variable Name",
+      "defaultValue": "build.gcp.vm.password",
       "required": true,
-      "helpMarkDown": "The build variable to store the new password in."
+      "helpMarkDown": "The name of the build variable to store the new password in."
     },
     {
       "name": "machineIpOutput",
       "type": "string",
-      "label": "VM IP Variable",
+      "label": "VM IP Variable Name",
+      "defaultValue": "build.gcp.vm.ip",
       "required": true,
-      "helpMarkDown": "The build variable to store the machine ip."
+      "helpMarkDown": "The name of the build variable to store the machine ip in."
     }
   ],
   "execution": {

@@ -1,8 +1,13 @@
 # ![GCPLogo][GCPLogo] Set Virtual Machine Login build task
 
 This task gets the IP address and account password for a [Google Compute Engine][GCE]
-virtual machine. It outputs these values to build variables that can be used by subsequesnt
+virtual machine. It outputs these values to build variables that can be used by subsequent
 tasks, such as the [IIS Web App Deployment Using WinRM][WinRmTasks] tasks.
+
+### **Warning**
+The password for the user will be changed every time you run this task. Use a new,
+unused username such as `TFSUser`.
+
 
 ## Usage
 
@@ -18,7 +23,7 @@ Do not put the actual variable, as the task will then put the values in the vari
 named by the contents of the input. e.g. To use "$(GcpVmPassword) in future build
 tasks, input "GcpVmPassword".
 
-When this task runs, it will connect to [Google Compute Engine][GCE], reset the
+When this task runs, it will connect to [Google Compute Engine][GCE], create or reset the
 password of the given user on the given VM, and put the Password and IP address in
 the given variables.
 

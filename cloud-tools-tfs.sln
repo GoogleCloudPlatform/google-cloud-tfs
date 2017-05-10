@@ -8,10 +8,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{12D2E214-18DA-4DB7-80D6-8AB79D46D846}"
 	ProjectSection(SolutionItems) = preProject
 		build\BuildExtension.ps1 = build\BuildExtension.ps1
+		build\BuildFunctions.psm1 = build\BuildFunctions.psm1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DAAD89E4-610D-497E-88C4-7FD340EA502F}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yaml = appveyor.yaml
 		CONTRIBUTING.md = CONTRIBUTING.md
 		DETAILS.md = DETAILS.md
 		LICENSE = LICENSE
@@ -34,8 +36,14 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "set-login-build-task", "set
 	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "container-build-task", "container-build-task\container-build-task.njsproj", "{86DB8657-6D59-4455-9F30-81343CBE7CBC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8ABCF5FE-EC92-4FFB-96E5-821790941E57} = {8ABCF5FE-EC92-4FFB-96E5-821790941E57}
+	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "deploy-gke-build-task", "deploy-gke-build-task\deploy-gke-build-task.njsproj", "{D839A77D-05FA-4180-9ECB-E44C987599F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8ABCF5FE-EC92-4FFB-96E5-821790941E57} = {8ABCF5FE-EC92-4FFB-96E5-821790941E57}
+	EndProjectSection
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "install-cloud-sdk-build-task", "install-cloud-sdk-build-task\install-cloud-sdk-build-task.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject

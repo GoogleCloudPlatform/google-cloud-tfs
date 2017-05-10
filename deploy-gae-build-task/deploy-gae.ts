@@ -15,7 +15,7 @@
 /**
  * @fileoverview This is the main script run by the deploy-gae-build-task.
  *   It takes input from the TFS build task GUI (defined by task.json).
- *   It then, if asked, copies the yaml file from the source folder to the
+ *   It then, if asked, copies the YAML file from the source folder to the
  *   deployment path. I writes a credential file from the endpoint
  *   authorization, and calls gcloud beta app deploy with various parameters.
  * @author przybjw@google.com (Jim Przybylinski)
@@ -46,12 +46,12 @@ async function run():Promise<void> {
   const endpointId = task.getInput('serviceEndpoint', true);
   // The path of the deployment files.
   const deploymentPath = task.getPathInput('deploymentPath', true);
-  // The name of the yaml file we want to run on.
+  // The name of the YAML file we want to run on.
   const yamlFileName = task.getInput('yamlFileName', true);
-  // If true, copy the yaml file from the source folder to the deployment
+  // If true, copy the YAML file from the source folder to the deployment
   // path.
   const copyYaml = task.getBoolInput('copyYaml', true);
-  // The source folder the yaml file is in.
+  // The source folder the YAML file is in.
   const sourceFolder = task.getPathInput('sourceFolder', copyYaml);
   // The storage bucket to send to the --bucket parameter.
   const storageBucket = task.getInput('storageBucket', false);
@@ -62,7 +62,7 @@ async function run():Promise<void> {
   // Toggle between --stop-previous-version and --no-stop-previous-version.
   const stopPrevious = task.getBoolInput('stopPrevious', promote);
 
-  // Move yaml.
+  // Move YAML.
   const yamlPath = path.join(deploymentPath, yamlFileName);
   if (copyYaml) {
     task.cp(path.join(sourceFolder, yamlFileName), deploymentPath);

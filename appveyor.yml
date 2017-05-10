@@ -20,3 +20,6 @@ test_script:
         GetTypeScriptModules | % {
             vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$_/$_.njsproj
         }
+artifacts:
+  - path: ./bin/*.vsix
+    name: ExtensionPackage

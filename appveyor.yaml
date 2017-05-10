@@ -1,5 +1,6 @@
 environment:
   PATH: $(APPDATA)\npm;$(PATH)
+  VisualStudioVersion: 14.0
 
 install:
   - ps: Install-Product node 6.9.1
@@ -15,7 +16,7 @@ before_package:
 
 test_script:
   - ps: |
-        Write-Output $env:VisualStudioVersion
+        $env:VisualStudioVersion
         GetTypeScriptModules | % {
             vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$_/$_.njsproj
         }

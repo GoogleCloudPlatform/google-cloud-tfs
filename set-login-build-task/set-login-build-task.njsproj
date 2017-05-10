@@ -45,7 +45,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
   -->
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
-  <Target Name="InstallCommonModule" Inputs="@(CommonOutput)" Outputs="@(CommonOutput -> $(ProjectDir)node_modules/common/%(Filename)%(extension))">
+  <Target Name="InstallCommonModule">
     <Exec Command="npm install ../common" />
   </Target>
   <PropertyGroup>

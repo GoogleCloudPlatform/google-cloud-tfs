@@ -1,0 +1,14 @@
+environment:
+  PATH: $(APPDATA)\npm;$(PATH)
+
+install:
+  - ps: Install-Product node 6.9.1
+  - npm install typescript@latest -global
+  - npm install tfx-cli@latest -global
+  - ps: Import-Module .\build\BuildFunctions.psm1
+
+before_build:
+  - ps: InitAll (GetTypeScriptModules)
+
+before_package:
+  - ps: Package (GetTypeScriptModules)

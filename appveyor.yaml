@@ -12,3 +12,10 @@ before_build:
 
 before_package:
   - ps: Package (GetTypeScriptModules)
+
+test_script:
+  - ps: |
+        Write-Output $env:VisualStudioVersion
+        GetTypeScriptModules | % {
+            vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$_/$_.njsproj
+        }

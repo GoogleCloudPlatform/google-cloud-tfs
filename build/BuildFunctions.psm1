@@ -130,8 +130,10 @@ function TestTask($task) {
 function RunAppveyorTests([string[]]$tasks) {
     $jobs = $tasks | % {
         Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            $task = $args[1]
             cd $args[0]
-            vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$args[1]/$args[1].njsproj
+            cd $task
+            vstest.console /logger:Appveyor  /UseVsixExtensions:true "$task.njsproj"
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob

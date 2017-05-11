@@ -53,9 +53,14 @@ function InitTsTask([string]$task) {
 function CompileAll([string[]]$tasks) {
     Write-Host "Compiling TypeScript modules and tasks"
     CompileCommon
-    $tasks | % {
-        CompileTask $_
+    $jobs = $tasks | % {
+        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            cd $args[0]
+            Import-Module ./build/BuildFunctions.psm1
+            CompileTask $args[1]
+        }
     }
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
 }
 
 function CompileCommon() {
@@ -92,9 +97,14 @@ function CompileTask($task) {
 
 function TestAll([string[]]$tasks) {
     Write-Host "Testing Tasks"
-    $tasks | % {
-        TestTask $_
+    $jobs = $tasks | % {
+        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            cd $args[0]
+            Import-Module ./build/BuildFunctions.psm1
+            TestTask $args[1]
+        }
     }
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
 }
 
 function TestTask($task) {
@@ -117,11 +127,26 @@ function TestTask($task) {
     }
 }
 
-function PublishTasksLocal([string[]]$tasks) {
-    PublishPsTaskLocal "install-cloud-sdk-build-task"
-    $tasks | % {
-        PublishTsTaskLocal $_
+function RunAppveyorTests([string[]]$tasks) {
+    $jobs = $tasks | % {
+        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            cd $args[0]
+            vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$args[1]/$args[1].njsproj
+        }
     }
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
+}
+
+function PublishTasksLocal([string[]]$tasks) {
+    $jobs = $tasks | % {
+        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            cd $args[0]
+            Import-Module ./build/BuildFunctions.psm1
+            PublishTsTaskLocal $args[1]
+        }
+    }
+    PublishPsTaskLocal "install-cloud-sdk-build-task"
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
 }
 
 function PublishPsTaskLocal($task) {
@@ -173,9 +198,14 @@ function PublishTsTaskLocal($task){
 function Package([string[]]$tasks){
 
     Write-Host "Building package"
-    $tasks | % {
-        PrePackageTask $_
+    $jobs = $tasks | % {
+        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+            cd $args[0]
+            Import-Module ./build/BuildFunctions.psm1
+            PrePackageTask $args[1]
+        }
     }
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
     Write-Verbose "Running: tfx extension create --output-path bin"
     tfx extension create --manifestGlobs **/manifest.json --output-path bin
 }
@@ -208,9 +238,10 @@ function GetProductionModules($task) {
     return (npm ls --prod --parseable | Split-Path -Leaf) -ne $task
 }
 
-function GetTypeScriptModules() {
-    ls -Directory | ? {
+function GetTypeScriptTaskModules() {
+    $dirs = ls -Directory | ? {
         $fileNames = ls $_ -File | Split-Path -Leaf
         $fileNames -contains "task.json" -and $fileNames -contains "tsconfig.json"
     }
+    $dirs.Name | Write-Output
 }

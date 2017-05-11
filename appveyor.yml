@@ -9,17 +9,14 @@ install:
   - ps: Import-Module .\build\BuildFunctions.psm1
 
 before_build:
-  - ps: InitAll (GetTypeScriptModules)
+  - ps: InitAll (GetTypeScriptTaskModules)
 
 before_package:
-  - ps: Package (GetTypeScriptModules)
+  - ps: Package (GetTypeScriptTaskModules)
 
 test_script:
-  - ps: |
-        $env:VisualStudioVersion
-        GetTypeScriptModules | % {
-            vstest.console /logger:Appveyor  /UseVsixExtensions:true ./$_/$_.njsproj
-        }
+  - ps: RunAppveyorTests (GetTypeScriptTaskModules)
+
 artifacts:
   - path: ./bin/*.vsix
     name: ExtensionPackage

@@ -16,27 +16,23 @@
 [CmdletBinding()]
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
-$allTasks = (
-    "deploy-gke-build-task",
-    "container-build-task",
-    "deploy-gae-build-task",
-    "set-login-build-task"
-)
-
-if($TasksToBuild -eq $null) {
-    $tasks = $allTasks
-} else {
-    $tasks = $allTasks | ? {$_ -in $TasksToBuild}
-    $TasksToBuild |
-        ? { $_ -notin $allTasks } |
-        % { Write-Warning "$_ is not a valid task" }
-}
-
 
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
 try {
     Import-Module ./BuildFunctions.psm1
     cd ..
+
+    $allTasks = GetTypeScriptTaskModules
+
+    if($TasksToBuild -eq $null) {
+        $tasks = $allTasks
+    } else {
+        $tasks = $allTasks | ? {$_ -in $TasksToBuild}
+        $TasksToBuild |
+            ? { $_ -notin $allTasks } |
+            % { Write-Warning "$_ is not a valid task" }
+    }
+
     if(Test-Path bin) {
         Write-Verbose "Removing bin"
         rm bin -Force -Recurse -ErrorAction Stop
@@ -62,6 +58,6 @@ try {
         Package $tasks
     }
 } finally {
-    Get-Module BuildFunctions | Remove-Module
+    Get-Module "BuildFunctions" | Remove-Module
     popd
 }

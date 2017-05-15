@@ -1,0 +1,22 @@
+environment:
+  PATH: $(APPDATA)\npm;$(PATH)
+  VisualStudioVersion: 14.0
+
+install:
+  - ps: Install-Product node 6.9.1
+  - npm install typescript@latest -global
+  - npm install tfx-cli@latest -global
+  - ps: Import-Module .\build\BuildFunctions.psm1
+
+before_build:
+  - ps: InitAll (GetTypeScriptTaskModules)
+
+before_package:
+  - ps: Package (GetTypeScriptTaskModules)
+
+test_script:
+  - ps: RunAppveyorTests (GetTypeScriptTaskModules)
+
+artifacts:
+  - path: ./bin/*.vsix
+    name: ExtensionPackage

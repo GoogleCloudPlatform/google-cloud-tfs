@@ -28,21 +28,21 @@
       "type": "string",
       "label": "Zone",
       "required": true,
-      "helpMarkDown": "The zone of the virtual machine to get the password for."
+      "helpMarkDown": "The zone of the virtual machine to get a new password for."
     },
     {
       "name": "machine",
       "type": "string",
       "label": "Virtual Machine",
       "required": true,
-      "helpMarkDown": "The name of the virtual machine to the password for."
+      "helpMarkDown": "The name of the virtual machine to get a new password for."
     },
     {
       "name": "userName",
       "type": "string",
       "label": "User Name",
       "required": true,
-      "helpMarkDown": "The user name to get a new password for."
+      "helpMarkDown": "The user name to create or reset the password of."
     },
     {
       "name": "passwordOutput",

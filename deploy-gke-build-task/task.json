@@ -21,7 +21,7 @@
       "type": "connectedService:google-cloud-service-endpoint",
       "label": "GCP connection",
       "required": true,
-      "helpMarkDown": "The Google Cloud Platform connection to use"
+      "helpMarkDown": "The Google Cloud Platform connection to use."
     },
     {
       "name": "zone",

@@ -16,7 +16,7 @@ before_package:
 
 test:
   assemblies:
-    - **\*.njsproj
+    - '**\*.njsproj'
 
 artifacts:
   - path: ./bin/*.vsix

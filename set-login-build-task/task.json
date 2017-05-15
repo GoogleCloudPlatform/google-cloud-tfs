@@ -9,7 +9,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 2
   },
   "category": "Utility",
   "visibility": [ "Build", "Release" ],
@@ -21,7 +21,7 @@
       "type": "connectedService:google-cloud-service-endpoint",
       "label": "GCP connection",
       "required": true,
-      "helpMarkDown": "The Google Cloud Platform connection to use"
+      "helpMarkDown": "The Google Cloud Platform connection to use."
     },
     {
       "name": "zone",

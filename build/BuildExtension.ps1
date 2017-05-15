@@ -17,9 +17,9 @@
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
 
+$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
 try {
-    Import-Module ./BuildFunctions.psm1
     cd ..
 
     $allTasks = GetTypeScriptTaskModules
@@ -58,6 +58,6 @@ try {
         Package $tasks
     }
 } finally {
-    Get-Module "BuildFunctions" | Remove-Module
     popd
+    $functionsModule | Remove-Module
 }

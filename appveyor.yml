@@ -14,8 +14,9 @@ before_build:
 before_package:
   - ps: Package (GetTypeScriptTaskModules)
 
-test_script:
-  - ps: RunAppveyorTests (GetTypeScriptTaskModules)
+test:
+  assemblies:
+    - **\*.njsproj
 
 artifacts:
   - path: ./bin/*.vsix

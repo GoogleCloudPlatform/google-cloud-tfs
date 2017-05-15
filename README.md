@@ -22,9 +22,6 @@ install the extension from the extension management page of TFS or VSTS.
 
 ## Build
 
-### Automated Build Status
-[![Build status](https://ci.appveyor.com/api/projects/status/hu7qlgxrh2j0i35y/branch/master?svg=true)](https://ci.appveyor.com/project/ILMTitan/google-cloud-tfs/branch/master)
-
 ### Prerequisits
 
   - [PowerShell][PowerShell]. Installed by default on modern windows platforms.

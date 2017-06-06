@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/hu7qlgxrh2j0i35y/branch/master?svg=true)](https://ci.appveyor.com/project/ILMTitan/google-cloud-tfs/branch/master)
+[![codecov](https://codecov.io/gh/GoogleCloudPlatform/google-cloud-tfs/branch/master/graph/badge.svg)](https://codecov.io/gh/GoogleCloudPlatform/google-cloud-tfs)
 
 # ![GCPLogo][GCPLogo] Cloud Tools for Team Foundation Server
 

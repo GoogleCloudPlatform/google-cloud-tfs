@@ -111,27 +111,31 @@ function CompileTask($task) {
     }
 }
 
-function TestAll([string[]]$tasks) {
+function TestAll([string[]]$tasks, [string]$reporter) {
     Write-Host "Testing Tasks"
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
+        Start-Job -ArgumentList $pwd, $_, $reporter -ScriptBlock {
             cd $args[0]
             Import-Module ./build/BuildFunctions.psm1
-            TestTask $args[1]
+            TestTask $args[1] $args[2]
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
 }
 
-function TestTask($task) {
+function TestTask([string]$task, [string]$reporter) {
     Write-Host "Testing TypeScript task $task"
     pushd $task
     try {
         $testSuite = Join-Path Test _suite.js
-
         if (Test-path $testSuite) {
             Write-Verbose "Running: mocha $testSuite"
-            mocha $testSuite
+            if ($reporter) {
+                nyc mocha --reporter $reporter $testSuite
+            } else {
+                nyc mocha $testSuite
+            }
+
             if ($LASTEXITCODE -ne 0) {
                 throw "mocha failed  for task $task"
             }
@@ -141,18 +145,6 @@ function TestTask($task) {
     } finally {
         popd
     }
-}
-
-function RunAppveyorTests([string[]]$tasks) {
-    $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            $task = $args[1]
-            cd $args[0]
-            cd $task
-            vstest.console /logger:Appveyor  /UseVsixExtensions:true "$task.njsproj"
-        }
-    }
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
 }
 
 function PublishTasksLocal([string[]]$tasks) {

@@ -26,6 +26,8 @@
     <TypeScriptCompile Include="Test\missing-machine.ts" />
     <TypeScriptCompile Include="Test\missing-zone.ts" />
     <TypeScriptCompile Include="Test\missing-endpoint.ts" />
+    <TypeScriptCompile Include="Test\gcloud-output-missing-password.ts" />
+    <TypeScriptCompile Include="Test\gcloud-output-missing-ip_address.ts" />
     <TypeScriptCompile Include="Test\normal-inputs.ts" />
     <TypeScriptCompile Include="Test\no-gcloud.ts" />
     <TypeScriptCompile Include="Test\_suite.ts">

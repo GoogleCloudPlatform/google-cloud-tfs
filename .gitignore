@@ -25,3 +25,4 @@ container-build-task/icon.png
 deploy-gke-image-build-task/icon.png
 install-cloud-sdk-build-task/ps_modules/
 *.user
+.nyc_output

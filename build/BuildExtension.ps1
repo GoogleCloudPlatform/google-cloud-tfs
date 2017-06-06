@@ -17,8 +17,8 @@
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
 
-$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
+$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
     cd ..
 

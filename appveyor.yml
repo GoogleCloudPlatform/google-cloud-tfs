@@ -6,6 +6,9 @@ install:
   - ps: Install-Product node 6.9.1
   - npm install typescript@latest -global
   - npm install tfx-cli@latest -global
+  - npm install nyc -global
+  - npm install mocha -global
+  - npm install mocha-appveyor-reporter -global
   - ps: Import-Module .\build\BuildFunctions.psm1
 
 before_build:
@@ -15,7 +18,7 @@ before_package:
   - ps: Package (GetTypeScriptTaskModules)
 
 test_script:
-  - ps: RunAppveyorTests (GetTypeScriptTaskModules)
+  - ps: TestAll (GetTypeScriptTaskModules), "mocha-appveyor-reporter"
 
 artifacts:
   - path: ./bin/*.vsix

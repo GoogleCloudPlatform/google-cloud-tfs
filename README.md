@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/hu7qlgxrh2j0i35y/branch/master?svg=true)](https://ci.appveyor.com/project/ILMTitan/google-cloud-tfs/branch/master)
+
 # ![GCPLogo][GCPLogo] Cloud Tools for Team Foundation Server
 
 This repository contains an extension for Team Foundation server and Visual

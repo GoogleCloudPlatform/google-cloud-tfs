@@ -22,6 +22,7 @@
     <Content Include="manifest.json" />
     <Content Include="set-login-build-task.licenseheader" />
     <Content Include="task.json" />
+    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="deploy-gke.ts" />
     <Content Include="package.json" />
@@ -30,70 +31,70 @@
     <TypeScriptCompile Include="gke-set-deployment.ts" />
     <TypeScriptCompile Include="interfaces.ts" />
     <TypeScriptCompile Include="strings.ts" />
-    <TypeScriptCompile Include="Test\apply-config\success-dry-run-update-tag.ts" />
-    <TypeScriptCompile Include="Test\apply-config\success-no-update-tag.ts" />
-    <TypeScriptCompile Include="Test\apply-config\missing-config-path.ts" />
-    <TypeScriptCompile Include="Test\apply-config\missing-image-tag.ts" />
-    <TypeScriptCompile Include="Test\apply-config\missing-image-name.ts" />
-    <TypeScriptCompile Include="Test\apply-config\fail-kubectl-apply.ts" />
-    <TypeScriptCompile Include="Test\apply-config\replace-image-json.ts" />
-    <TypeScriptCompile Include="Test\apply-config\replace-image-error.ts" />
-    <TypeScriptCompile Include="Test\apply-config\replace-image-yaml.ts" />
-    <TypeScriptCompile Include="Test\apply-config\missing-update-tag.ts" />
-    <TypeScriptCompile Include="Test\apply-config\test-constants.ts" />
-    <TypeScriptCompile Include="Test\apply-config\_suite.ts">
+    <TypeScriptCompile Include="test\apply-config\success-dry-run-update-tag.ts" />
+    <TypeScriptCompile Include="test\apply-config\success-no-update-tag.ts" />
+    <TypeScriptCompile Include="test\apply-config\missing-config-path.ts" />
+    <TypeScriptCompile Include="test\apply-config\missing-image-tag.ts" />
+    <TypeScriptCompile Include="test\apply-config\missing-image-name.ts" />
+    <TypeScriptCompile Include="test\apply-config\fail-kubectl-apply.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-json.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-error.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-yaml.ts" />
+    <TypeScriptCompile Include="test\apply-config\missing-update-tag.ts" />
+    <TypeScriptCompile Include="test\apply-config\test-constants.ts" />
+    <TypeScriptCompile Include="test\apply-config\_suite.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="Test\missing-cluster.ts" />
-    <TypeScriptCompile Include="Test\invalid-deploy-type.ts" />
-    <TypeScriptCompile Include="Test\missing-zone.ts" />
-    <TypeScriptCompile Include="Test\missing-deploy-type.ts" />
-    <TypeScriptCompile Include="Test\missing-dry-run.ts" />
-    <TypeScriptCompile Include="Test\missing-service-endpoint.ts" />
-    <TypeScriptCompile Include="Test\fail-gcloud-get-credentials.js.ts" />
-    <TypeScriptCompile Include="Test\no-kubectl.ts" />
-    <TypeScriptCompile Include="Test\no-gcloud.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\both-scale-set-image-success-dry-run.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\both-scale-set-image-success.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\scale-success-dry-run.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\set-image-success-dry-run.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\set-image-success.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\scale-success.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\skip-both-scale-set-image.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\fail-both-scale-set-image.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\fail-scale.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\fail-set-image.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\run-success-dry-run.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\run-success.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\fail-run.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\invalid-get-deployments.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\fail-get-deployments.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\invalid-replica-string.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\missing-replicas.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\invalid-replica-negative.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\missing-deployment-name.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\missing-image-tag.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\missing-image-name.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\test-constants.ts" />
-    <TypeScriptCompile Include="Test\set-deployment\_suite.ts">
+    <TypeScriptCompile Include="test\missing-cluster.ts" />
+    <TypeScriptCompile Include="test\invalid-deploy-type.ts" />
+    <TypeScriptCompile Include="test\missing-zone.ts" />
+    <TypeScriptCompile Include="test\missing-deploy-type.ts" />
+    <TypeScriptCompile Include="test\missing-dry-run.ts" />
+    <TypeScriptCompile Include="test\missing-service-endpoint.ts" />
+    <TypeScriptCompile Include="test\fail-gcloud-get-credentials.js.ts" />
+    <TypeScriptCompile Include="test\no-kubectl.ts" />
+    <TypeScriptCompile Include="test\no-gcloud.ts" />
+    <TypeScriptCompile Include="test\set-deployment\both-scale-set-image-success-dry-run.ts" />
+    <TypeScriptCompile Include="test\set-deployment\both-scale-set-image-success.ts" />
+    <TypeScriptCompile Include="test\set-deployment\scale-success-dry-run.ts" />
+    <TypeScriptCompile Include="test\set-deployment\set-image-success-dry-run.ts" />
+    <TypeScriptCompile Include="test\set-deployment\set-image-success.ts" />
+    <TypeScriptCompile Include="test\set-deployment\scale-success.ts" />
+    <TypeScriptCompile Include="test\set-deployment\skip-both-scale-set-image.ts" />
+    <TypeScriptCompile Include="test\set-deployment\fail-both-scale-set-image.ts" />
+    <TypeScriptCompile Include="test\set-deployment\fail-scale.ts" />
+    <TypeScriptCompile Include="test\set-deployment\fail-set-image.ts" />
+    <TypeScriptCompile Include="test\set-deployment\run-success-dry-run.ts" />
+    <TypeScriptCompile Include="test\set-deployment\run-success.ts" />
+    <TypeScriptCompile Include="test\set-deployment\fail-run.ts" />
+    <TypeScriptCompile Include="test\set-deployment\invalid-get-deployments.ts" />
+    <TypeScriptCompile Include="test\set-deployment\fail-get-deployments.ts" />
+    <TypeScriptCompile Include="test\set-deployment\invalid-replica-string.ts" />
+    <TypeScriptCompile Include="test\set-deployment\missing-replicas.ts" />
+    <TypeScriptCompile Include="test\set-deployment\invalid-replica-negative.ts" />
+    <TypeScriptCompile Include="test\set-deployment\missing-deployment-name.ts" />
+    <TypeScriptCompile Include="test\set-deployment\missing-image-tag.ts" />
+    <TypeScriptCompile Include="test\set-deployment\missing-image-name.ts" />
+    <TypeScriptCompile Include="test\set-deployment\test-constants.ts" />
+    <TypeScriptCompile Include="test\set-deployment\_suite.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="Test\test-constants.ts" />
-    <TypeScriptCompile Include="Test\_suite.ts">
+    <TypeScriptCompile Include="test\test-constants.ts" />
+    <TypeScriptCompile Include="test\_suite.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Test\" />
-    <Folder Include="Test\apply-config\" />
-    <Folder Include="Test\set-deployment\" />
+    <Folder Include="test\" />
+    <Folder Include="test\apply-config\" />
+    <Folder Include="test\set-deployment\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <Target Name="InstallCommonModule">
-    <Exec Command="npm install ../common"/>
+    <Exec Command="npm install ../common" />
   </Target>
   <PropertyGroup>
     <BuildDependsOn>

@@ -30,38 +30,39 @@
     <Content Include="manifest.json" />
     <Content Include="set-login-build-task.licenseheader" />
     <Content Include="task.json" />
+    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="container-build-helper.ts" />
     <TypeScriptCompile Include="container-build.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <TypeScriptCompile Include="Test\missing-registry.ts" />
-    <TypeScriptCompile Include="Test\missing-service-endpoint.ts" />
-    <TypeScriptCompile Include="Test\missing-deployment-path.ts" />
-    <TypeScriptCompile Include="Test\missing-build-config-type.ts" />
-    <TypeScriptCompile Include="Test\missing-image-name.ts" />
-    <TypeScriptCompile Include="Test\missing-cloud-build-file.ts" />
-    <TypeScriptCompile Include="Test\test-constants.ts" />
-    <TypeScriptCompile Include="Test\using-custom-config.ts" />
-    <TypeScriptCompile Include="Test\using-custom-config-all-params.ts" />
-    <TypeScriptCompile Include="Test\using-dockerfile-all-params.ts" />
-    <TypeScriptCompile Include="Test\using-dockerfile.ts" />
-    <TypeScriptCompile Include="Test\using-default-config-all-params.ts" />
-    <TypeScriptCompile Include="Test\using-default-config.ts" />
-    <TypeScriptCompile Include="Test\gcloud-fails.ts" />
-    <TypeScriptCompile Include="Test\no-gcloud.ts" />
-    <TypeScriptCompile Include="Test\_suite.ts">
+    <TypeScriptCompile Include="test\missing-registry.ts" />
+    <TypeScriptCompile Include="test\missing-service-endpoint.ts" />
+    <TypeScriptCompile Include="test\missing-deployment-path.ts" />
+    <TypeScriptCompile Include="test\missing-build-config-type.ts" />
+    <TypeScriptCompile Include="test\missing-image-name.ts" />
+    <TypeScriptCompile Include="test\missing-cloud-build-file.ts" />
+    <TypeScriptCompile Include="test\test-constants.ts" />
+    <TypeScriptCompile Include="test\using-custom-config.ts" />
+    <TypeScriptCompile Include="test\using-custom-config-all-params.ts" />
+    <TypeScriptCompile Include="test\using-dockerfile-all-params.ts" />
+    <TypeScriptCompile Include="test\using-dockerfile.ts" />
+    <TypeScriptCompile Include="test\using-default-config-all-params.ts" />
+    <TypeScriptCompile Include="test\using-default-config.ts" />
+    <TypeScriptCompile Include="test\gcloud-fails.ts" />
+    <TypeScriptCompile Include="test\no-gcloud.ts" />
+    <TypeScriptCompile Include="test\_suite.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="default\" />
-    <Folder Include="Test\" />
+    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <Target Name="InstallCommonModule">
-    <Exec Command="npm install ../common"/>
+    <Exec Command="npm install ../common" />
   </Target>
   <PropertyGroup>
     <BuildDependsOn>

@@ -127,23 +127,28 @@ function TestTask([string]$task, [string]$reporter) {
     Write-Host "Testing TypeScript task $task"
     pushd $task
     try {
-        $testSuite = Join-Path Test _suite.js
-        if (Test-path $testSuite) {
-            Write-Verbose "Running: mocha $testSuite"
-            if ($reporter) {
-                nyc mocha --reporter $reporter $testSuite
-            } else {
-                nyc mocha $testSuite
-            }
-
-            if ($LASTEXITCODE -ne 0) {
-                throw "mocha failed  for task $task"
-            }
+        if ($reporter) {
+            Write-Verbose "Running: nyc --reporter json mocha --reporter $reporter"
+            nyc --reporter json mocha --reporter $reporter
         } else {
-            Write-Warning "Skipping tests for task $task"
+            Write-Verbose "Running: nyc --reporter json mocha"
+            nyc --reporter json mocha
+        }
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "mocha failed  for task $task"
         }
     } finally {
         popd
+    }
+}
+
+function SendCoverage([string[]]$tasks) {
+    Write-Host "Sending Code Coverage reports."
+    $reports = ls -Recurse -Include coverage-final.json
+    $reports.FullName | % {
+        Write-Verbose "Running: codecov -f $_"
+        codecov -f $_
     }
 }
 
@@ -169,7 +174,7 @@ function PublishPsTaskLocal($task) {
         if (Test-Path $agentTaskDir) {
             Write-Verbose "Copying scripts for task $task to $agentTaskDir"
             # Excluded non-packaged files.
-            $excludes = "obj", "bin", "Test", ".taskkey", "*.psproj"
+            $excludes = "obj", "bin", "test", ".taskkey", "*.psproj"
             cp * $agentTaskDir -Force -Recurse -Exclude $excludes
         }
     } finally {
@@ -188,7 +193,7 @@ function PublishTsTaskLocal($task){
         if (Test-Path $agentTaskDir) {
             Write-Verbose "Copying scripts for task $task to $agentTaskDir"
             # Excluded non-packaged files.
-            $excludes = "node_modules", "obj", "bin", "Test", ".taskkey", "*.ts", "*.js.map", "package.json",
+            $excludes = "node_modules", "obj", "bin", "test", ".taskkey", "*.ts", "*.js.map", "package.json",
                 "tsconfig.json", "manifest.json", "*.njsproj"
             cp * $agentTaskDir -Force -Recurse -Exclude $excludes
 

@@ -18,10 +18,9 @@ Dockerfile~
 *.md#
 *.d.ts
 npm-debug.log
-deploy-gae-build-task/icon.png
-set-login-build-task/icon.png
-container-build-task/icon.png
+*/icon.png
 .kube/
-deploy-gke-image-build-task/icon.png
-install-cloud-sdk-build-task/ps_modules/
+*/ps_modules/
 *.user
+.nyc_output
+*/coverage

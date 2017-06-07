@@ -17,25 +17,28 @@
     <Content Include="README.md" />
     <Content Include="set-login-build-task.licenseheader" />
     <Content Include="task.json" />
+    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="set-login.ts" />
-    <TypeScriptCompile Include="Test\gcloud-fails.ts" />
-    <TypeScriptCompile Include="Test\missing-password-output.ts" />
-    <TypeScriptCompile Include="Test\missing-machine-ip-output.ts" />
-    <TypeScriptCompile Include="Test\missing-user-name.ts" />
-    <TypeScriptCompile Include="Test\missing-machine.ts" />
-    <TypeScriptCompile Include="Test\missing-zone.ts" />
-    <TypeScriptCompile Include="Test\missing-endpoint.ts" />
-    <TypeScriptCompile Include="Test\normal-inputs.ts" />
-    <TypeScriptCompile Include="Test\no-gcloud.ts" />
-    <TypeScriptCompile Include="Test\_suite.ts">
+    <TypeScriptCompile Include="test\gcloud-fails.ts" />
+    <TypeScriptCompile Include="test\missing-password-output.ts" />
+    <TypeScriptCompile Include="test\missing-machine-ip-output.ts" />
+    <TypeScriptCompile Include="test\missing-user-name.ts" />
+    <TypeScriptCompile Include="test\missing-machine.ts" />
+    <TypeScriptCompile Include="test\missing-zone.ts" />
+    <TypeScriptCompile Include="test\missing-endpoint.ts" />
+    <TypeScriptCompile Include="test\gcloud-output-missing-password.ts" />
+    <TypeScriptCompile Include="test\gcloud-output-missing-ip_address.ts" />
+    <TypeScriptCompile Include="test\normal-inputs.ts" />
+    <TypeScriptCompile Include="test\no-gcloud.ts" />
+    <TypeScriptCompile Include="test\_suite.ts">
       <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
       <Publish>True</Publish>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Test" />
+    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <Target Name="InstallCommonModule">

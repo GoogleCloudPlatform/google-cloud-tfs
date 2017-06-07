@@ -17,12 +17,12 @@
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
 
-$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
+$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
     cd ..
 
-    $allTasks = GetTypeScriptTaskModules
+    $allTasks = Get-TypeScriptTasks
 
     if($TasksToBuild -eq $null) {
         $tasks = $allTasks
@@ -39,23 +39,23 @@ try {
     }
 
     if (-not $SkipInit){
-        InitAll $tasks
+        Initialize-All $tasks
     }
 
     if (-not $SkipCompile) {
-        CompileAll $tasks
+        Invoke-CompileAll $tasks
     }
         
     if (-not $SkipTest) {
-        TestAll $tasks
+        Invoke-AllMochaTests $tasks
     }
 
     if (Test-Path env:TfsBuildAgentPath) {
-        PublishTasksLocal $tasks
+        Publish-TasksLocal $tasks
     }
 
     if(-not $SkipPackage) {
-        Package $tasks
+        Merge-ExtensionPackage $tasks
     }
 } finally {
     popd

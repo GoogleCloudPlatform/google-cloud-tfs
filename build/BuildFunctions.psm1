@@ -256,7 +256,7 @@ function Get-ProductionModules($task) {
     return (npm ls --prod --parseable | Split-Path -Leaf) -ne $task
 }
 
-function Get-TypeScriptTaskModules() {
+function Get-TypeScriptTasks() {
     $dirs = ls -Directory | ? {
         $fileNames = ls $_ -File | Split-Path -Leaf
         $fileNames -contains "task.json" -and $fileNames -contains "tsconfig.json"

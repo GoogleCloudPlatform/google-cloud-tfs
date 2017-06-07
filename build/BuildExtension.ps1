@@ -22,7 +22,7 @@ $functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
     cd ..
 
-    $allTasks = Get-TypeScriptTaskModules
+    $allTasks = Get-TypeScriptTasks
 
     if($TasksToBuild -eq $null) {
         $tasks = $allTasks

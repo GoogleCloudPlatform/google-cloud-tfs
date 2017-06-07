@@ -22,7 +22,7 @@ $functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
     cd ..
 
-    $allTasks = GetTypeScriptTaskModules
+    $allTasks = Get-TypeScriptTaskModules
 
     if($TasksToBuild -eq $null) {
         $tasks = $allTasks
@@ -39,23 +39,23 @@ try {
     }
 
     if (-not $SkipInit){
-        InitAll $tasks
+        Initialize-All $tasks
     }
 
     if (-not $SkipCompile) {
-        CompileAll $tasks
+        Invoke-CompileAll $tasks
     }
         
     if (-not $SkipTest) {
-        TestAll $tasks
+        Invoke-AllMochaTests $tasks
     }
 
     if (Test-Path env:TfsBuildAgentPath) {
-        PublishTasksLocal $tasks
+        Publish-TasksLocal $tasks
     }
 
     if(-not $SkipPackage) {
-        Package $tasks
+        Merge-ExtensionPackage $tasks
     }
 } finally {
     popd

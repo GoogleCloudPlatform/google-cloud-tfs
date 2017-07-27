@@ -9,7 +9,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   },
   "category": "Utility",
   "visibility": [ "Build", "Release" ],
@@ -25,14 +25,14 @@
     },
     {
       "name": "zone",
-      "type": "string",
+      "type": "pickList",
       "label": "Zone",
       "required": true,
       "helpMarkDown": "The zone of the virtual machine to get a new password for."
     },
     {
       "name": "machine",
-      "type": "string",
+      "type": "pickList",
       "label": "Virtual Machine",
       "required": true,
       "helpMarkDown": "The name of the virtual machine to get a new password for."
@@ -59,6 +59,21 @@
       "defaultValue": "build.gcp.vm.ip",
       "required": true,
       "helpMarkDown": "The name of the build variable to store the machine ip in."
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "zone",
+      "endpointId": "$(serviceEndpoint)",
+      "dataSourceName": "ZoneName"
+    },
+    {
+      "target": "machine",
+      "endpointId": "$(serviceEndpoint)",
+      "dataSourceName": "MachineName",
+      "parameters": {
+        "zone": "$(zone)"
+      }
     }
   ],
   "execution": {

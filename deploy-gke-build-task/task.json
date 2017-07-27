@@ -9,7 +9,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   },
   "category": "Deploy",
   "visibility": [ "Build", "Release" ],
@@ -25,14 +25,14 @@
     },
     {
       "name": "zone",
-      "type": "string",
+      "type": "pickList",
       "label": "Zone",
       "required": true,
       "helpMarkDown": "The zone the cluster resides in."
     },
     {
       "name": "cluster",
-      "type": "string",
+      "type": "pickList",
       "label": "Cluster Name",
       "required": true,
       "helpMarkDown": "The name of the cluster to deploy to."
@@ -108,6 +108,21 @@
       "required": true,
       "defaultValue": false,
       "helpMarkDown": "With dry run selected, no changes will actually be made to your cluster"
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "zone",
+      "endpointId": "$(serviceEndpoint)",
+      "dataSourceName": "ZoneName"
+    },
+    {
+      "target": "cluster",
+      "endpointId": "$(serviceEndpoint)",
+      "dataSourceName": "ClusterName",
+      "parameters": {
+        "zone": "$(zone)"
+      }
     }
   ],
   "execution": {

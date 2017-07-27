@@ -3,9 +3,10 @@
   "manifestVersion": 1,
   "id": "google-cloud-tfs",
   "name": "Cloud Tools for TFS",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "GoogleCloudTools",
   "targets": [ { "id": "Microsoft.VisualStudio.Services" } ],
+  "demands": [ "api-version/4.0" ],
   "description": "Tools for deploying to Google Cloud Platform.",
   "icons": {
     "large": "images/cloud_512x512.png",
@@ -69,23 +70,63 @@
         "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
         "url": {
           "displayName": "Server Url",
-          "value": "https://accounts.google.com/o/oauth2"
+          "value": "https://www.googleapis.com/"
         },
-        "inputDescriptors": [],
+        "inputDescriptors": [
+          {
+            "id": "projectid",
+            "name": "Project Name",
+            "description": "Project for connecting to the endpoint",
+            "inputMode": "textbox",
+            "isConfidential": false,
+            "validation": {
+              "isRequired": true,
+              "dataType": "string",
+              "maxLength": 300
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "name": "ZoneName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/beta/projects/{{{endpoint.projectid}}}/zones",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "MachineName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/beta/projects/{{{endpoint.projectid}}}/zones/$(zone)/instances",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "RegionName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/v1/projects/{{{endpoint.projectid}}}/regions",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "ProjectName",
+            "endpointUrl": "https://cloudresourcemanager.googleapis.com/v1beta1/projects",
+            "resultSelector": "jsonpath:$.projects[*]"
+          },
+          {
+            "name": "ClusterName",
+            "endpointUrl": "https://container.googleapis.com/v1/projects/{{{endpoint.projectid}}}/zones/$(zone)/clusters",
+            "resultSelector": "jsonpath:$.clusters[*].name"
+          }
+        ],
         "authenticationSchemes": [
           {
-            "type": "ms.vss-endpoint.endpoint-auth-scheme-cert",
-            "displayName": "Json Key File Contents",
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-JWT",
             "inputDescriptors": [
               {
                 "id": "certificate",
-                "name": "Json Text",
-                "description": "The contents of the json key file",
-                "inputMode": "TextArea",
+                "name": "Json File contents",
+                "description": "i18n:Place Contents of JSON file here",
+                "inputMode": "textbox",
                 "isConfidential": true,
                 "validation": {
                   "isRequired": true,
-                  "dataType": "string"
+                  "dataType": "string",
+                  "maxLength": 4000
                 }
               }
             ]

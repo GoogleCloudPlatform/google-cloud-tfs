@@ -9,7 +9,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 3
+    "Patch": 2
   },
   "category": "Utility",
   "visibility": [ "Build", "Release" ],
@@ -23,13 +23,6 @@
     }
   ],
   "inputs": [
-    {
-      "name": "serviceEndpoint",
-      "type": "connectedService:google-cloud-service-endpoint",
-      "label": "GCP connection",
-      "required": true,
-      "helpMarkDown": "The Google Cloud Platform connection to use."
-    },
     {
       "name": "AllowReporting",
       "label": "Allow anonymous usage statistics",
@@ -48,21 +41,21 @@
     {
       "name": "Project",
       "label": "Project",
-      "type": "pickList",
+      "type": "string",
       "required": false,
       "helpMarkDown": "Configure the Cloud SDK's current default project. If left blank, the current configuration will not change."
     },
     {
       "name": "Region",
       "label": "Region",
-      "type": "pickList",
+      "type": "string",
       "required": false,
       "helpMarkDown": "Configure the Cloud SDK's current default compute/region. If left blank, the current configuration will not change."
     },
     {
       "name": "Zone",
       "label": "Zone",
-      "type": "pickList",
+      "type": "string",
       "required": false,
       "helpMarkDown": "Configure the Cloud SDK's current default compute/zone. If left blank, the current configuration will not change."
     },
@@ -91,24 +84,6 @@
       "required": true,
       "groupName": "advanced",
       "helpMarkDown": "Check this to remove files from the target installation path."
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "target": "Zone",
-      "endpointId": "$(serviceEndpoint)",
-      "dataSourceName": "ZoneName"
-    },
-    {
-      "target": "Region",
-      "endpointId": "$(serviceEndpoint)",
-      "dataSourceName": "RegionName"
-    },
-    {
-      "target": "Project",
-      "endpointId": "$(serviceEndpoint)",
-      "dataSourceName": "ProjectName",
-      "resultTemplate": "{ \"Value\" : \"{{{projectId}}}\", \"DisplayValue\" : \"{{{name}}}\" }"
     }
   ],
   "execution": {

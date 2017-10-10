@@ -7,9 +7,9 @@
   "description": "Save to a variable the login password for a Google Compute Engine virtual machine running windows.",
   "helpMarkDown": "[Compute Engine Console](http://console.cloud.google.com/compute) [Compute Engine Docs](https://cloud.google.com/compute/docs/) [Windows Passwords Docs](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances)",
   "version": {
-    "Major": 0,
+    "Major": 1,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 0
   },
   "category": "Utility",
   "visibility": [ "Build", "Release" ],

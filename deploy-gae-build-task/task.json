@@ -7,9 +7,9 @@
   "description": "Deploy your app to Google App Engine.",
   "helpMarkDown": "[Google App Engine Console](http://console.cloud.google.com/appengine) [Google App Engine Docs](https://cloud.google.com/appengine/docs) [gcloud app deploy](https://cloud.google.com/sdk/gcloud/reference/app/deploy)",
   "version": {
-    "Major": 0,
+    "Major": 1,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 0
   },
   "category": "Deploy",
   "visibility": [ "Build", "Release" ],
@@ -29,7 +29,7 @@
   "inputs": [
     {
       "name": "serviceEndpoint",
-      "type": "connectedService:google-cloud-service-endpoint",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
       "label": "GCP connection",
       "required": true,
       "helpMarkDown": "The Google Cloud Platform connection to use."

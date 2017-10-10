@@ -59,12 +59,12 @@
   },
   "contributions": [
     {
-      "id": "service-endpoint",
+      "id": "google-cloud-service-endpoint",
       "description": "Information for connecting to Google Cloud Platform",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": [ "ms.vss-endpoint.endpoint-types" ],
       "properties": {
-        "name": "google-cloud-service-endpoint",
+        "name": "GoogleCloudServiceEndpoint",
         "displayName": "Google Cloud Platform",
         "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
         "url": {
@@ -95,4 +95,3 @@
     }
   ]
 }
-

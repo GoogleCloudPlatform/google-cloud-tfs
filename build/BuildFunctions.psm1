@@ -213,7 +213,7 @@ function Publish-TsTaskLocal($task){
     }
 }
 
-function Merge-ExtensionPackage([string[]]$tasks){
+function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher){
 
     Write-Host "Building package"
     $jobs = $tasks | % {
@@ -224,8 +224,13 @@ function Merge-ExtensionPackage([string[]]$tasks){
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
-    Write-Verbose "Running: tfx extension create --output-path bin"
-    tfx extension create --manifestGlobs **/manifest.json --output-path bin
+    if($publisher){
+        Write-Verbose "Running: tfx extension create --manifestGlobs **/manifest.json --output-path bin --publisher $publisher"
+        tfx extension create --manifestGlobs **/manifest.json --output-path bin --publisher $publisher
+    } else {
+        Write-Verbose "Running: tfx extension create --output-path bin"
+        tfx extension create --manifestGlobs **/manifest.json --output-path bin
+    }
 }
 
 function Update-TaskBeforePackage([string]$task) {

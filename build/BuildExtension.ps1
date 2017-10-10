@@ -14,7 +14,7 @@
  # limitations under the License.
  ##>
 [CmdletBinding()]
-Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
+Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest, [string]$Publisher)
 
 
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
@@ -55,7 +55,7 @@ try {
     }
 
     if(-not $SkipPackage) {
-        Merge-ExtensionPackage $tasks
+        Merge-ExtensionPackage $tasks $Publisher
     }
 } finally {
     popd

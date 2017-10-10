@@ -18,7 +18,7 @@
   "inputs": [
     {
       "name": "serviceEndpoint",
-      "type": "connectedService:google-cloud-service-endpoint",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
       "label": "GCP connection",
       "required": true,
       "helpMarkDown": "The Google Cloud Platform connection to use."

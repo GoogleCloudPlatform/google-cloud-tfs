@@ -268,8 +268,8 @@ function Update-AppveyorBuildVersion () {
     if (!$env:APPVEYOR) {
         Write-Error "Only avalable when running in Appveyor."
     }
-
-    if ($env:APPVEYOR_REPO_TAG) {
+    Add-AppveyorMessage -Message "Is tag: $env:APPVEYOR_REPO_TAG"
+    if ($env:APPVEYOR_REPO_TAG -and $env:APPVEYOR_REPO_TAG_NAME) {
         Add-AppveyorMessage -Message "Updating from tag"
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_ID"
     } else {

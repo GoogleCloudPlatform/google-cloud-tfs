@@ -270,10 +270,16 @@ function Update-AppveyorBuildVersion () {
     }
 
     if ($env:APPVEYOR_REPO_TAG) {
+        Add-AppveyorMessage -Message "Updating from tag"
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_ID"
     } else {
-        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        Add-AppveyorMessage -Message "Updating from branch"
+        $manifestContent = Get-Content .\manifest.json
+        Add-AppveyorMessage -Message $manifestContent
+        $manifest = $manifestContent | ConvertFrom-Json
         $manifestVersion = $manifest.version
+        Add-AppveyorMessage -Message "Manifest Version: $manifestVersion"
+        Add-AppveyorMessage -Message "commit timestamp $env:APPVEYOR_REOP_COMMIT_TIMESTAMP"
         $version = "$manifestVersion-$env:APPVEYOR_REPO_COMMIT_TIMESTAMP+$env:APPVEYOR_BUILD_ID"
     }
     Add-AppveyorMessage -Message "Updating version to $version"

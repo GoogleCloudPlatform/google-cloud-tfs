@@ -279,8 +279,9 @@ function Update-AppveyorBuildVersion () {
         $manifest = $manifestContent | ConvertFrom-Json
         $manifestVersion = $manifest.version
         Add-AppveyorMessage -Message "Manifest Version: $manifestVersion"
-        Add-AppveyorMessage -Message "commit timestamp $env:APPVEYOR_REOP_COMMIT_TIMESTAMP"
-        $version = "$manifestVersion-$env:APPVEYOR_REPO_COMMIT_TIMESTAMP+$env:APPVEYOR_BUILD_ID"
+        $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
+        Add-AppveyorMessage -Message "commit timestamp $timestamp"
+        $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_ID"
     }
     Add-AppveyorMessage -Message "Updating version to $version"
     Update-AppveyorBuild -Version $version

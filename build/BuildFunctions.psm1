@@ -268,11 +268,13 @@ function Update-AppveyorBuildVersion () {
     if (!$env:APPVEYOR) {
         Write-Error "Only avalable when running in Appveyor."
     }
-    $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+
     if ($env:APPVEYOR_REPO_TAG) {
-        $version = $env:APPVEYOR_REPO_TAG_NAME + "+" + $env:APPVEYOR_BUILD_ID
+        $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_ID"
     } else {
-        $version = $manifest.version + "-" + $env:APPVEYOR_REPO_COMMIT_TIMESTAMP + "+" + $env:APPVEYOR_BUILD_ID
+        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        $manifestVersion = $manifest.version
+        $version = "$manifestVersion-$env:APPVEYOR_REPO_COMMIT_TIMESTAMP+$env:APPVEYOR_BUILD_ID"
     }
     Update-AppveyorBuild -Version $version
 }

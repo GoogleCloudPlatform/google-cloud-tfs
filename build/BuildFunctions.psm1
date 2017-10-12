@@ -268,21 +268,13 @@ function Update-AppveyorBuildVersion () {
     if (!$env:APPVEYOR) {
         Write-Error "Only avalable when running in Appveyor."
     }
-    Add-AppveyorMessage -Message "Is tag: $env:APPVEYOR_REPO_TAG"
-    if ($env:APPVEYOR_REPO_TAG -and $env:APPVEYOR_REPO_TAG_NAME) {
-        Add-AppveyorMessage -Message "Updating from tag"
+    if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_ID"
     } else {
-        Add-AppveyorMessage -Message "Updating from branch"
-        $manifestContent = Get-Content .\manifest.json
-        Add-AppveyorMessage -Message $manifestContent
-        $manifest = $manifestContent | ConvertFrom-Json
-        $manifestVersion = $manifest.version
-        Add-AppveyorMessage -Message "Manifest Version: $manifestVersion"
         $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
-        Add-AppveyorMessage -Message "commit timestamp $timestamp"
+        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        $manifestVersion = $manifest.version
         $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_ID"
     }
-    Add-AppveyorMessage -Message "Updating version to $version"
     Update-AppveyorBuild -Version $version
 }

@@ -276,5 +276,6 @@ function Update-AppveyorBuildVersion () {
         $manifestVersion = $manifest.version
         $version = "$manifestVersion-$env:APPVEYOR_REPO_COMMIT_TIMESTAMP+$env:APPVEYOR_BUILD_ID"
     }
+    Add-AppveyorMessage -Message "Updating version to $version"
     Update-AppveyorBuild -Version $version
 }

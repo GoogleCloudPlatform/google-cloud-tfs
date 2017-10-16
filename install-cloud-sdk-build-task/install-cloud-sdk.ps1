@@ -43,7 +43,7 @@ try {
             gcloud config set disable_usage_reporting $disableReportingString
         }
     } else {
-        $InstallerUri = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk-windows-x86_64-bundled-python.zip"
+        $InstallerUri = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk-windows-bundled-python.zip"
         $Path = Join-Path $MyInvocation.MyCommand.Path .. -Resolve
 
         $InstallerFile = Join-Path $Path "google-cloud-sdk.zip"

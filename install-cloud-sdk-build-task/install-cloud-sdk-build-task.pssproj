@@ -34,13 +34,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="install-cloud-sdk.ps1" />
+    <Compile Include="test\install-cloud-sdk.tests.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Target Name="Build" >
-    <Exec
-      Command="powershell.exe -command &quot;cd &apos;$(ProjectDir)&apos; ; ..\build\InitPsTask.ps1&quot;"
-      Condition="!Exists(ps_modules)"
-      WorkingDirectory="$(ProjectDir)"
-      />
+  <Target Name="Build">
+    <Exec Command="powershell.exe -command &quot;cd '$(ProjectDir)' ; ..\build\InitPsTask.ps1&quot;" Condition="!Exists(ps_modules)" WorkingDirectory="$(ProjectDir)" />
   </Target>
 </Project>

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
- * @fileoverview This is a test script for the deploy gke task with
- *   a missing serviceEndpoint parameter.
+ * @fileoverview This is a test script for the deploy gke task successfully
+ *    scaling and updating image.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import * as mocks from 'common/register-mocks';

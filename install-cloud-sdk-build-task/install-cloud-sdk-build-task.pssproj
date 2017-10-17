@@ -34,10 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="install-cloud-sdk.ps1" />
-    <Compile Include="test\install-cloud-sdk.tests.ps1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build">

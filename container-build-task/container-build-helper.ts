@@ -43,6 +43,21 @@ export function buildFullImageTag(
 }
 
 /**
+ * Adds listeners to the gcloud ToolRunner that output stdout and stderr to appropriate console logging levels.
+ * @param gcloud The gcloud tool runner.
+ */
+export function listenToOutput(gcloud: ToolRunner) {
+  gcloud.on(
+    'stdline', (line: string) => {
+      task.debug(line);
+    });
+  gcloud.on(
+    'errline', (line: string) => {
+      console.log(line);
+    });
+}
+
+/**
  * Adds a listener to the gcloud ToolRunner that log stdout until the  start of
  * the JSON output. It will then collect but not log the JSON output, parse it,
  * set the image output variable, and then return to logging stdout.
@@ -55,14 +70,9 @@ export function listenForImages(
   const startListener = (line: string): void => {
     if (line.startsWith('{')) {
       gcloud.removeListener('stdline', startListener);
-      if (tryParseImagesToVariable([line], imageOutputVariable)) {
-        gcloud.addListener('stdline', console.log);
-      } else {
-        const collectJson = getCollectJson(gcloud, imageOutputVariable, [line]);
-        gcloud.on('stdline', collectJson);
+      if (!tryParseImagesToVariable([line], imageOutputVariable)) {
+        listenForJson(gcloud, imageOutputVariable, [line]);
       }
-    } else {
-      console.log(line);
     }
   };
   gcloud.on('stdline', startListener);
@@ -76,17 +86,16 @@ export function listenForImages(
  * @param imageOutputVariable The name of the variable to set the images to.
  * @param gcloud The ToolRunner to log the lines from.
  */
-function getCollectJson(
+function listenForJson(
     gcloud: ToolRunner, imageOutputVariable: string,
-    jsonLines: string[]): (line: string) => void {
+    jsonLines: string[]): void {
   const collectJson = (line: string): void => {
     jsonLines.push(line);
     if (tryParseImagesToVariable(jsonLines, imageOutputVariable)) {
       gcloud.removeListener('stdline', collectJson);
-      gcloud.addListener('stdline', console.log);
     }
   };
-  return collectJson;
+  gcloud.on('stdline', collectJson);
 }
 
 /**
@@ -109,7 +118,6 @@ function tryParseImagesToVariable(
     task.setVariable(imageOutputVariable, images.join(' '));
   } else {
     task.warning('No output images found!');
-    task.debug(jsonString);
   }
   return true;
 }

@@ -14,18 +14,21 @@
 
 /**
  * @fileoverview This is a test script for the deploy gke task with
- *   a missing image tag parameter.
+ *   replacing the image tag in an empty config file.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import * as mocks from 'common/register-mocks';
 import * as tc from './test-constants'
 
 const runner = tc.getDefaultRunner();
-runner.setInput('updateTag', 'true');
 runner.setInput('configPath', tc.configPath);
+runner.setInput('updateTag', 'true');
 runner.setInput('imageName', tc.imageName);
+runner.setInput('imageTag', tc.imageTag);
 
-runner.setAnswers(tc.getDefaultAnswers());
-mocks.registerCommonMocks(runner);
+const answers = tc.getDefaultAnswers();
+answers.exec[tc.kubectlApplyExecString] = tc.successResult;
+runner.setAnswers(answers);
+mocks.registerCommonMocks(runner, tc.emptyConfig.map);
 
 runner.run();

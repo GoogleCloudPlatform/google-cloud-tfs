@@ -54,6 +54,10 @@ export function configParseError(path: string): string {
   return `Config file at ${path} is neither a JSON nor a YAML file.`;
 }
 
+export function configFileInvalid(path: string): string {
+  return `Config file at ${path} is not a valid config.`;
+}
+
 export function configApplied(configPath: string): string {
   return `Applied config ${configPath}.`;
 }

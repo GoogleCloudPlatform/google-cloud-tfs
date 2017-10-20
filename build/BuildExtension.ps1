@@ -14,11 +14,19 @@
  # limitations under the License.
  ##>
 [CmdletBinding()]
-Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest, [string]$Publisher)
+Param(
+    [string[]]$TasksToBuild,
+    [switch]$SkipInit,
+    [switch]$SkipCompile,
+    [switch]$SkipTest,
+    [string]$Publisher,
+    [string]$Version
+)
 
 
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
-$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
+$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru -Verbose:$false
+$functionsModule.GetVariableFromCallersModule("VerbosePreference").Value = $VerbosePreference
 try {
     cd ..
 
@@ -55,9 +63,9 @@ try {
     }
 
     if(-not $SkipPackage) {
-        Merge-ExtensionPackage $tasks $Publisher
+        Merge-ExtensionPackage $tasks $Publisher $Version
     }
 } finally {
     popd
-    $functionsModule | Remove-Module
+    $functionsModule | Remove-Module -Verbose:$false
 }

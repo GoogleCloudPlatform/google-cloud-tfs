@@ -1,11 +1,10 @@
 {
   "name": "set-login-build-task",
   "version": "0.0.1",
-  "description": "A TFS build task to deploy to google app engine.",
-  "license": "UNLICENSED",
-  "$todo:(jimwp) license": "Change license to Apache when opensource approved",
+  "description": "A TFS build task to deploy to Google App Engine.",
+  "license": "Apache-2.0",
   "author": "Google Cloud Tools",
-  "repository": "sso://team/cloudsharp-eng/cloud-tools-tfs",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
   "dependencies": {
     "common": "file:../common",
     "vsts-task-lib": "^1.1.0"

@@ -22,7 +22,6 @@ import './set-deployment/_suite';
 
 import * as assert from 'assert';
 import * as gcloudAssert from 'common/asserts';
-import * as mock from 'common/register-mocks';
 import {toKebabCase} from 'common/strings';
 import * as path from 'path';
 import {MockTestRunner} from 'vsts-task-lib/mock-test';

@@ -14,9 +14,6 @@
 
 import * as mocks from 'common/register-mocks';
 import * as path from 'path';
-import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
-import {TaskMockRunner} from 'vsts-task-lib/mock-run';
-
 import * as tc from '../test-constants';
 
 export {
@@ -68,15 +65,34 @@ const jsonContents = `
 }
 `;
 const newJsonContents = `{"image":"${imageName}:${imageTag}"}`;
+
 const yamlContents = `
 image: ${imageName}:oldTag
 `;
 const newYamlContents = `image: '${imageName}:${imageTag}'`;
+
+const complexContents = `
+{
+  "index1": [{"image": "${imageName}:oldTag"},"string!"],
+  "index2": {"image": "${imageName}:oldTag"},
+  "index3": null
+}
+`;
+const newComplexContents = `{"index1":[{"image":"${imageName}:${imageTag}"},"string!"],"index2":{"image":"${imageName}:${imageTag}"},"index3":null}`;
+
+const nullContents = 'null';
+
 const invalidContents = `
 {This:}, looks:, like:, a:, csv:, file!
 `;
+const emptyContents = '';
+
+export const emptyConfig = new Config(emptyContents);
 export const invalidConfig = new Config(invalidContents);
+
 export const configs: Configs = {
   json: new Config(jsonContents, newJsonContents),
   yaml: new Config(yamlContents, newYamlContents),
+  complex: new Config(complexContents, newComplexContents),
+  null: new Config(nullContents, nullContents),
 }

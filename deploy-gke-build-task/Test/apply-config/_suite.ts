@@ -99,6 +99,21 @@ describe('deploy-gke with apply config', () => {
     assert(!ranKubeCtlApply, 'Should not have run kubectl apply.');
   });
 
+  it('should fail to replace image for empty config', () => {
+    const testPath = path.join(__dirname, `replace-image-empty.js`);
+    runner = new MockTestRunner(testPath);
+    runner.run();
+    assert(runner.failed, 'Should have failed.');
+    GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
+    assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
+    assert(
+      !runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+      'Should not have written update to config.');
+
+    const ranKubeCtlApply = runner.ran(execString);
+    assert(!ranKubeCtlApply, 'Should not have run kubectl apply.');
+  });
+
   it('should fail if kubectl apply fails.', () => {
     const testPath = path.join(__dirname, `fail-kubectl-apply.js`);
     runner = new MockTestRunner(testPath);

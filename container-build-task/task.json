@@ -7,9 +7,9 @@
   "description": "Build a Docker image with Google Cloud Container Builder.",
   "helpMarkDown": "Use [Google Cloud Container Builder](https://cloud.google.com/container-builder/docs) to build a Docker image and place it in [Google Container Registry](https://cloud.google.com/container-registry/docs).",
   "version": {
-    "Major": 0,
+    "Major": 1,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 0
   },
   "category": "Package",
   "visibility": [ "Build", "Release" ],
@@ -26,9 +26,9 @@
     {
       "name": "serviceEndpoint",
       "label": "GCP connection",
-      "type": "connectedService:google-cloud-service-endpoint",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
       "required": true,
-      "helpMarkDown": "The Google Cloud Platform connection to use"
+      "helpMarkDown": "The Google Cloud Platform connection to use."
     },
     {
       "name": "deploymentPath",
@@ -107,7 +107,7 @@
       "type": "string",
       "required": false,
       "groupName": "advanced",
-      "helpMarkDown": "The name of the build variable the task will place the full image tag (e.g. us.gcr.io/my-project/my-image-name:image-tag)"
+      "helpMarkDown": "The name of the build variable the task will place the full image tag (e.g. us.gcr.io/my-project/my-image-name:image-tag)."
     }
   ],
   "execution": {

@@ -143,4 +143,40 @@ describe('set-login-build-task tests', () => {
     assert(!runner.stdOutContained('[task.setvariable'),
       'Should not have set any variables.');
   });
+
+  it('should fail with missing password from gcloud output', () => {
+    const testPath = path.join(__dirname, 'gcloud-output-missing-password.js');
+    runner = new MockTestRunner(testPath);
+    runner.run();
+    
+    assert(runner.failed, 'Should have failed.');
+    assert.equal(runner.invokedToolCount, 1, 'Should have run gcloud once.');
+    assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
+    assert.equal(runner.errorIssues.length, 1, 'Should have an error.');
+    assertKeyFileWritten(runner);
+
+    assert(runner.createdErrorIssue('Could not find new password for instance instanceId' +
+      ' in zone zoneId'),
+      'Should not have set ip variable.');
+    assert(!runner.stdOutContained('[task.setvariable variable=passwordVar'),
+      'Should not have set password variable.');
+  });
+
+  it('should fail with missing ip_address from gcloud output', () => {
+    const testPath = path.join(__dirname, 'gcloud-output-missing-ip_address.js');
+    runner = new MockTestRunner(testPath);
+    runner.run();
+
+    assert(runner.failed, 'Should have failed.');
+    assert.equal(runner.invokedToolCount, 1, 'Should have run gcloud once.');
+    assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
+    assert.equal(runner.errorIssues.length, 1, 'Should have an error.');
+    assertKeyFileWritten(runner);
+
+    assert(runner.createdErrorIssue('Could not find external ip for instance instanceId' +
+      ' in zone zoneId'),
+      'Should not have set ip variable.');
+    assert(!runner.stdOutContained('[task.setvariable variable=ipVar'),
+      'Should not have set ip variable.');
+  });
 });

@@ -39,9 +39,11 @@ try {
             Write-VstsTaskVerbose "Setting Environment Path"
             $env:Path = "$env:Path;$gcloudSdkPath"
             Set-VstsTaskVariable "Path" $env:Path
+            $disableReportingString = if($AllowReporting) {"false"} else {"true"}
+            gcloud config set disable_usage_reporting $disableReportingString
         }
     } else {
-        $InstallerUri = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.zip"
+        $InstallerUri = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk-windows-bundled-python.zip"
         $Path = Join-Path $MyInvocation.MyCommand.Path .. -Resolve
 
         $InstallerFile = Join-Path $Path "google-cloud-sdk.zip"

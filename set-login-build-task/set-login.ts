@@ -73,8 +73,7 @@ function run(): void {
           gcloudResult.stdout) as {ip_address: string, password: string};
       setVariable(
           machineIpVariable, data.ip_address, false,
-          `Could not find external ip for instance ${instance} in zone ${zone
-          }`);
+          `Could not find external ip for instance ${instance} in zone ${zone}`);
       setVariable(
           passwordVariable, data.password, true,
           `Could not find new password for instance ${instance}` +

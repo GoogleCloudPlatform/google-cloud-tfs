@@ -19,14 +19,14 @@ and image to [Google Container Registry][GCR] before deploying that image to
 the service account to deploy it with.
  - Image contents directory: The directory containing the contents to be bundled in the image.
  - Cloud build file: The type of cloud build file to use.
-   - Select Default ASP.NET Core 1.0 Build to build a standrd [ASP.NET Core][AspNetCore] 1.0 app image.
+   - Select Default ASP.NET Core 1.0 Build to build a standard [ASP.NET Core][AspNetCore] 1.0 app image.
    - Select Existing Dockerfile to use the Dockerfile in the image contents directory.
    - Select Custom Cloud Build to use your own [cloud build configuration file][CloudBuildConfig]. When you do.
  - Selecting Default Build or Existing Dockerfile require the following parameters:
    - Registry Server: The [Google Container Registry][GCR] [hostname][GCRHosts] to push your image to.
    - Repository (Image Name): The name of the image repository (often the name of the image).
    - Image Tag: The tag to give to the image.
- - Selecting Cutsom Cloud Build needs the following parameters:
+ - Selecting Custom Cloud Build needs the following parameters:
    - Cloud Build File: The location of the YAML or JSON file that defines the cloud build.
    - Substitutions: A comma separated list of [custom substitutions][Substitioutions] for your cloud build file. Takes the form `_VAR1=\"val1\",_VAR2=\"val2\"`
 

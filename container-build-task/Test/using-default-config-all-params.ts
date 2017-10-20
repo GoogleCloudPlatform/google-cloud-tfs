@@ -17,13 +17,12 @@
  *   successful run with default build config type and extra parameters.
  * @author przybjw@google.com (Jim Przybylinski)
  */
+import {getDefaultAnswers, registerCommonMocks} from 'common/register-mocks';
 import * as path from 'path';
-import { TaskLibAnswers } from 'vsts-task-lib/mock-answer';
-import { TaskMockRunner } from 'vsts-task-lib/mock-run';
-import {
-  registerCommonMocks, getDefaultAnswers, getFsMock
-} from 'common/register-mocks';
-import { successResult } from './test-constants';
+import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
+import {TaskMockRunner} from 'vsts-task-lib/mock-run';
+
+import {successResult} from './test-constants';
 
 const taskPath = path.join(__dirname, '..', 'container-build.js');
 const runner = new TaskMockRunner(taskPath);

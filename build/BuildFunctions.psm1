@@ -266,7 +266,8 @@ function Get-TypeScriptTasks() {
 
 function Update-AppveyorBuildVersion () {
     if (!$env:APPVEYOR) {
-        Write-Error "Only avalable when running in Appveyor."
+        Write-Error "Update-AppveyorBuildVersion is only avalable when running in Appveyor."
+        return
     }
     if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_NUMBER"

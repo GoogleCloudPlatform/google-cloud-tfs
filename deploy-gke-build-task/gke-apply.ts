@@ -73,6 +73,9 @@ function updateConfig(path: string, imageName: string, imageTag: string): void {
           s.configParseError(path), [jsonError as Error, yamlError as Error]);
     }
   }
+  if (typeof configObject !== 'object') {
+    throw new Error(s.configFileInvalid(path));
+  }
   replaceAllImage(configObject, imageName, imageTag);
   const newConfigContents: string = toStringFunction(configObject);
   task.writeFile(path, newConfigContents);
@@ -100,16 +103,14 @@ function replaceAllImage(
 
       for (const key of Object.keys(kubeConfig)) {
         const element = kubeConfig[key];
-        if (typeof element === 'object') {
-          if (element instanceof Array) {
-            for (const arrayElement of element) {
-              if (typeof arrayElement === 'object') {
-                replaceImageInElement(arrayElement);
-              }
+        if (element instanceof Array) {
+          for (const arrayElement of element) {
+            if (typeof arrayElement === 'object') {
+              replaceImageInElement(arrayElement);
             }
-          } else {
-            replaceImageInElement(element);
           }
+        } else if (typeof element === 'object') {
+          replaceImageInElement(element);
         }
       }
     }

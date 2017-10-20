@@ -14,7 +14,7 @@
 
 /**
  * @fileoverview This is a test script for the deploy gke task with
- *   a missing serviceEndpoint parameter.
+ *   a missing update tag parameter.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import * as mocks from 'common/register-mocks';

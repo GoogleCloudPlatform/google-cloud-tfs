@@ -31,6 +31,9 @@
     <TypeScriptCompile Include="gke-set-deployment.ts" />
     <TypeScriptCompile Include="interfaces.ts" />
     <TypeScriptCompile Include="strings.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-empty.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-null.ts" />
+    <TypeScriptCompile Include="test\apply-config\replace-image-complex.ts" />
     <TypeScriptCompile Include="test\apply-config\success-dry-run-update-tag.ts" />
     <TypeScriptCompile Include="test\apply-config\success-no-update-tag.ts" />
     <TypeScriptCompile Include="test\apply-config\missing-config-path.ts" />

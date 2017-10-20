@@ -12,6 +12,7 @@ install:
   - npm install nyc -global
   - choco install codecov
   - ps: Import-Module .\build\BuildFunctions.psm1
+  - ps: Update-AppveyorBuildVersion
   - ps: $allTsTasks = Get-TypeScriptTasks
 
 before_build:
@@ -29,12 +30,3 @@ after_test:
 artifacts:
   - path: ./bin/*.vsix
     name: ExtensionPackage
-
-deploy:
-  - provider: GitHub
-    artifact: /.*\.vsix/
-    draft: false
-    prerelease: true
-    on:
-      branch: master
-      appveyor_repo_tag: true

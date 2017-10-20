@@ -263,3 +263,18 @@ function Get-TypeScriptTasks() {
     }
     $dirs.Name | Write-Output
 }
+
+function Update-AppveyorBuildVersion () {
+    if (!$env:APPVEYOR) {
+        Write-Error "Only avalable when running in Appveyor."
+    }
+    if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
+        $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_NUMBER"
+    } else {
+        $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
+        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        $manifestVersion = $manifest.version
+        $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_NUMBER"
+    }
+    Update-AppveyorBuild -Version $version
+}

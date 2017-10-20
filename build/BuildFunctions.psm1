@@ -222,10 +222,8 @@ function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] 
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
+
     $tfxArgs = "extension", "create", "--manifestGlobs", "**/manifest.json", "--output-path", "bin"
-    if ($publisher) {
-        $tfxArgs += "--publisher", $publisher
-    }
     $overrides = @{}
     if ($publisher) {
         $tfxArgs += "--publisher", $publisher
@@ -233,18 +231,27 @@ function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] 
     if ($version) {
         $overrides["version"] = $version
     }
+    $overridesFile = Write-TempOverridesFile $overrides
+    if ($overridesFile) {
+        $tfxArgs += "--overrides-file", $overridesFile
+    }
+    Write-Verbose "Running: tfx $tfxArgs"
+    tfx $tfxArgs
+    if ($overridesFile) {
+        rm $overridesFile
+    }
+}
+
+function Write-TempOverridesFile($overrides) {
     if ($overrides.Count -gt 0) {
         $overridesFile = [System.IO.Path]::GetTempFileName()
         $overrideJson = $overrides | ConvertTo-Json
         # Avoids the byte order mark
         $enc = New-Object System.Text.UTF8Encoding
         [System.IO.File]::WriteAllLines($overridesFile, $overrideJson, $enc)
-        $tfxArgs += "--overrides-file", $overridesFile
-    }
-    Write-Verbose "Running: tfx $tfxArgs"
-    tfx $tfxArgs
-    if ($overrides.Count -gt 0) {
-        rm $overridesFile
+        return $overridesFile
+    } else {
+        return $false
     }
 }
 

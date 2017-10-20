@@ -129,13 +129,12 @@ function Invoke-MochaTest([string]$task, [string]$reporter) {
     try {
         # nyc is the javascript code coverage checker.
         # mocha is the javascript test runner.
+        $nycArgs = "--reporter", "json", "mocha"
         if ($reporter) {
-            Write-Verbose "Running: nyc --reporter json mocha --reporter $reporter"
-            nyc --reporter json mocha --reporter $reporter
-        } else {
-            Write-Verbose "Running: nyc --reporter json mocha"
-            nyc --reporter json mocha
+            $nycArgs += "--reporter", $reporter
         }
+        Write-Verbose "Running: nyc $nycArgs"
+        nyc $nycArgs
 
         if ($LASTEXITCODE -ne 0) {
             throw "mocha failed  for task $task"
@@ -185,7 +184,7 @@ function Publish-PsTaskLocal($task) {
     }
 }
 
-function Publish-TsTaskLocal($task){
+function Publish-TsTaskLocal($task) {
     Write-Host "Publishing TypeScript task $task to local build agent"
     pushd $task
     try {
@@ -213,8 +212,7 @@ function Publish-TsTaskLocal($task){
     }
 }
 
-function Merge-ExtensionPackage([string[]]$tasks){
-
+function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] $version) {
     Write-Host "Building package"
     $jobs = $tasks | % {
         Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
@@ -224,8 +222,37 @@ function Merge-ExtensionPackage([string[]]$tasks){
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
-    Write-Verbose "Running: tfx extension create --output-path bin"
-    tfx extension create --manifestGlobs **/manifest.json --output-path bin
+
+    $tfxArgs = "extension", "create", "--manifestGlobs", "**/manifest.json", "--output-path", "bin"
+    $overrides = @{}
+    if ($publisher) {
+        $tfxArgs += "--publisher", $publisher
+    }
+    if ($version) {
+        $overrides["version"] = $version
+    }
+    $overridesFile = Write-TempOverridesFile $overrides
+    if ($overridesFile) {
+        $tfxArgs += "--overrides-file", $overridesFile
+    }
+    Write-Verbose "Running: tfx $tfxArgs"
+    tfx $tfxArgs
+    if ($overridesFile) {
+        rm $overridesFile
+    }
+}
+
+function Write-TempOverridesFile($overrides) {
+    if ($overrides.Count -gt 0) {
+        $overridesFile = [System.IO.Path]::GetTempFileName()
+        $overrideJson = $overrides | ConvertTo-Json
+        # Avoids the byte order mark
+        $enc = New-Object System.Text.UTF8Encoding
+        [System.IO.File]::WriteAllLines($overridesFile, $overrideJson, $enc)
+        return $overridesFile
+    } else {
+        return $false
+    }
 }
 
 function Update-TaskBeforePackage([string]$task) {
@@ -239,7 +266,8 @@ function Update-TaskBeforePackage([string]$task) {
 
         # Create manifest.json in node_modules, so only production modules are
         # included in the final package.
-        @{"files" = $productionModules | %{ @{ "path" = $_ } } } | ConvertTo-Json |
+        $productionModulePaths = $productionModules | %{ @{ "path" = $_ } }
+        @{"files" = $productionModulePaths } | ConvertTo-Json |
             Out-File (Join-Path node_modules manifest.json) -Encoding utf8
     } finally {
         popd

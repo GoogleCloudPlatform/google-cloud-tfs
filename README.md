@@ -23,7 +23,7 @@ install the extension from the extension management page of TFS.
 
 ## Build
 
-### Prerequisits
+### Prerequisites
 
   - [PowerShell][PowerShell]. Installed by default on modern windows platforms.
   - [Node.js][Node]. Download and install from the website.

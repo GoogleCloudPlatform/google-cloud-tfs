@@ -281,7 +281,15 @@ function Get-TaskVersion() {
 }
 
 function Get-ProductionModules($task) {
-    return (npm ls --prod --parseable | Split-Path -Leaf) -ne $task
+    ($root, $modulePaths) = npm ls --prod --parseable
+    $moduleRoot = Join-Path $root node_modules
+    $moduleRoot += "\"
+    foreach ($modulePath in $modulePaths) {
+        if (!$modulePath.StartsWith($moduleRoot)) {
+            throw "$modelPath does not start with $moduleRoot!"
+        }
+        Write-Output $modulePath.Substring($moduleRoot.Length)
+    }
 }
 
 function Get-TypeScriptTasks() {

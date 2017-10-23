@@ -43,7 +43,7 @@ export function getDefaultExecOptions(): IExecOptions {
       'CLOUDSDK_METRICS_ENVIRONMENT': 'cloud-tools-tfs',
       'CLOUDSDK_METRICS_ENVIRONMENT_VERSION': '0.0.1',
     } as {
-      [key: string]: string;
+      [variableName: string]: string;
     },
     ignoreReturnCode: false,
     failOnStdErr: false,

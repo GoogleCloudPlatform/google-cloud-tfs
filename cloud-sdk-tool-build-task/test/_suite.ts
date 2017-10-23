@@ -19,11 +19,13 @@
 import 'mocha';
 
 import * as assert from 'assert';
-import * as gcloudAssert from 'common/asserts';
 import * as path from 'path';
 import {MockTestRunner} from 'vsts-task-lib/mock-test';
 
+import {CloudSdkPackage} from '../cloud-sdk-package';
+
 describe('cloud-sdk-tool', function() {
+  this.timeout(0);
 
   let runner: MockTestRunner;
   beforeEach(function() { runner = null; });
@@ -36,11 +38,12 @@ describe('cloud-sdk-tool', function() {
     }
   });
 
-  it('should fail for no gcloud', () => {
-    const testPath = path.join(__dirname, 'no-gcloud.js');
-    runner = new MockTestRunner(testPath);
-    runner.run();
-
-    gcloudAssert.assertGcloudNotRun(runner);
+  it('fails installing kubectl', async () => {
+    process.env['Agent_Version'] = '2.115.0';
+    process.env['Agent_TempDirectory'] =
+        path.join(process.env['TEMP'], 'TfsTemp');
+    process.env['Agent_ToolsDirectory'] =
+      path.join(process.env['TEMP'], 'TfsTools');
+    await new CloudSdkPackage('176.0.0').aquire(true);
   });
 });

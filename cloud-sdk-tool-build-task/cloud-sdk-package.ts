@@ -72,7 +72,7 @@ export class CloudSdkPackage {
         .line(`--usage-reporting ${allowReporting}`)
         .exec(execOptions);
     toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
-    task.tool(task.which('gcloud'))
+    await task.tool(task.which('gcloud'))
         .line('components install kubectl beta')
         .exec(execOptions);
   }

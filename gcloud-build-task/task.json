@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "78A617AD-4750-499D-9A42-3A8F3F0350AA",
+  "name": "gcloud-build-task",
+  "friendlyName": "Gcloud Command Line",
+  "author": "Google Cloud Tools",
+  "description": "Execute an arbitrary gcloud command.",
+  "helpMarkDown": "[List of gcloud commands](https://cloud.google.com/sdk/gcloud/reference/).",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "category": "Utility",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "label": "GCP connection",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use."
+    },
+    {
+      "name": "commandLine",
+      "label": "Command Line",
+      "type": "string",
+      "required": true,
+      "helpMarkDown": "The command to run."
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "run.js"
+    }
+  }
+}

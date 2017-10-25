@@ -111,7 +111,7 @@ function Invoke-CompileTask($task) {
     }
 }
 
-function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter) {
+function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
     $jobs = $tasks | % {
         Start-Job -ArgumentList $pwd, $_, $reporter -ScriptBlock {
@@ -120,7 +120,11 @@ function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter) {
             Invoke-MochaTest -task $args[1] -reporter $args[2]
         }
     }
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
+    $jobErrors = $null
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+    if ($throwOnError -and $jobErrors) {
+        throw $jobErrors
+    }
 }
 
 function Invoke-MochaTest([string]$task, [string]$reporter) {
@@ -137,7 +141,7 @@ function Invoke-MochaTest([string]$task, [string]$reporter) {
         nyc $nycArgs
 
         if ($LASTEXITCODE -ne 0) {
-            throw "mocha failed  for task $task"
+            throw "mocha failed for task $task"
         }
     } finally {
         popd

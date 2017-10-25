@@ -15,11 +15,24 @@
   <ItemGroup>
     <Content Include="manifest.json" />
     <Content Include="task.json" />
+    <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="gcloud-build-task.ts" />
     <TypeScriptCompile Include="run.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="test\functional-tests.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\unit-tests.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\_suite.ts">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <Target Name="InstallCommonModule">

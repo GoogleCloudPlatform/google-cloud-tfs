@@ -22,10 +22,9 @@ import * as task from 'vsts-task-lib/task';
 import {IExecOptions, ToolRunner} from 'vsts-task-lib/toolrunner';
 
 import TaskResult = task.TaskResult;
-
 export interface RunGcloudOptions {
   gcloudTool: ToolRunner;
-  endpointId: string;
+  endpoint: Endpoint;
   command: string;
   includeProjectParam: boolean;
   ignoreReturnCode: boolean;
@@ -33,22 +32,23 @@ export interface RunGcloudOptions {
 }
 
 export function runGcloud(runOptions: RunGcloudOptions): void {
-  const endpoint = new Endpoint(runOptions.endpointId);
-
   runOptions.gcloudTool.line(runOptions.command)
       .arg(Endpoint.credentialParam)
-      .argIf(runOptions.includeProjectParam, endpoint.projectParam);
+      .argIf(runOptions.includeProjectParam, runOptions.endpoint.projectParam);
   const execOptions: IExecOptions = getDefaultExecOptions();
   execOptions.ignoreReturnCode = runOptions.ignoreReturnCode;
 
-  endpoint.using(() => {
+  runOptions.endpoint.using(() => {
     const result = runOptions.gcloudTool.execSync(execOptions);
     if (result.error) {
-      const errorMessage =
-          result.error.message || result.stderr || result.stdout;
+      task.error(result.error.message);
+      task.setResult(TaskResult.Failed, result.error.message);
+    } else if (result.code !== 0 && !runOptions.ignoreReturnCode) {
+      const errorMessage = result.stderr || result.stdout;
       task.error(errorMessage);
       task.setResult(TaskResult.Failed, errorMessage);
-    } else if (runOptions.outputVariable) {
+    }
+    if (runOptions.outputVariable) {
       task.setVariable(runOptions.outputVariable, result.stdout);
     }
   });

@@ -16,21 +16,26 @@
  * @fileoverview This is the entry point for the gcloud build task.
  * @author JimWP@google.com (Jim Przybylinski)
  */
+import {Endpoint} from 'common/exec-options';
+import {catchAll} from 'common/handle-rejection';
 import * as task from 'vsts-task-lib/task';
 
 import {runGcloud, RunGcloudOptions} from './gcloud-build-task';
 
-const runOptions: RunGcloudOptions = {
-  // Check that gcloud exists.
-  gcloudTool : task.tool(task.which('gcloud', true)),
+function run(): void {
+  const runOptions: RunGcloudOptions = {
+    // Check that gcloud exists.
+    gcloudTool : task.tool(task.which('gcloud', true)),
 
-  // Get inputs from GUI.
-  // The id of the GCP service endpoint to get the credentials from.
-  endpointId : task.getInput('serviceEndpoint', true),
-  command : task.getInput('command', true),
-  includeProjectParam : task.getBoolInput('includeProjectParam', true),
-  ignoreReturnCode : task.getBoolInput('ignoreReturnCode', true),
-  outputVariable : task.getInput('outputVariable', false),
-};
+    // Get inputs from GUI.
+    // The id of the GCP service endpoint to get the credentials from.
+    endpoint : new Endpoint(task.getInput('serviceEndpoint', true)),
+    command : task.getInput('command', true),
+    includeProjectParam : task.getBoolInput('includeProjectParam', true),
+    ignoreReturnCode : task.getBoolInput('ignoreReturnCode', true),
+    outputVariable : task.getInput('outputVariable', false),
+  };
+  runGcloud(runOptions);
+}
 
-runGcloud(runOptions);
+catchAll(run);

@@ -13,37 +13,60 @@
 // limitations under the License.
 
 import * as assert from 'assert';
-import {spawn} from 'child_process';
-import * as task from 'vsts-task-lib/task';
+import {fork, ForkOptions, spawn} from 'child_process';
 
+async function runTask(taskScript: string,
+                       env: {[key: string]: string}): Promise<string[]> {
+
+  const options: ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
+  const taskProcess = fork(taskScript, [], options);
+  const stdoutPromise = new Promise<string[]>((resolve) => {
+    const allChunks: string[] = [];
+    taskProcess.stdout.on(
+        'data', (chunk) => allChunks.push(chunk && chunk.toString().trim()));
+    taskProcess.stdout.on('close', () => {
+      console.log('Stream Closed.');
+      return resolve(allChunks);
+    });
+  });
+  return await new Promise<string[]>((resolve, reject) => {
+    taskProcess.on('exit', () => resolve(stdoutPromise));
+    taskProcess.on('error', reject);
+  });
+}
 describe('functional tests', function(): void {
   this.timeout(0);
 
   it('should run gcloud version', async () => {
-    const gcloudPromise = new Promise<string>((resolve) => {
-      const cp = spawn('gcloud', [ 'version' ], {shell : true});
-      cp.on('exit', () => resolve(cp.stdout.read().toString()));
+    const gcloudPromise = new Promise<string>((resolve, reject) => {
+      const gcloudProcess = spawn('gcloud', [ 'version' ], {shell : true});
+      gcloudProcess.on(
+          'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
+      gcloudProcess.on('error', reject);
     });
-    process.env['INPUT_serviceEndpoint'] = 'endpoint';
-    process.env['ENDPOINT_AUTH_endpoint'] = JSON.stringify({
+
+    const variableName = 'outputVariable';
+    const endpointAuth = JSON.stringify({
       parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
     });
-    process.env['INPUT_command'] = 'version';
-    process.env['INPUT_includeProjectParam'] = false;
-    process.env['INPUT_ignoreReturnCode'] = false;
-    const variableName = 'outputVariable';
-    process.env['INPUT_outputVariable'] = variableName;
+    const env = {
+      ['INPUT_serviceEndpoint'] : 'endpoint',
+      ['ENDPOINT_AUTH_endpoint'] : endpointAuth,
+      ['INPUT_command'] : 'version',
+      ['INPUT_includeProjectParam'] : 'false',
+      ['INPUT_ignoreReturnCode'] : 'false',
+      ['INPUT_outputVariable'] : variableName
+    };
 
-    // TODO(jimwp): This is fragile. It will be broken by the next version of
-    // vsts-task-lib.
-    task._loadData();
-
-    // Run the task.
-    // ReSharper disable once CommonJsExternalModule
-    /* tslint:disable-next-line no-require-imports */
-    require('../run');
-
+    const taskOutput = await runTask('run.js', env);
     const gcloudVersionOutput = await gcloudPromise;
-    assert.equal(process.env[variableName], gcloudVersionOutput);
+
+    const setVariableTag =
+      `##vso[task.setvariable variable=${variableName};secret=false;]`;
+    taskOutput.forEach((chunk) => {
+      if (chunk.startsWith(setVariableTag)) {
+        assert.ok(chunk.endsWith(gcloudVersionOutput));
+      }
+    });
   });
 });

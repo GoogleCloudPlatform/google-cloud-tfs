@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-describe('gcloud-build-task', (): void => {
+describe('gcloud-build-task', () => {
 
   // ReSharper disable once CommonJsExternalModule
   /* tslint:disable-next-line no-require-imports */

@@ -35,16 +35,18 @@ async function runTask(taskScript: string,
   });
 }
 describe('functional tests', function(): void {
-  this.timeout(0);
+  let gcloudVersionPromise: Promise<string>;
 
-  it('should run gcloud version', async () => {
-    const gcloudPromise = new Promise<string>((resolve, reject) => {
+  before('start gcloud version', () => {
+    gcloudVersionPromise = new Promise<string>((resolve, reject) => {
       const gcloudProcess = spawn('gcloud', [ 'version' ], {shell : true});
       gcloudProcess.on(
           'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
       gcloudProcess.on('error', reject);
     });
+  });
 
+  it('should run gcloud version', async () => {
     const variableName = 'outputVariable';
     const endpointAuth = JSON.stringify({
       parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
@@ -59,10 +61,10 @@ describe('functional tests', function(): void {
     };
 
     const taskOutput = await runTask('run.js', env);
-    const gcloudVersionOutput = await gcloudPromise;
+    const gcloudVersionOutput = await gcloudVersionPromise;
 
     const setVariableTag =
-      `##vso[task.setvariable variable=${variableName};secret=false;]`;
+        `##vso[task.setvariable variable=${variableName};secret=false;]`;
     taskOutput.forEach((chunk) => {
       if (chunk.startsWith(setVariableTag)) {
         assert.ok(chunk.endsWith(gcloudVersionOutput));

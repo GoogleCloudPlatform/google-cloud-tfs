@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -20,10 +20,9 @@
  *   authorization, and calls gcloud beta app deploy with various parameters.
  * @author przybjw@google.com (Jim Przybylinski)
  */
-import {catchAll} from 'common/handle-rejection';
-
 import * as exec from 'common/exec-options';
 import {isoNowString} from 'common/format';
+import {catchAll} from 'common/handle-rejection';
 import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
 import {IExecOptions, IExecResult, ToolRunner} from 'vsts-task-lib/toolrunner';
@@ -36,7 +35,7 @@ import TaskResult = task.TaskResult;
 /**
  * Runs the script
  */
-async function run():Promise<void> {
+async function run(): Promise<void> {
   // Check that gcloud exists.
   const gcloudPath = task.which('gcloud', true);
   checkGcloudVersion(gcloudPath);
@@ -82,7 +81,7 @@ async function run():Promise<void> {
   const gcloud: ToolRunner =
       task.tool(gcloudPath)
           .line('beta app deploy --quiet --verbosity=info')
-          .arg([`"${yamlPath}"`, credentialArg, projectArg])
+          .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
           .argIf(version, `--version="${version}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')
@@ -93,7 +92,7 @@ async function run():Promise<void> {
   const execOptions: IExecOptions = exec.getDefaultExecOptions();
 
   // Write credential file.
-  await endpoint.usingAsync(async() => {
+  await endpoint.usingAsync(async () => {
     // Run gcloud. Do it async so console output is sent to TFS immediately.
     await gcloud.exec(execOptions);
     task.setResult(TaskResult.Succeeded, 'Deployment succeeded');
@@ -101,13 +100,14 @@ async function run():Promise<void> {
 }
 
 function checkGcloudVersion(gcloudPath: string): void {
+  interface GcloudVersion {
+    ['Google Cloud SDK']: string;
+    ['beta']: string;
+  }
   const versionTool = task.tool(gcloudPath).line('version --format=json');
   const result: IExecResult = versionTool.execSync(exec.getQuietExecOptions());
   const cloudSdkVersionRegex = /\d*/;
-  const versionData = JSON.parse(result.stdout) as {
-    ['Google Cloud SDK']: string,
-    ['beta']: string,
-  };
+  const versionData = JSON.parse(result.stdout) as GcloudVersion;
   const majorVersionString =
       versionData['Google Cloud SDK'].match(cloudSdkVersionRegex)[0];
   if (Number.parseInt(majorVersionString) < 146) {
@@ -117,6 +117,6 @@ function checkGcloudVersion(gcloudPath: string): void {
   if (!versionData['beta']) {
     throw new Error(strings.noGcloudBetaError);
   }
-};
+}
 
 catchAll(run());

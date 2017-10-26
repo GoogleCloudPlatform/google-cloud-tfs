@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved
+// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -37,16 +37,14 @@ import WritableStream = NodeJS.WritableStream;
  */
 export function getDefaultExecOptions(): IExecOptions {
   return {
-    windowsVerbatimArguments: true,
-    errStream: process.stdout as WritableStream,
-    env: {
-      'CLOUDSDK_METRICS_ENVIRONMENT': 'cloud-tools-tfs',
-      'CLOUDSDK_METRICS_ENVIRONMENT_VERSION': '0.0.1',
-    } as {
-      [key: string]: string;
-    },
-    ignoreReturnCode: false,
-    failOnStdErr: false,
+    windowsVerbatimArguments : true,
+    errStream : process.stdout as WritableStream,
+    env : {
+      'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
+      'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
+    } as { [key: string]: string; },
+    ignoreReturnCode : false,
+    failOnStdErr : false,
   } as IExecOptions;
 }
 
@@ -58,8 +56,8 @@ export function getQuietExecOptions(): IExecOptions {
   // Hide the stream output.
   // Hopefully replace this with execOptions.silent when that works.
   const protoWriter: PropertyDescriptorMap = {
-    write: {
-      value(chunk: Buffer | string, encoding?: string, callback?: Function):
+    write : {
+      value(chunk: Buffer|string, encoding?: string, callback?: Function) :
           Boolean {
             let chunkString: string;
             if (encoding && chunk instanceof Buffer) {
@@ -140,17 +138,13 @@ export class Endpoint {
   /**
    * Deletes the json key file.
    */
-  clearCredentials(): void {
-    fs.unlinkSync(Endpoint.jsonKeyFilePath);
-  }
+  clearCredentials(): void { fs.unlinkSync(Endpoint.jsonKeyFilePath); }
 
   /**
    * The project id as a gcloud parameter.
    * @returns {string} --project="projectId"
    */
-  get projectParam(): string {
-    return `--project="${this.projectId}"`;
-  }
+  get projectParam(): string { return `--project="${this.projectId}"`; }
 }
 
 /**
@@ -239,7 +233,7 @@ export class KubeEndpoint extends Endpoint {
   setKubectlEnv(execOptions: IExecOptions): void {
     const credentialVariableName = 'GOOGLE_APPLICATION_CREDENTIALS';
     const useDefaultCredentialsVariableName =
-      'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS';
+        'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS';
     execOptions.env[credentialVariableName] = sc.jsonKeyFilePath;
     execOptions.env[useDefaultCredentialsVariableName] = 'true';
   }

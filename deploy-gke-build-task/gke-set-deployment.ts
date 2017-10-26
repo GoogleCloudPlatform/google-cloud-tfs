@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -52,14 +52,11 @@ export async function runOrSetDeployment(
   const image = `${imageName}:${imageTag}`;
 
   const deployments: Deployment[] = getDeployments(endpoint);
-  const deployment: Deployment = deployments.find((dep: Deployment) => {
-    return dep.metadata.name === deploymentName;
-  });
+  const deployment: Deployment = deployments.find(
+      (dep: Deployment) => dep.metadata.name === deploymentName);
   if (deployment) {
-    await setAndResizeDeployment(
-        deployment, image, replicas, dryRun, endpoint);
-    task.setResult(
-        TaskResult.Succeeded, s.deploymentImageSuccess(image));
+    await setAndResizeDeployment(deployment, image, replicas, dryRun, endpoint);
+    task.setResult(TaskResult.Succeeded, s.deploymentImageSuccess(image));
   } else {
     await task.tool(kubectlPath)
         .line('run --port=8080 --record --alsologtostderr')
@@ -81,11 +78,10 @@ export async function runOrSetDeployment(
  * @returns An array of Deployments, as parsed from json.
  */
 function getDeployments(endpointData: KubeEndpoint): Deployment[] {
-  const result =
-      task.tool(kubectlPath)
-          .line('get deployments -o json --alsologtostderr')
-          .arg(KubeEndpoint.kubeConfigParam)
-          .execSync(endpointData.quietKubectlExecOptions);
+  const result = task.tool(kubectlPath)
+                     .line('get deployments -o json --alsologtostderr')
+                     .arg(KubeEndpoint.kubeConfigParam)
+                     .execSync(endpointData.quietKubectlExecOptions);
   if (result.code !== 0) {
     if (result.error) {
       throw result.error;
@@ -146,9 +142,9 @@ async function rescaleDeployment(
 }
 // clang-format on
 
-async function setDeploymentImage(
-    deployment: Deployment, image: string, dryRun: boolean,
-    endpoint: KubeEndpoint): Promise<void> {
+async function setDeploymentImage(deployment: Deployment, image: string,
+                                  dryRun: boolean,
+                                  endpoint: KubeEndpoint): Promise<void> {
   const needsNewImage = (container: {image: string}) =>
       container.image !== image;
   if (deployment.spec.template.spec.containers.some(needsNewImage)) {
@@ -156,11 +152,11 @@ async function setDeploymentImage(
       console.log(s.imageSetDryRun(deployment.metadata.name, image));
     } else {
       await task.tool(kubectlPath)
-        .line('set image --record --alsologtostderr')
-        .arg(KubeEndpoint.kubeConfigParam)
-        .arg(`deployment/${deployment.metadata.name}`)
-        .arg(`${deployment.metadata.name}=${image}`)
-        .exec(endpoint.defaultKubectlExecOptions);
+          .line('set image --record --alsologtostderr')
+          .arg(KubeEndpoint.kubeConfigParam)
+          .arg(`deployment/${deployment.metadata.name}`)
+          .arg(`${deployment.metadata.name}=${image}`)
+          .exec(endpoint.defaultKubectlExecOptions);
     }
   } else {
     task.debug(s.skipSetImage(deployment.metadata.name, image));

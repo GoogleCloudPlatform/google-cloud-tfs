@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -44,14 +44,14 @@ async function run(): Promise<void> {
   const endpoint = new KubeEndpoint(endpointId, cluster, zone);
   await endpoint.usingAsync(async () => {
     switch (deployType) {
-      case 'config':
-        await applyConfig(dryRun, endpoint);
-        break;
-      case 'values':
-        await runOrSetDeployment(dryRun, endpoint);
-        break;
-      default:
-        throw new Error(`Invalid deployType "${deployType}"`);
+    case 'config':
+      await applyConfig(dryRun, endpoint);
+      break;
+    case 'values':
+      await runOrSetDeployment(dryRun, endpoint);
+      break;
+    default:
+      throw new Error(`Invalid deployType "${deployType}"`);
     }
   });
 }

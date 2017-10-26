@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import {ToolRunner} from 'vsts-task-lib/toolrunner';
  * @param imageName The repository (name) of the image.
  * @param imageTag The tag of the image, if it has one.
  */
-export function buildFullImageTag(
-    registry: string, imageName: string, imageTag?: string): string {
+export function buildFullImageTag(registry: string, imageName: string,
+                                  imageTag?: string): string {
   if (registry && imageName) {
     const fullImage = `${registry}/$PROJECT_ID/${imageName}`;
     if (imageTag) {
@@ -43,18 +43,13 @@ export function buildFullImageTag(
 }
 
 /**
- * Adds listeners to the gcloud ToolRunner that output stdout and stderr to appropriate console logging levels.
+ * Adds listeners to the gcloud ToolRunner that output stdout and stderr to
+ * appropriate console logging levels.
  * @param gcloud The gcloud tool runner.
  */
-export function listenToOutput(gcloud: ToolRunner) {
-  gcloud.on(
-    'stdline', (line: string) => {
-      task.debug(line);
-    });
-  gcloud.on(
-    'errline', (line: string) => {
-      console.log(line);
-    });
+export function listenToOutput(gcloud: ToolRunner): void {
+  gcloud.on('stdline', (line: string) => { task.debug(line); });
+  gcloud.on('errline', (line: string) => { console.log(line); });
 }
 
 /**
@@ -65,13 +60,13 @@ export function listenToOutput(gcloud: ToolRunner) {
  * @param imageOutputVariable The name of the variable to sent to the new image
  *   name.
  */
-export function listenForImages(
-    gcloud: ToolRunner, imageOutputVariable: string): void {
+export function listenForImages(gcloud: ToolRunner,
+                                imageOutputVariable: string): void {
   const startListener = (line: string): void => {
     if (line.startsWith('{')) {
       gcloud.removeListener('stdline', startListener);
-      if (!tryParseImagesToVariable([line], imageOutputVariable)) {
-        listenForJson(gcloud, imageOutputVariable, [line]);
+      if (!tryParseImagesToVariable([ line ], imageOutputVariable)) {
+        listenForJson(gcloud, imageOutputVariable, [ line ]);
       }
     }
   };
@@ -86,9 +81,8 @@ export function listenForImages(
  * @param imageOutputVariable The name of the variable to set the images to.
  * @param gcloud The ToolRunner to log the lines from.
  */
-function listenForJson(
-    gcloud: ToolRunner, imageOutputVariable: string,
-    jsonLines: string[]): void {
+function listenForJson(gcloud: ToolRunner, imageOutputVariable: string,
+                       jsonLines: string[]): void {
   const collectJson = (line: string): void => {
     jsonLines.push(line);
     if (tryParseImagesToVariable(jsonLines, imageOutputVariable)) {
@@ -104,8 +98,8 @@ function listenForJson(
  * @param jsonLines The array of lines that could be a json object.
  * @param imageOutputVariable The name of the variable to set the images to.
  */
-function tryParseImagesToVariable(
-    jsonLines: string[], imageOutputVariable: string): boolean {
+function tryParseImagesToVariable(jsonLines: string[],
+                                  imageOutputVariable: string): boolean {
   const jsonString = jsonLines.join(os.EOL);
   let images: {};
   try {

@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import {MockTestRunner} from 'vsts-task-lib/mock-test';
 
 import * as mock from './register-mocks';
 import * as s from './strings';
-
 
 /**
  * Tests that the test run successfully with no warnings or errors, and that
@@ -47,13 +46,13 @@ export interface SuccessOption {
  * Asserts run success with gcloud output and invokeCount tool invocations.
  * @param runner The test runner to assert against.
  */
-export function assertGcloudSuccess(
-    runner: MockTestRunner, options: SuccessOption = {}): void {
+export function assertGcloudSuccess(runner: MockTestRunner,
+                                    options: SuccessOption = {}): void {
   const invokeCount = options.invokeCount || 1;
   const gcloudOutput = options.gcloudOutput || '[gcloud output]';
 
   assertRunSuccess(runner);
-      assert.equal(runner.invokedToolCount, invokeCount, 'Should invoke tool.');
+  assert.equal(runner.invokedToolCount, invokeCount, 'Should invoke tool.');
   assert(runner.stdOutContained(gcloudOutput), 'Should capture gcloud output.');
 }
 
@@ -64,9 +63,8 @@ export function assertGcloudSuccess(
 export function assertGcloudSilentSuccess(runner: MockTestRunner): void {
   assertRunSuccess(runner);
   assert.equal(runner.invokedToolCount, 1, 'Should invoke tool once.');
-  assert(
-      !runner.stdOutContained('[gcloud output]'),
-      'gcloud output should not be visible.');
+  assert(!runner.stdOutContained('[gcloud output]'),
+         'gcloud output should not be visible.');
 }
 
 /**
@@ -74,12 +72,10 @@ export function assertGcloudSilentSuccess(runner: MockTestRunner): void {
  * @param runner The test runner to assert against.
  */
 export function assertKeyFileWritten(runner: MockTestRunner): void {
-  assert(
-      runner.stdOutContained(`[task.writeFile]${s.jsonKeyFilePath}`),
-      'tempKeyFile.json should be written.');
-  assert(
-      runner.stdOutContained(`[fs.unlinkSync]${s.jsonKeyFilePath}`),
-      'tempKeyFile.json should be deleted.');
+  assert(runner.stdOutContained(`[task.writeFile]${s.jsonKeyFilePath}`),
+         'tempKeyFile.json should be written.');
+  assert(runner.stdOutContained(`[fs.unlinkSync]${s.jsonKeyFilePath}`),
+         'tempKeyFile.json should be deleted.');
 }
 
 /**
@@ -103,24 +99,20 @@ export function assertKubeKeyFileWritten(
  * not written.
  * @param runner The test runner to assert against.
  */
-export function assertGcloudNotRun(
-    runner: MockTestRunner, checkVersion = false): void {
+export function assertGcloudNotRun(runner: MockTestRunner,
+                                   checkVersion = false): void {
   assert(runner.failed, 'Should not have run.');
   if (checkVersion) {
-    assert.equal(
-        runner.invokedToolCount, 1,
-        'Should only call gcloud to check version.');
-    assert(
-        runner.ran(mock.gcloudVersionExecString),
-        'Should have run check version.');
+    assert.equal(runner.invokedToolCount, 1,
+                 'Should only call gcloud to check version.');
+    assert(runner.ran(mock.gcloudVersionExecString),
+           'Should have run check version.');
   } else {
     assert.equal(runner.invokedToolCount, 0, 'Should not have called gcloud.');
   }
   assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-  assert(
-      !runner.createdErrorIssue(s.unhandledRejectionErrorMessage),
-      'Should handle all rejections.');
-  assert(
-      !runner.stdOutContained(`[task.writeFile]${s.jsonKeyFilePath}`),
-      'tempKeyFile.json should not be written.');
+  assert(!runner.createdErrorIssue(s.unhandledRejectionErrorMessage),
+         'Should handle all rejections.');
+  assert(!runner.stdOutContained(`[task.writeFile]${s.jsonKeyFilePath}`),
+         'tempKeyFile.json should not be written.');
 }

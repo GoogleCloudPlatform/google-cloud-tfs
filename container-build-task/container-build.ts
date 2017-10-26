@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
  * @fileoverview This is the main script run by the container-build-task.
  * @author przybjw@google.com (Jim Przybylinski)
  */
-import {getQuietExecOptions, Endpoint} from 'common/exec-options';
+import {Endpoint, getQuietExecOptions} from 'common/exec-options';
+import {catchAll} from 'common/handle-rejection';
 import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
-import { IExecOptions } from 'vsts-task-lib/toolrunner';
-import {catchAll} from 'common/handle-rejection';
+import {IExecOptions} from 'vsts-task-lib/toolrunner';
 
 import * as helper from './container-build-helper';
 
@@ -45,12 +45,12 @@ async function run(): Promise<void> {
   const registry = task.getInput('registry', useDefaultConfig || useDockerfile);
   // The name of the image to build and push.
   const imageName =
-    task.getInput('imageName', useDefaultConfig || useDockerfile);
+      task.getInput('imageName', useDefaultConfig || useDockerfile);
   // The tag of the image to build and push.
   const imageTag = task.getInput('imageTag');
   // The path of the custom cloud config.
   const customCloudBuildFile =
-    task.getPathInput('cloudBuildFile', useCustomBuild);
+      task.getPathInput('cloudBuildFile', useCustomBuild);
   const customSubstitutions = task.getInput('substitutions');
   const imageOutputVariable = task.getInput('imageVariable');
 
@@ -59,8 +59,8 @@ async function run(): Promise<void> {
   const dockerfilePath = path.join(deploymentPath, 'Dockerfile');
   if (!useDockerfile && task.exist(dockerfilePath)) {
     task.warning(
-      'Dockerfile detected. Remove it to avoid errors, or select "Cloud ' +
-      'build file: Existing Dockerfile" to use it to build your image.');
+        'Dockerfile detected. Remove it to avoid errors, or select "Cloud ' +
+        'build file: Existing Dockerfile" to use it to build your image.');
   }
 
   let cloudBuildFile: string;
@@ -84,18 +84,18 @@ async function run(): Promise<void> {
   } else if (useDefaultConfig) {
     const nameAndTag = imageTag ? `${imageName}:${imageTag}` : imageName;
     substitutionsArg =
-      `--substitutions=_REG="${registry}",_NAMEANDTAG="${nameAndTag}"`;
+        `--substitutions=_REG="${registry}",_NAMEANDTAG="${nameAndTag}"`;
   } else {
     substitutionsArg = undefined;
   }
 
   const gcloud = task.tool(gcloudPath)
-    .line('container builds submit --quiet --format=json')
-    .arg([projectArg, credentialArg])
-    .arg(`"${deploymentPath}"`)
-    .argIf(useCustomBuild || useDefaultConfig, cloudBuildArg)
-    .argIf(substitutionsArg, substitutionsArg)
-    .argIf(useDockerfile, tagArg);
+                     .line('container builds submit --quiet --format=json')
+                     .arg([ projectArg, credentialArg ])
+                     .arg(`"${deploymentPath}"`)
+                     .argIf(useCustomBuild || useDefaultConfig, cloudBuildArg)
+                     .argIf(substitutionsArg, substitutionsArg)
+                     .argIf(useDockerfile, tagArg);
 
   helper.listenToOutput(gcloud);
   if (imageOutputVariable) {
@@ -105,9 +105,9 @@ async function run(): Promise<void> {
   const execOptions: IExecOptions = getQuietExecOptions();
 
   await endpoint.usingAsync(async () => {
-      await gcloud.exec(execOptions);
-      task.setResult(task.TaskResult.Succeeded, 'Image Built');
-    });
+    await gcloud.exec(execOptions);
+    task.setResult(task.TaskResult.Succeeded, 'Image Built');
+  });
 }
 
 catchAll(run());

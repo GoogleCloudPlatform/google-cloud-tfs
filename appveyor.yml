@@ -1,6 +1,7 @@
 image: Visual Studio 2015
 environment:
   PATH: $(APPDATA)\npm;$(PATH)
+  GCLOUD_SDK_INSTALLATION_NO_PROMPT: true
 
 install:
   - ps: Install-Product node 6.9.1
@@ -11,6 +12,8 @@ install:
   - npm install mocha-appveyor-reporter -global
   - npm install nyc -global
   - choco install codecov
+  - ps: Install-Module "GoogleCloud"
+  - ps: Import-Module "GoogleCloud"
   - ps: Import-Module .\build\BuildFunctions.psm1
   - ps: Update-AppveyorBuildVersion
   - ps: $allTsTasks = Get-TypeScriptTasks

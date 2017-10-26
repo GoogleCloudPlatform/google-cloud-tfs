@@ -22,7 +22,7 @@ before_package:
   - ps: Merge-ExtensionPackage $allTsTasks
 
 test_script:
-  - ps: Invoke-AllMochaTests $allTsTasks "mocha-appveyor-reporter"
+  - ps: Invoke-AllMochaTests $allTsTasks "mocha-appveyor-reporter" -throwOnError
 
 after_test:
   - ps: Send-Coverage

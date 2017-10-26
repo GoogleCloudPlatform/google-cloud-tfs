@@ -22,12 +22,9 @@ async function runTask(taskScript: string,
   const taskProcess = fork(taskScript, [], options);
   const stdoutPromise = new Promise<string[]>((resolve) => {
     const allChunks: string[] = [];
-    taskProcess.stdout.on(
-        'data', (chunk) => allChunks.push(chunk && chunk.toString().trim()));
-    taskProcess.stdout.on('close', () => {
-      console.log('Stream Closed.');
-      return resolve(allChunks);
-    });
+    taskProcess.stdout.on('data', (chunk: string|Buffer) => allChunks.push(
+                                      chunk && chunk.toString().trim()));
+    taskProcess.stdout.on('close', () => { return resolve(allChunks); });
   });
   return await new Promise<string[]>((resolve, reject) => {
     taskProcess.on('exit', () => resolve(stdoutPromise));
@@ -35,6 +32,7 @@ async function runTask(taskScript: string,
   });
 }
 describe('functional tests', function(): void {
+  this.timeout(0);
   let gcloudVersionPromise: Promise<string>;
 
   before('start gcloud version', () => {

@@ -62,11 +62,14 @@ describe('functional tests', function(): void {
     const gcloudVersionOutput = await gcloudVersionPromise;
 
     const setVariableTag =
-        `##vso[task.setvariable variable=${variableName};secret=false;]`;
+      `##vso[task.setvariable variable=${variableName};secret=false;]`;
+    let isVariableSet = false;
     taskOutput.forEach((chunk) => {
       if (chunk.startsWith(setVariableTag)) {
         assert.ok(chunk.endsWith(gcloudVersionOutput));
+        isVariableSet = true;
       }
     });
+    assert.ok(isVariableSet);
   });
 });

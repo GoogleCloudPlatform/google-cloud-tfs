@@ -24,16 +24,18 @@ async function runTask(taskScript: string,
     const allChunks: string[] = [];
     taskProcess.stdout.on('data', (chunk: string|Buffer) => allChunks.push(
                                       chunk && chunk.toString().trim()));
-    taskProcess.stdout.on('close', () => { return resolve(allChunks); });
+    taskProcess.stdout.on('close', () => resolve(allChunks));
   });
   return await new Promise<string[]>((resolve, reject) => {
     taskProcess.on('exit', () => resolve(stdoutPromise));
     taskProcess.on('error', reject);
   });
 }
+
 describe('functional tests', function(): void {
   this.timeout(0);
   let gcloudVersionPromise: Promise<string>;
+  let taskOutput: string[];
 
   before('start gcloud version', () => {
     gcloudVersionPromise = new Promise<string>((resolve, reject) => {
@@ -42,6 +44,13 @@ describe('functional tests', function(): void {
           'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
       gcloudProcess.on('error', reject);
     });
+  });
+
+  afterEach('write task output on failure', function(): void {
+    if (this.currentTest.state === 'failed') {
+      console.log('--- task output ---');
+      console.log(taskOutput.join('\n---\n'));
+    }
   });
 
   it('should run gcloud version', async () => {
@@ -58,11 +67,11 @@ describe('functional tests', function(): void {
       ['INPUT_outputVariable'] : variableName
     };
 
-    const taskOutput = await runTask('run.js', env);
+    taskOutput = await runTask('run.js', env);
     const gcloudVersionOutput = await gcloudVersionPromise;
 
     const setVariableTag =
-      `##vso[task.setvariable variable=${variableName};secret=false;]`;
+        `##vso[task.setvariable variable=${variableName};secret=false;]`;
     let isVariableSet = false;
     taskOutput.forEach((chunk) => {
       if (chunk.startsWith(setVariableTag)) {
@@ -70,6 +79,7 @@ describe('functional tests', function(): void {
         isVariableSet = true;
       }
     });
-    assert.ok(isVariableSet);
+    assert.ok(isVariableSet,
+              'The variable should be set as visible in the output.');
   });
 });

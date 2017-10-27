@@ -12,30 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @fileoverview This is the entry point for the gcloud build task.
- * @author JimWP@google.com (Jim Przybylinski)
- */
 import {Endpoint} from 'common/exec-options';
 import {catchAll} from 'common/handle-rejection';
 import * as task from 'vsts-task-lib/task';
 
-import {runGcloud, RunGcloudOptions} from './gcloud-build-task';
+import {runGcloud} from './gcloud-build-task';
 
+/**
+ * This is the entry point for the gcloud build task.
+ * @author JimWP@google.com (Jim Przybylinski)
+ */
 function run(): void {
-  const runOptions: RunGcloudOptions = {
-    // Check that gcloud exists.
-    gcloudTool : task.tool(task.which('gcloud', true)),
+  // Check that gcloud exists.
+  const gcloudPath = task.which('gcloud', true);
+  runGcloud({
+    gcloudTool : task.tool(gcloudPath),
 
     // Get inputs from GUI.
-    // The id of the GCP service endpoint to get the credentials from.
     endpoint : new Endpoint(task.getInput('serviceEndpoint', true)),
     command : task.getInput('command', true),
-    includeProjectParam : task.getBoolInput('includeProjectParam', true),
-    ignoreReturnCode : task.getBoolInput('ignoreReturnCode', true),
+    includeProjectParam : task.getBoolInput('includeProjectParam'),
+    ignoreReturnCode : task.getBoolInput('ignoreReturnCode'),
     outputVariable : task.getInput('outputVariable', false),
-  };
-  runGcloud(runOptions);
+  });
 }
 
 catchAll(run);

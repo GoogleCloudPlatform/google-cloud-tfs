@@ -13,73 +13,92 @@
 // limitations under the License.
 
 import * as assert from 'assert';
-import {fork, ForkOptions, spawn} from 'child_process';
-
-async function runTask(taskScript: string,
-                       env: {[key: string]: string}): Promise<string[]> {
-
-  const options: ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
-  const taskProcess = fork(taskScript, [], options);
-  const stdoutPromise = new Promise<string[]>((resolve) => {
-    const allChunks: string[] = [];
-    taskProcess.stdout.on('data', (chunk: string|Buffer) => allChunks.push(
-                                      chunk && chunk.toString().trim()));
-    taskProcess.stdout.on('close', () => resolve(allChunks));
-  });
-  return await new Promise<string[]>((resolve, reject) => {
-    taskProcess.on('exit', () => resolve(stdoutPromise));
-    taskProcess.on('error', reject);
-  });
-}
+import {spawn} from 'child_process';
+import {TaskResult} from './task-result';
 
 describe('functional tests', function(): void {
   this.timeout(0);
   let gcloudVersionPromise: Promise<string>;
-  let taskOutput: string[];
+  let taskOutput: TaskResult;
+  const endpointAuth = JSON.stringify({
+    parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
+  });
+  const variableName = 'outputVariable';
+  let env: {[variableName: string]: string};
 
   before('start gcloud version', () => {
     gcloudVersionPromise = new Promise<string>((resolve, reject) => {
-      const gcloudProcess = spawn('gcloud', [ 'version' ], {shell : true});
+      const gcloudProcess =
+          spawn('gcloud', [ 'version --format=json' ], {shell : true});
       gcloudProcess.on(
           'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
       gcloudProcess.on('error', reject);
     });
   });
 
-  afterEach('write task output on failure', function(): void {
-    if (this.currentTest.state === 'failed') {
-      console.log('--- task output ---');
-      console.log(taskOutput.join('\n---\n'));
-    }
-  });
-
-  it('should run gcloud version', async () => {
-    const variableName = 'outputVariable';
-    const endpointAuth = JSON.stringify({
-      parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
-    });
-    const env = {
+  beforeEach(() => {
+    env = {
       ['INPUT_serviceEndpoint'] : 'endpoint',
       ['ENDPOINT_AUTH_endpoint'] : endpointAuth,
-      ['INPUT_command'] : 'version',
+      ['INPUT_command'] : '-h',
       ['INPUT_includeProjectParam'] : 'false',
       ['INPUT_ignoreReturnCode'] : 'false',
       ['INPUT_outputVariable'] : variableName
     };
-
-    taskOutput = await runTask('run.js', env);
-    const gcloudVersionOutput = await gcloudVersionPromise;
-
-    const setVariableTag =
-        `##vso[task.setvariable variable=${variableName};secret=false;]`;
-    let isVariableSet = false;
-    taskOutput.forEach((chunk) => {
-      if (chunk.startsWith(setVariableTag)) {
-        assert.ok(chunk.endsWith(gcloudVersionOutput));
-        isVariableSet = true;
-      }
-    });
-    assert.ok(isVariableSet,
-              'The variable should be set as visible in the output.');
   });
+
+  afterEach('write task output on failure', function(): void {
+    if (this.currentTest.state === 'failed') {
+      taskOutput.logData();
+    }
+  });
+
+  it('should run gcloud version', async () => {
+    const gcloudVersionOutput = await gcloudVersionPromise;
+    env['INPUT_command'] = 'version --format=json';
+
+    taskOutput = await TaskResult.runTask('run.js', env);
+
+    assert.deepEqual(JSON.parse(gcloudVersionOutput),
+                     JSON.parse(taskOutput.getVariable(variableName)));
+  });
+
+  const requiredInputs = [ 'serviceEndpoint', 'command' ];
+  for (let input of requiredInputs) {
+    it(`should fail missing required input ${input}`, async () => {
+      env[`INPUT_${input}`] = undefined;
+
+      taskOutput = await TaskResult.runTask('run.js', env);
+      assert.equal(taskOutput.getStatus()[0], 'failed');
+
+    });
+  }
+
+  it(`should succeed missing optional input outputVariable`, async () => {
+    env[`INPUT_outputVariable`] = undefined;
+
+    taskOutput = await TaskResult.runTask('run.js', env);
+
+    assert.equal('succeeded', taskOutput.getStatus()[0]);
+    assert.equal(undefined, taskOutput.getVariable(variableName));
+  });
+
+  it('should fail for non-existant command', async () => {
+    env['INPUT_command'] = 'this does not exist';
+    env['INPUT_ignoreReturnCode'] = 'false';
+
+    taskOutput = await TaskResult.runTask('run.js', env);
+
+    assert.equal('failed', taskOutput.getStatus()[0]);
+  });
+
+  it('should succeed for non-existant command when ignoring return code',
+     async () => {
+       env['INPUT_command'] = 'this does not exist';
+       env['INPUT_ignoreReturnCode'] = 'true';
+
+       taskOutput = await TaskResult.runTask('run.js', env);
+
+       assert.equal('succeeded', taskOutput.getStatus()[0]);
+     });
 });

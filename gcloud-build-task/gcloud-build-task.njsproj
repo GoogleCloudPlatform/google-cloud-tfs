@@ -14,6 +14,8 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="manifest.json" />
+    <Content Include="resources.ts" />
+    <Content Include="Strings\resources.resjson\en-us\resources.resjson" />
     <Content Include="task.json" />
     <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
@@ -24,6 +26,9 @@
     <TypeScriptCompile Include="test\functional-tests.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\task-result.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\unit-tests.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -32,6 +37,9 @@
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Strings\" />
+    <Folder Include="Strings\resources.resjson\" />
+    <Folder Include="Strings\resources.resjson\en-us\" />
     <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />

@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
  */
 
 /**
- *The recursive definition of a kubernetes configuration file.
+ * The recursive definition of a kubernetes configuration file.
  */
 export interface KubeResource {
-  [key: string]:
-      KubeResource|string|boolean|number|KubeResource[]|string[]|number[];
+  [key: string]: KubeResource|string|boolean|number|KubeResource[]|string[]|
+      number[];
 }
 
 /**
@@ -31,11 +31,15 @@ export interface KubeResource {
 export interface Deployment extends KubeResource {
   metadata: {name: string};
   spec: {
-    replicas: number,
+    replicas: number;
     template: {
       spec: {
-        containers: {image: string}[],
-      },
-    },
+        containers: ImageContainer[];
+      };
+    };
   };
+}
+
+interface ImageContainer extends KubeResource {
+  image: string;
 }

@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved
+// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 
 import * as assert from 'assert';
 import * as gcloudAssert from 'common/asserts';
-import SuccessOption = gcloudAssert.SuccessOption
+import SuccessOption = gcloudAssert.SuccessOption;
 import * as path from 'path';
 import {MockTestRunner} from 'vsts-task-lib/mock-test';
 
@@ -29,11 +29,9 @@ import * as strings from '../string-constants';
 describe('deploy-gae task tests', () => {
 
   let runner: MockTestRunner;
-  beforeEach(function () {
-    runner = null;
-  });
+  beforeEach(() => { runner = null; });
 
-  afterEach(function () {
+  afterEach(function(): void {
     if (this.currentTest.state === 'failed') {
       console.log(runner.stdout);
       console.log('--------------------');
@@ -44,7 +42,7 @@ describe('deploy-gae task tests', () => {
   const deployPath = path.resolve('Test', 'deploy');
   const sourcePath = path.resolve('Test', 'source');
   const sourceYamlPath = path.join(sourcePath, 'app.yaml');
-  const options: SuccessOption = {invokeCount: 2};
+  const options: SuccessOption = {invokeCount : 2};
 
   it('should fail for no gcloud', () => {
     const testPath = path.join(__dirname, 'no-gcloud.js');
@@ -60,9 +58,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained(strings.oldGcloudVersionError),
-        'Should describe error');
+    assert(runner.stdOutContained(strings.oldGcloudVersionError),
+           'Should describe error');
   });
 
   it('should fail for gcloud with no beta', () => {
@@ -71,9 +68,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained(strings.noGcloudBetaError),
-        'Should describe error');
+    assert(runner.stdOutContained(strings.noGcloudBetaError),
+           'Should describe error');
   });
 
   it('should fail when gcloud fails', () => {
@@ -85,12 +81,10 @@ describe('deploy-gae task tests', () => {
     assert.equal(runner.invokedToolCount, 2, 'Should invoke tool twice.');
     assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
     assert.equal(runner.errorIssues.length, 1, 'Should have an error.');
-    assert(
-        runner.stdOutContained('[gcloud error]'),
-        'Should write stderr as issue.');
-    assert(
-        runner.stdOutContained('[gcloud output]'),
-        'Should capture gcloud output.');
+    assert(runner.stdOutContained('[gcloud error]'),
+           'Should write stderr as issue.');
+    assert(runner.stdOutContained('[gcloud output]'),
+           'Should capture gcloud output.');
     gcloudAssert.assertKeyFileWritten(runner);
   });
 
@@ -99,8 +93,8 @@ describe('deploy-gae task tests', () => {
     runner = new MockTestRunner(testPath);
     runner.run();
     gcloudAssert.assertGcloudSuccess(runner, options);
-    assert(
-        !runner.stdOutContained('###copying###'), 'Should not copy yaml file.');
+    assert(!runner.stdOutContained('###copying###'),
+           'Should not copy yaml file.');
   });
 
   it('should succeed using sourceFolder', () => {
@@ -110,9 +104,8 @@ describe('deploy-gae task tests', () => {
 
     gcloudAssert.assertGcloudSuccess(runner, options);
     assert(runner.stdOutContained('###copying###'), 'Should copy yaml file.');
-    assert(
-        runner.stdOutContained(`copying ${sourceYamlPath} to ${deployPath}`),
-        'Should copy yaml file.');
+    assert(runner.stdOutContained(`copying ${sourceYamlPath} to ${deployPath}`),
+           'Should copy yaml file.');
   });
 
   it('should succeed using storageBucket', () => {
@@ -153,9 +146,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: serviceEndpoint'),
-        'Should be looking for serviceEndpoint.');
+    assert(runner.stdOutContained('Input required: serviceEndpoint'),
+           'Should be looking for serviceEndpoint.');
   });
 
   it('should fail with missing deploymentPath', () => {
@@ -164,9 +156,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: deploymentPath'),
-        'Should be looking for deploymentPath.');
+    assert(runner.stdOutContained('Input required: deploymentPath'),
+           'Should be looking for deploymentPath.');
   });
 
   it('should fail with missing yamlFileName', () => {
@@ -175,9 +166,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: yamlFileName'),
-        'Should be looking for yamlFileName.');
+    assert(runner.stdOutContained('Input required: yamlFileName'),
+           'Should be looking for yamlFileName.');
   });
 
   it('should fail with missing copyYaml', () => {
@@ -186,9 +176,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: copyYaml'),
-        'Should be looking for copyYaml.');
+    assert(runner.stdOutContained('Input required: copyYaml'),
+           'Should be looking for copyYaml.');
   });
 
   it('should fail with missing sourceFolder', () => {
@@ -197,9 +186,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: sourceFolder'),
-        'Should be looking for sourceFolder.');
+    assert(runner.stdOutContained('Input required: sourceFolder'),
+           'Should be looking for sourceFolder.');
   });
 
   it('should fail with missing promote', () => {
@@ -208,9 +196,8 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: promote'),
-        'Should be looking for promote.');
+    assert(runner.stdOutContained('Input required: promote'),
+           'Should be looking for promote.');
   });
 
   it('should fail with missing stopPrevious', () => {
@@ -219,8 +206,7 @@ describe('deploy-gae task tests', () => {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(
-        runner.stdOutContained('Input required: stopPrevious'),
-        'Should be looking for stopPrevious.');
+    assert(runner.stdOutContained('Input required: stopPrevious'),
+           'Should be looking for stopPrevious.');
   });
 });

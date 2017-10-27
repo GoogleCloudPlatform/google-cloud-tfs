@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import 'mocha';
-import * as assert from 'assert';
-import * as path from 'path';
-import { MockTestRunner } from 'vsts-task-lib/mock-test';
-import * as gcloudAssert from 'common/asserts';
-import { successOption, gcloudImageOutput, gcloudError } from './test-constants';
 
-describe('container-build', function() {
+import * as assert from 'assert';
+import * as gcloudAssert from 'common/asserts';
+import * as path from 'path';
+import {MockTestRunner} from 'vsts-task-lib/mock-test';
+
+import {gcloudError, gcloudImageOutput, successOption} from './test-constants';
+
+describe('container-build', () => {
 
   let runner: MockTestRunner;
-  beforeEach(function () {
-    runner = null;
-  });
+  beforeEach(() => { runner = null; });
 
-  afterEach(function () {
+  afterEach(function(): void {
     if (this.currentTest.state === 'failed') {
       console.log(runner.stdout);
       console.log('--------------------');
@@ -56,12 +56,10 @@ describe('container-build', function() {
       assert.equal(runner.invokedToolCount, 1, 'Should invoke tool once.');
       assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
       assert.equal(runner.errorIssues.length, 1, 'Should have an error.');
-      assert(
-          runner.createdErrorIssue(gcloudError),
-          'Should write stderr as issue.');
-      assert(
-          runner.stdOutContained(gcloudImageOutput),
-          'Should capture gcloud output.');
+      assert(runner.createdErrorIssue(gcloudError),
+             'Should write stderr as issue.');
+      assert(runner.stdOutContained(gcloudImageOutput),
+             'Should capture gcloud output.');
       gcloudAssert.assertKeyFileWritten(runner);
     });
 
@@ -74,14 +72,14 @@ describe('container-build', function() {
     });
 
     it('should succeed using default buildConfigType and extra parameters',
-    () => {
-      const testPath = path.join(__dirname,
-        'using-default-config-all-params.js');
-      runner = new MockTestRunner(testPath);
-      runner.run();
+       () => {
+         const testPath =
+             path.join(__dirname, 'using-default-config-all-params.js');
+         runner = new MockTestRunner(testPath);
+         runner.run();
 
-      gcloudAssert.assertGcloudSuccess(runner, successOption);
-    });
+         gcloudAssert.assertGcloudSuccess(runner, successOption);
+       });
 
     it('should succeed using custom buildConfigType', () => {
       const testPath = path.join(__dirname, 'using-custom-config.js');
@@ -92,14 +90,14 @@ describe('container-build', function() {
     });
 
     it('should succeed using custom buildConfigType and extra parameters',
-    () => {
-      const testPath = path.join(__dirname,
-        'using-custom-config-all-params.js');
-      runner = new MockTestRunner(testPath);
-      runner.run();
+       () => {
+         const testPath =
+             path.join(__dirname, 'using-custom-config-all-params.js');
+         runner = new MockTestRunner(testPath);
+         runner.run();
 
-      gcloudAssert.assertGcloudSuccess(runner, successOption);
-    });
+         gcloudAssert.assertGcloudSuccess(runner, successOption);
+       });
 
     it('should succeed using docker buildConfigType', () => {
       const testPath = path.join(__dirname, 'using-dockerfile.js');
@@ -110,13 +108,14 @@ describe('container-build', function() {
     });
 
     it('should succeed using docker buildConfigType and extra parameters',
-    () => {
-      const testPath = path.join(__dirname, 'using-dockerfile-all-params.js');
-      runner = new MockTestRunner(testPath);
-      runner.run();
+       () => {
+         const testPath =
+             path.join(__dirname, 'using-dockerfile-all-params.js');
+         runner = new MockTestRunner(testPath);
+         runner.run();
 
-      gcloudAssert.assertGcloudSuccess(runner, successOption);
-    });
+         gcloudAssert.assertGcloudSuccess(runner, successOption);
+       });
   });
 
   it('should fail with missing service endpoint', () => {
@@ -125,9 +124,8 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-        runner.stdOutContained('Input required: serviceEndpoint'),
-        'Should be looking for serviceEndpoint.');
+    assert(runner.stdOutContained('Input required: serviceEndpoint'),
+           'Should be looking for serviceEndpoint.');
   });
 
   it('should fail with missing deployment path', () => {
@@ -136,9 +134,8 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-        runner.stdOutContained('Input required: deploymentPath'),
-        'Should be looking for deploymentPath.');
+    assert(runner.stdOutContained('Input required: deploymentPath'),
+           'Should be looking for deploymentPath.');
   });
 
   it('should fail with missing build config type', () => {
@@ -147,9 +144,8 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-        runner.stdOutContained('Input required: buildConfigType'),
-        'Should be looking for buildConfigType.');
+    assert(runner.stdOutContained('Input required: buildConfigType'),
+           'Should be looking for buildConfigType.');
   });
 
   it('should fail with missing registry', () => {
@@ -158,9 +154,8 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-      runner.stdOutContained('Input required: registry'),
-      'Should be looking for registry.');
+    assert(runner.stdOutContained('Input required: registry'),
+           'Should be looking for registry.');
   });
 
   it('should fail with missing image name', () => {
@@ -169,9 +164,8 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-        runner.stdOutContained('Input required: imageName'),
-        'Should be looking for imageName.');
+    assert(runner.stdOutContained('Input required: imageName'),
+           'Should be looking for imageName.');
   });
 
   it('should fail with missing cloud build file', () => {
@@ -180,8 +174,7 @@ describe('container-build', function() {
     runner.run();
 
     gcloudAssert.assertGcloudNotRun(runner);
-    assert(
-        runner.stdOutContained('Input required: cloudBuildFile'),
-        'Should be looking for cloudBuildFile.');
+    assert(runner.stdOutContained('Input required: cloudBuildFile'),
+           'Should be looking for cloudBuildFile.');
   });
 });

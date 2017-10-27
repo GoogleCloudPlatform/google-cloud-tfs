@@ -1,6 +1,6 @@
 image: Visual Studio 2015
 environment:
-  PATH: $(APPDATA)\npm;$(PATH)
+  PATH: $(APPDATA)\npm;C:\Python27;$(PATH)
   GCLOUD_SDK_INSTALLATION_NO_PROMPT: true
 
 install:

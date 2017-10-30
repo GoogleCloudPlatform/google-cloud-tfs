@@ -47,8 +47,10 @@ describe('functional tests', function(): void {
     };
   });
 
-  afterEach('write task output on failure', function(): void {
+  afterEach('write task output on failure', async function(): Promise<void> {
     if (this.currentTest.state === 'failed') {
+      console.log('--- gcloud version call ---');
+      console.log(await gcloudVersionPromise);
       taskOutput.logData();
     }
   });

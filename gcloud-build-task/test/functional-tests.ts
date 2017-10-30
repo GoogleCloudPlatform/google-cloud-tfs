@@ -39,7 +39,7 @@ describe('functional tests', function(): void {
 
   before('start gcloud info', () => {
     gcloudInfoPromise = new Promise<string>((resolve, reject) => {
-      const gcloudProcess = spawn('gcloud', [ 'info' ], {shell : true});
+      const gcloudProcess = spawn('gcloud', [ 'info', '--format=json' ], {shell : true});
       gcloudProcess.on(
           'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
       gcloudProcess.on('error', reject);
@@ -47,14 +47,16 @@ describe('functional tests', function(): void {
     ;
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     env = {
       ['INPUT_serviceEndpoint'] : 'endpoint',
       ['ENDPOINT_AUTH_endpoint'] : endpointAuth,
       ['INPUT_command'] : '-h',
       ['INPUT_includeProjectParam'] : 'false',
       ['INPUT_ignoreReturnCode'] : 'false',
-      ['INPUT_outputVariable'] : variableName
+      ['INPUT_outputVariable']: variableName,
+// ReSharper disable once InconsistentNaming
+      ['CLOUDSDK_PYTHON']: (JSON.parse(await gcloudInfoPromise) as {basic: {python_location: string}}).basic.python_location,
     };
   });
 

@@ -42,6 +42,7 @@ export function getDefaultExecOptions(): IExecOptions {
     env : {
       'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
       'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
+      'CLOUDSDK_PYTHON' : process.env['CLOUDSDK_PYTHON'],
     } as { [key: string]: string; },
     ignoreReturnCode : false,
     failOnStdErr : false,

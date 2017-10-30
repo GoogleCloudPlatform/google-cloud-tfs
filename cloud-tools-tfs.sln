@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "common", "common\common.njsproj", "{8ABCF5FE-EC92-4FFB-96E5-821790941E57}"
 EndProject
@@ -47,6 +47,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "deploy-gke-build-task", "de
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "install-cloud-sdk-build-task", "install-cloud-sdk-build-task\install-cloud-sdk-build-task.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "gcloud-build-task", "gcloud-build-task\gcloud-build-task.njsproj", "{7340F853-0853-43B8-9F85-C958E3152435}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,8 +79,15 @@ Global
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7340F853-0853-43B8-9F85-C958E3152435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7340F853-0853-43B8-9F85-C958E3152435}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7340F853-0853-43B8-9F85-C958E3152435}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7340F853-0853-43B8-9F85-C958E3152435}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8A0CA21-7F7F-484A-9619-D31D44FE8982}
 	EndGlobalSection
 EndGlobal

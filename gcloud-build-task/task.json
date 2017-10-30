@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "id": "78A617AD-4750-499D-9A42-3A8F3F0350AA",
+  "name": "gcloud-build-task",
+  "friendlyName": "Gcloud Command Line",
+  "author": "Google Cloud Tools",
+  "description": "Execute an arbitrary gcloud command.",
+  "helpMarkDown": "[List of gcloud commands](https://cloud.google.com/sdk/gcloud/reference/).",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Utility",
+  "visibility": [ "Build", "Release" ],
+  "demands": [],
+  "groups": [
+    {
+      "name": "advanced",
+      "displayName": "Advanced Options",
+      "isExpanded": false
+    }
+  ],
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "label": "GCP connection",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use."
+    },
+    {
+      "name": "command",
+      "label": "Command Line",
+      "type": "string",
+      "required": true,
+      "helpMarkDown": "The [gcloud command](https://cloud.google.com/sdk/gcloud/reference/) to run."
+    },
+    {
+      "name": "includeProjectParam",
+      "label": "Add project parameter",
+      "type": "boolean",
+      "required": true,
+      "helpMarkDown": "Include the `--project=<project-id>` parameter in the command line, taking the project id from the connection.",
+      "defaultValue": false
+    },
+    {
+      "name": "ignoreReturnCode",
+      "label": "Ignore Return Code",
+      "type": "boolean",
+      "required": true,
+      "helpMarkDown": "When checked, a non-zero return code from gcloud will not cause this task to fail.",
+      "defaultValue": false,
+      "groupName": "advanced"
+    },
+    {
+      "name": "outputVariable",
+      "label": "StdOut build variable",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "The name of the build variable in which to store the contents of the gcloud stdout.",
+      "groupName": "advanced"
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "run.js"
+    }
+  }
+}

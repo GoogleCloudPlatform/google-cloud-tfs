@@ -27,12 +27,12 @@ export class TaskResult {
   }
 
   static async runTask(taskScript: string,
-    env: { [key: string]: string }): Promise<TaskResult> {
-    for (const envVarKey in process.env) {
-      if (env[envVarKey] === undefined) {
-        env[envVarKey] = process.env[envVarKey];
+                       env: {[key: string]: string}): Promise<TaskResult> {
+    Object.keys(process.env).forEach((variableName) => {
+      if (env[variableName] === undefined) {
+        env[variableName] = process.env[variableName];
       }
-    }
+    });
     const options:
         ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
     const taskProcess = fork(taskScript, [], options);

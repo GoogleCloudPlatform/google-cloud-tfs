@@ -4,10 +4,9 @@ environment:
   GCLOUD_SDK_INSTALLATION_NO_PROMPT: true
 
 install:
-  - choco install python2
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
-  - gcloud version
+  - gcloud info
   - ps: Install-Product node 6.9.1
   - npm install typescript -global
   - npm install ts-node -global

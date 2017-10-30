@@ -19,7 +19,6 @@ import {TaskResult} from './task-result';
 describe('functional tests', function(): void {
   this.timeout(0);
   let gcloudVersionPromise: Promise<string>;
-  let gcloudInfoPromise: Promise<string>;
   let taskOutput: TaskResult;
   const endpointAuth = JSON.stringify({
     parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
@@ -37,16 +36,6 @@ describe('functional tests', function(): void {
     });
   });
 
-  before('start gcloud info', () => {
-    gcloudInfoPromise = new Promise<string>((resolve, reject) => {
-      const gcloudProcess = spawn('gcloud', [ 'info', '--format=json' ], {shell : true});
-      gcloudProcess.on(
-          'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
-      gcloudProcess.on('error', reject);
-    });
-    ;
-  });
-
   beforeEach(async () => {
     env = {
       ['INPUT_serviceEndpoint'] : 'endpoint',
@@ -54,18 +43,12 @@ describe('functional tests', function(): void {
       ['INPUT_command'] : '-h',
       ['INPUT_includeProjectParam'] : 'false',
       ['INPUT_ignoreReturnCode'] : 'false',
-      ['INPUT_outputVariable']: variableName,
-// ReSharper disable once InconsistentNaming
-      ['CLOUDSDK_PYTHON']: (JSON.parse(await gcloudInfoPromise) as {basic: {python_location: string}}).basic.python_location,
+      ['INPUT_outputVariable'] : variableName,
     };
   });
 
   afterEach('write task output on failure', async function(): Promise<void> {
     if (this.currentTest.state === 'failed') {
-      console.log('--- process.env ---');
-      console.log(process.env);
-      console.log('--- gcloud info call ---');
-      console.log(await gcloudInfoPromise);
       taskOutput.logData();
     }
   });

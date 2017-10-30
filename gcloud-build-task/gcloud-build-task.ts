@@ -45,9 +45,6 @@ export function runGcloud(runOptions: RunGcloudOptions): void {
     if (result.error) {
       task.setResult(TaskResult.Failed, result.error.message);
     } else if (result.code !== 0 && !runOptions.ignoreReturnCode) {
-      Object.keys(process.env)
-          .forEach((key) => task.debug(`${key}: ${process.env[key]}`));
-      task.debug(task.tool('gcloud').line('info').execSync().stdout);
       const message = `gcloud returned code ${result.code}`;
       task.setResult(TaskResult.Failed, message);
     } else {

@@ -36,14 +36,17 @@ import WritableStream = NodeJS.WritableStream;
  * @returns {IExecOptions} for gcloud calls.
  */
 export function getDefaultExecOptions(): IExecOptions {
+  const env: {[key: string]: string;} = {
+    'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
+    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
+  };
+  if (process.env['CLOUDSDK_PYTHON']) {
+    env['CLOUDSDK_PYTHON'] = process.env['CLOUDSDK_PYTHON'];
+  }
   return {
     windowsVerbatimArguments : true,
     errStream : process.stdout as WritableStream,
-    env : {
-      'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
-      'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
-      'CLOUDSDK_PYTHON' : process.env['CLOUDSDK_PYTHON'],
-    } as { [key: string]: string; },
+    env : env,
     ignoreReturnCode : false,
     failOnStdErr : false,
   } as IExecOptions;
@@ -179,19 +182,17 @@ export class KubeEndpoint extends Endpoint {
     try {
       const execOptions: IExecOptions = this.quietKubectlExecOptions;
       execOptions.env['KUBECONFIG'] = sc.kubeConfigPath;
-      const result = task.tool(task.which('gcloud'))
+      const result = task.tool(task.which('gcloud', true))
                          .line('container clusters get-credentials')
                          .arg(this.cluster)
                          .arg(`--zone=${this.zone}`)
                          .arg(this.projectParam)
                          .arg(KubeEndpoint.credentialParam)
                          .execSync(execOptions);
-      if (result.code !== 0) {
-        if (result.error) {
-          throw result.error;
-        } else {
-          throw new Error(result.stderr);
-        }
+      if (result.error) {
+        throw result.error;
+      } else if (result.code !== 0) {
+        throw new Error(result.stderr);
       }
     } catch (e) {
       super.clearCredentials();

@@ -14,16 +14,18 @@
 
 /**
  * @fileoverview This is a test script for the deploy-gae-build-task with
- *   a missing stop previous input.
+ *   normal inputs but setting stop previous to false.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 
-import {getDefaultAnswers, registerCommonMocks} from 'common/register-mocks';
+import * as mock from 'common/register-mocks';
 import * as path from 'path';
 import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
 import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+import * as strings from './test-strings';
+
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 const deployPath = path.resolve('Test', 'deploy');
@@ -33,10 +35,26 @@ runner.setInput('deploymentPath', deployPath);
 runner.setInput('yamlFileName', 'app.yaml');
 runner.setInput('copyYaml', 'false');
 runner.setInput('promote', 'true');
+runner.setInput('stopPrevious', 'false');
 
-const answers: TaskLibAnswers = getDefaultAnswers();
+const execString = [
+  mock.gcloudPath,
+  'beta app deploy --quiet --verbosity=info',
+  strings.yamlParam,
+  strings.credentialParam,
+  strings.projectParam,
+  strings.versionParam,
+  '--promote',
+  '--no-stop-previous-version',
+].join(' ');
+
+const answers: TaskLibAnswers = mock.getDefaultAnswers();
+answers.exec[execString] = {
+  'code': 0,
+  'stdout': '[gcloud output]'
+};
 
 runner.setAnswers(answers);
-registerCommonMocks(runner);
+mock.registerCommonMocks(runner);
 
 runner.run();

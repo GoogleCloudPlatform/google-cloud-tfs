@@ -20,5 +20,10 @@
     "mocha": "^3.2.0",
     "mockery": "^2.1.0",
     "typemoq": "^2.1.0"
+  },
+  "nyc": {
+    "exclude": [
+      "legacyTests/**"
+    ]
   }
 }

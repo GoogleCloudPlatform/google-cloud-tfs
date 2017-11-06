@@ -14,7 +14,7 @@
 
 /**
  * @fileoverview This is a test script for the deploy-gae-build-task with
- *   normal inputs but setting stop previous to false.
+ *   normal inputs but setting promote to false.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 
@@ -25,7 +25,7 @@ import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
 import * as strings from './test-strings';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 const deployPath = path.resolve('Test', 'deploy');
@@ -34,8 +34,7 @@ runner.setInput('serviceEndpoint', 'endpoint');
 runner.setInput('deploymentPath', deployPath);
 runner.setInput('yamlFileName', 'app.yaml');
 runner.setInput('copyYaml', 'false');
-runner.setInput('promote', 'true');
-runner.setInput('stopPrevious', 'false');
+runner.setInput('promote', 'false');
 
 const execString = [
   mock.gcloudPath,
@@ -44,8 +43,7 @@ const execString = [
   strings.credentialParam,
   strings.projectParam,
   strings.versionParam,
-  '--promote',
-  '--no-stop-previous-version',
+  '--no-promote',
 ].join(' ');
 
 const answers: TaskLibAnswers = mock.getDefaultAnswers();

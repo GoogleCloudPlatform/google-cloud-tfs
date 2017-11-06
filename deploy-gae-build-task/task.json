@@ -120,7 +120,7 @@
   ],
   "execution": {
     "Node": {
-      "target": "deploy-gae.js"
+      "target": "run.js"
     }
   }
 }

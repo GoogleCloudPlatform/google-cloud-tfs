@@ -40,13 +40,14 @@ export function getDefaultExecOptions(): IExecOptions {
     'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
     'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
   };
-  if (process.env['CLOUDSDK_PYTHON']) {
-    env['CLOUDSDK_PYTHON'] = process.env['CLOUDSDK_PYTHON'];
+  const cloudSdkPython = process.env['CLOUDSDK_PYTHON'];
+  if (cloudSdkPython) {
+    env['CLOUDSDK_PYTHON'] = cloudSdkPython;
   }
   return {
+    env,
     windowsVerbatimArguments : true,
     errStream : process.stdout as WritableStream,
-    env : env,
     ignoreReturnCode : false,
     failOnStdErr : false,
   } as IExecOptions;
@@ -61,7 +62,7 @@ export function getQuietExecOptions(): IExecOptions {
   // Hopefully replace this with execOptions.silent when that works.
   const protoWriter: PropertyDescriptorMap = {
     write : {
-      value(chunk: Buffer|string, encoding?: string, callback?: Function) :
+      value(chunk: Buffer|string, encoding?: string, callback?: Function):
           Boolean {
             let chunkString: string;
             if (encoding && chunk instanceof Buffer) {

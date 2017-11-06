@@ -14,7 +14,7 @@
 
 /**
  * @fileoverview This is a test script for the deploy-gae-build-task with
- *   normal inputs.
+ *   a missing stop previous input.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 
@@ -23,7 +23,7 @@ import * as path from 'path';
 import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
 import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 const deployPath = path.resolve('Test', 'deploy');
@@ -31,12 +31,12 @@ const deployPath = path.resolve('Test', 'deploy');
 runner.setInput('serviceEndpoint', 'endpoint');
 runner.setInput('deploymentPath', deployPath);
 runner.setInput('yamlFileName', 'app.yaml');
-runner.setInput('copyYaml', 'true');
+runner.setInput('copyYaml', 'false');
 runner.setInput('promote', 'true');
-runner.setInput('stopPrevious', 'true');
 
 const answers: TaskLibAnswers = getDefaultAnswers();
 
 runner.setAnswers(answers);
 registerCommonMocks(runner);
+
 runner.run();

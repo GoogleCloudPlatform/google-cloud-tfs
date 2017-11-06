@@ -22,30 +22,42 @@
     <Content Include="tsconfig.json" />
     <Content Include="README.md" />
     <TypeScriptCompile Include="deploy-gae.ts" />
+    <TypeScriptCompile Include="legacyTests\legacy-tests.ts">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="string-constants.ts" />
-    <TypeScriptCompile Include="test\missing-copy-yaml.ts" />
-    <TypeScriptCompile Include="test\missing-yaml-file-name.ts" />
-    <TypeScriptCompile Include="test\missing-source-folder.ts" />
-    <TypeScriptCompile Include="test\no-gcloud-beta.ts" />
-    <TypeScriptCompile Include="test\old-gcloud.ts" />
-    <TypeScriptCompile Include="test\test-strings.ts" />
-    <TypeScriptCompile Include="test\using-source-folder.ts" />
-    <TypeScriptCompile Include="test\gcloud-fails.ts" />
-    <TypeScriptCompile Include="test\missing-stop-previous.ts" />
-    <TypeScriptCompile Include="test\deploy-app.ts" />
-    <TypeScriptCompile Include="test\missing-promote.ts" />
-    <TypeScriptCompile Include="test\using-promote-false.ts" />
-    <TypeScriptCompile Include="test\using-version.ts" />
-    <TypeScriptCompile Include="test\using-storage-bucket.ts" />
-    <TypeScriptCompile Include="test\missing-deployment-path.ts" />
-    <TypeScriptCompile Include="test\missing-service-endpoint.ts" />
-    <TypeScriptCompile Include="test\using-stop-previous-false.ts" />
-    <TypeScriptCompile Include="test\no-gcloud.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-copy-yaml.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-yaml-file-name.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-source-folder.ts" />
+    <TypeScriptCompile Include="legacyTests\no-gcloud-beta.ts" />
+    <TypeScriptCompile Include="legacyTests\old-gcloud.ts" />
+    <TypeScriptCompile Include="legacyTests\test-strings.ts" />
+    <TypeScriptCompile Include="legacyTests\using-source-folder.ts" />
+    <TypeScriptCompile Include="legacyTests\gcloud-fails.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-stop-previous.ts" />
+    <TypeScriptCompile Include="legacyTests\deploy-app.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-promote.ts" />
+    <TypeScriptCompile Include="legacyTests\using-promote-false.ts" />
+    <TypeScriptCompile Include="legacyTests\using-version.ts" />
+    <TypeScriptCompile Include="legacyTests\using-storage-bucket.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-deployment-path.ts" />
+    <TypeScriptCompile Include="legacyTests\missing-service-endpoint.ts" />
+    <TypeScriptCompile Include="legacyTests\using-stop-previous-false.ts" />
+    <TypeScriptCompile Include="legacyTests\no-gcloud.ts" />
+    <TypeScriptCompile Include="run.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\unit-tests.ts">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\_suite.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="legacyTests\" />
     <Folder Include="test\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />

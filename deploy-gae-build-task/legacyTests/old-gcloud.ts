@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -14,28 +14,39 @@
 
 /**
  * @fileoverview This is a test script for the deploy-gae-build-task with
- *   normal inputs.
+ *   an old version of gcloud.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 
-import {getDefaultAnswers, registerCommonMocks} from 'common/register-mocks';
+import * as mock from 'common/register-mocks';
 import * as path from 'path';
-import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
+import {
+  TaskLibAnswerExecResult,
+  TaskLibAnswers
+} from 'vsts-task-lib/mock-answer';
 import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 const deployPath = path.resolve('Test', 'deploy');
-
 runner.setInput('serviceEndpoint', 'endpoint');
 runner.setInput('deploymentPath', deployPath);
 runner.setInput('yamlFileName', 'app.yaml');
+runner.setInput('copyYaml', 'false');
 runner.setInput('promote', 'true');
 runner.setInput('stopPrevious', 'true');
 
-const answers: TaskLibAnswers = getDefaultAnswers();
+const answers: TaskLibAnswers = mock.getDefaultAnswers();
+answers.exec[mock.gcloudVersionExecString] = {
+  code : 0,
+  stdout : '{\n' +
+               '    "Google Cloud SDK": "145.0.0",\n' +
+               '    "beta": "2016.01.12"\n' +
+               '}\n',
+} as TaskLibAnswerExecResult;
+
 
 runner.setAnswers(answers);
-registerCommonMocks(runner);
+mock.registerCommonMocks(runner);
 runner.run();

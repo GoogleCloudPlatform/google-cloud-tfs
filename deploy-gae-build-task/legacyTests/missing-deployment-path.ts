@@ -23,7 +23,7 @@ import * as path from 'path';
 import {TaskLibAnswers} from 'vsts-task-lib/mock-answer';
 import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 runner.setInput('serviceEndpoint', 'endpoint');

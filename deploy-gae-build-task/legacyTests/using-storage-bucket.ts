@@ -14,7 +14,7 @@
 
 /**
  * @fileoverview This is a test script for the deploy-gae-build-task with
- *   normal inputs.
+ *   normal inputs and setting a storage bucket.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 
@@ -25,17 +25,17 @@ import {TaskMockRunner} from 'vsts-task-lib/mock-run';
 
 import * as strings from './test-strings';
 
-const taskPath = path.join(__dirname, '..', 'deploy-gae.js');
+const taskPath = path.join(__dirname, '..', 'run.js');
 const runner = new TaskMockRunner(taskPath);
 
 const deployPath = path.resolve('Test', 'deploy');
-const sourcePath = path.resolve('Test', 'source');
+
 
 runner.setInput('serviceEndpoint', 'endpoint');
 runner.setInput('deploymentPath', deployPath);
 runner.setInput('yamlFileName', 'app.yaml');
-runner.setInput('copyYaml', 'true');
-runner.setInput('sourceFolder', sourcePath);
+runner.setInput('copyYaml', 'false');
+runner.setInput('storageBucket', 'bucketname');
 runner.setInput('promote', 'true');
 runner.setInput('stopPrevious', 'true');
 
@@ -46,6 +46,7 @@ const execString = [
   strings.credentialParam,
   strings.projectParam,
   strings.versionParam,
+  '--bucket="bucketname"',
   '--promote',
   '--stop-previous-version',
 ].join(' ');
@@ -58,4 +59,5 @@ answers.exec[execString] = {
 
 runner.setAnswers(answers);
 mock.registerCommonMocks(runner);
+
 runner.run();

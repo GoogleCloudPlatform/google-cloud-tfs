@@ -52,7 +52,7 @@ export async function deployGae({
   endpoint,
   promote,
   stopPrevious,
-  version = isoNowString()
+  version
 }: RunOptions): Promise<void> {
 
   // Check that gcloud exists.
@@ -78,7 +78,7 @@ export async function deployGae({
       task.tool(gcloudPath)
           .line('beta app deploy --quiet --verbosity=info')
           .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
-          .argIf(version, `--version="${version}"`)
+          .arg(`--version="${version || isoNowString()}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')
           .argIf(!promote, '--no-promote')

@@ -36,14 +36,18 @@ import WritableStream = NodeJS.WritableStream;
  * @returns {IExecOptions} for gcloud calls.
  */
 export function getDefaultExecOptions(): IExecOptions {
+  const env: {[key: string]: string;} = {
+    'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
+    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
+  };
+  const cloudSdkPython = process.env['CLOUDSDK_PYTHON'];
+  if (cloudSdkPython) {
+    env['CLOUDSDK_PYTHON'] = cloudSdkPython;
+  }
   return {
+    env,
     windowsVerbatimArguments : true,
     errStream : process.stdout as WritableStream,
-    env : {
-      'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
-      'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
-      'CLOUDSDK_PYTHON' : process.env['CLOUDSDK_PYTHON'],
-    } as { [key: string]: string; },
     ignoreReturnCode : false,
     failOnStdErr : false,
   } as IExecOptions;
@@ -58,7 +62,7 @@ export function getQuietExecOptions(): IExecOptions {
   // Hopefully replace this with execOptions.silent when that works.
   const protoWriter: PropertyDescriptorMap = {
     write : {
-      value(chunk: Buffer|string, encoding?: string, callback?: Function) :
+      value(chunk: Buffer|string, encoding?: string, callback?: Function):
           Boolean {
             let chunkString: string;
             if (encoding && chunk instanceof Buffer) {

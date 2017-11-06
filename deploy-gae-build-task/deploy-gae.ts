@@ -34,7 +34,7 @@ import TaskResult = task.TaskResult;
 export interface RunOptions {
   deploymentPath: string;
   yamlFileName: string;
-  versionInput?: string;
+  version?: string;
   endpoint: Endpoint;
   storageBucket?: string;
   copyYaml: boolean;
@@ -43,20 +43,25 @@ export interface RunOptions {
   stopPrevious?: boolean;
 }
 
-export async function deployGae(runOptions: RunOptions): Promise<void> {
+export async function deployGae({
+  deploymentPath,
+  yamlFileName,
+  storageBucket,
+  copyYaml,
+  yamlSource,
+  endpoint,
+  promote,
+  stopPrevious,
+  version = isoNowString()
+}: RunOptions): Promise<void> {
 
   // Check that gcloud exists.
   const gcloudPath = task.which('gcloud', true);
   checkGcloudVersion(gcloudPath);
 
-  const deploymentPath = runOptions.deploymentPath;
-  const yamlFileName = runOptions.yamlFileName;
-  const storageBucket = runOptions.storageBucket;
-
   // Move YAML.
   const yamlPath = path.join(deploymentPath, yamlFileName);
-  if (runOptions.copyYaml) {
-    const yamlSource = runOptions.yamlSource;
+  if (copyYaml) {
     const appendedSource = path.join(yamlSource, yamlFileName);
     if (yamlSource.endsWith(yamlFileName) && !task.exist(appendedSource)) {
       task.cp(yamlSource, deploymentPath);
@@ -65,24 +70,20 @@ export async function deployGae(runOptions: RunOptions): Promise<void> {
     }
   }
 
-  // Set version
-  const version = runOptions.versionInput || isoNowString();
-
-  const endpoint = runOptions.endpoint;
   // Set gcloud arguments.
   const projectArg = endpoint.projectParam;
   const credentialArg = Endpoint.credentialParam;
 
   const gcloud: ToolRunner =
-    task.tool(gcloudPath)
-      .line('beta app deploy --quiet --verbosity=info')
-      .arg([`"${yamlPath}"`, credentialArg, projectArg])
-      .argIf(version, `--version="${version}"`)
-      .argIf(storageBucket, `--bucket="${storageBucket}"`)
-      .argIf(runOptions.promote, '--promote')
-      .argIf(!runOptions.promote, '--no-promote')
-      .argIf(runOptions.promote && runOptions.stopPrevious, '--stop-previous-version')
-      .argIf(runOptions.promote && !runOptions.stopPrevious, '--no-stop-previous-version');
+      task.tool(gcloudPath)
+          .line('beta app deploy --quiet --verbosity=info')
+          .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
+          .argIf(version, `--version="${version}"`)
+          .argIf(storageBucket, `--bucket="${storageBucket}"`)
+          .argIf(promote, '--promote')
+          .argIf(!promote, '--no-promote')
+          .argIf(promote && stopPrevious, '--stop-previous-version')
+          .argIf(promote && !stopPrevious, '--no-stop-previous-version');
 
   const execOptions: IExecOptions = exec.getDefaultExecOptions();
 
@@ -93,7 +94,6 @@ export async function deployGae(runOptions: RunOptions): Promise<void> {
     task.setResult(TaskResult.Succeeded, 'Deployment succeeded');
   });
 }
-
 
 function checkGcloudVersion(gcloudPath: string): void {
   interface GcloudVersion {

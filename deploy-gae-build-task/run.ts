@@ -47,7 +47,7 @@ async function run(): Promise<void> {
   // The storage bucket to send to the --bucket parameter.
   const storageBucket = task.getInput('storageBucket', false);
   // The version to deploy.
-  const versionInput = task.getInput('version', false);
+  const version = task.getInput('version', false);
   // Toggle between --promote and --no-promote parameters.
   const promote = task.getBoolInput('promote', true);
   // Toggle between --stop-previous-version and --no-stop-previous-version.
@@ -61,7 +61,7 @@ async function run(): Promise<void> {
     copyYaml,
     yamlSource,
     storageBucket,
-    versionInput,
+    version,
     promote,
     stopPrevious,
     deploymentPath,

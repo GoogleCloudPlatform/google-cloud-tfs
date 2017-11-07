@@ -15,34 +15,46 @@
 import * as assert from 'assert';
 import {spawn} from 'child_process';
 import {TaskResult} from 'common/task-result';
+import * as fs from 'fs';
+import * as path from 'path';
 
-describe('functional tests', function(): void {
+const credentialFile =
+    path.join('test', 'resources', 'Cloud Tools for TFS Testing.json');
+const describeWithCredentialFile =
+    fs.existsSync(credentialFile) ? describe : describe.skip;
+describeWithCredentialFile('functional tests', function(): void {
   this.timeout(0);
-  let gcloudVersionPromise: Promise<string>;
+  let kubectlVersionPromise: Promise<string>;
   let taskOutput: TaskResult;
-  const endpointAuth = JSON.stringify({
-    parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
-  });
+  let endpointAuth: string;
   const variableName = 'outputVariable';
   let env: {[variableName: string]: string};
 
-  before('start gcloud version', () => {
-    gcloudVersionPromise = new Promise<string>((resolve, reject) => {
-      const gcloudProcess =
-          spawn('gcloud', [ 'version --format=json' ], {shell : true});
-      gcloudProcess.on(
-          'exit', () => resolve(gcloudProcess.stdout.read().toString().trim()));
-      gcloudProcess.on('error', reject);
+  before('start kubectl version', () => {
+    endpointAuth = JSON.stringify(
+      {
+        parameters: {
+          certificate: fs.readFileSync(credentialFile).toString(),
+        },
+      });
+    kubectlVersionPromise = new Promise<string>((resolve, reject) => {
+      const kubectlProcess =
+          spawn('kubectl', [ 'version --output=json' ], {shell : true});
+      kubectlProcess.on(
+          'exit',
+          () => resolve(kubectlProcess.stdout.read().toString().trim()));
+      kubectlProcess.on('error', reject);
     });
   });
 
   beforeEach(async () => {
-    taskOutput = null;
+    taskOutput = undefined;
     env = {
       ['INPUT_serviceEndpoint'] : 'endpoint',
       ['ENDPOINT_AUTH_endpoint'] : endpointAuth,
       ['INPUT_command'] : '-h',
-      ['INPUT_includeProjectParam'] : 'false',
+      ['INPUT_cluster'] : 'test-cluster',
+      ['INPUT_zone'] : 'us-central1-a',
       ['INPUT_ignoreReturnCode'] : 'false',
       ['INPUT_outputVariable'] : variableName,
     };
@@ -54,9 +66,10 @@ describe('functional tests', function(): void {
     }
   });
 
-  it('should run gcloud version', async () => {
-    const gcloudVersionOutput = await gcloudVersionPromise;
-    env['INPUT_command'] = 'version --format=json';
+  it('should run kubectl version', async () => {
+    const gcloudVersionOutput = await kubectlVersionPromise;
+    env['INPUT_command'] = 'version --output=json';
+    env['INPUT_outputVariable'] = variableName,
 
     taskOutput = await TaskResult.runTask('run.js', env);
 
@@ -64,7 +77,7 @@ describe('functional tests', function(): void {
                      JSON.parse(taskOutput.getVariable(variableName)));
   });
 
-  const requiredInputs = [ 'serviceEndpoint', 'command' ];
+  const requiredInputs = [ 'serviceEndpoint', 'command', 'cluster', 'zone' ];
   for (let input of requiredInputs) {
     it(`should fail missing required input ${input}`, async () => {
       env[`INPUT_${input}`] = undefined;
@@ -80,8 +93,8 @@ describe('functional tests', function(): void {
 
     taskOutput = await TaskResult.runTask('run.js', env);
 
-    assert.equal('succeeded', taskOutput.getStatus()[0]);
-    assert.equal(undefined, taskOutput.getVariable(variableName));
+    assert.equal(taskOutput.getStatus()[0], 'succeeded');
+    assert.equal(taskOutput.getVariable(variableName), undefined);
   });
 
   it('should fail for non-existant command', async () => {
@@ -90,7 +103,7 @@ describe('functional tests', function(): void {
 
     taskOutput = await TaskResult.runTask('run.js', env);
 
-    assert.equal('failed', taskOutput.getStatus()[0]);
+    assert.equal(taskOutput.getStatus()[0], 'failed');
   });
 
   it('should succeed for non-existant command when ignoring return code',
@@ -100,6 +113,6 @@ describe('functional tests', function(): void {
 
        taskOutput = await TaskResult.runTask('run.js', env);
 
-       assert.equal('succeeded', taskOutput.getStatus()[0]);
+       assert.equal(taskOutput.getStatus()[0], 'succeeded');
      });
 });

@@ -183,19 +183,17 @@ export class KubeEndpoint extends Endpoint {
     try {
       const execOptions: IExecOptions = this.quietKubectlExecOptions;
       execOptions.env['KUBECONFIG'] = sc.kubeConfigPath;
-      const result = task.tool(task.which('gcloud'))
+      const result = task.tool(task.which('gcloud', true))
                          .line('container clusters get-credentials')
                          .arg(this.cluster)
                          .arg(`--zone=${this.zone}`)
                          .arg(this.projectParam)
                          .arg(KubeEndpoint.credentialParam)
                          .execSync(execOptions);
-      if (result.code !== 0) {
-        if (result.error) {
-          throw result.error;
-        } else {
-          throw new Error(result.stderr);
-        }
+      if (result.error) {
+        throw result.error;
+      } else if (result.code !== 0) {
+        throw new Error(result.stderr);
       }
     } catch (e) {
       super.clearCredentials();

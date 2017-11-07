@@ -7,6 +7,7 @@ environment:
 install:
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
+  - gcloud components install kubectl --quiet
   - ps: Install-Product node 6.9.1
   - npm install typescript -global
   - npm install ts-node -global

@@ -22,29 +22,35 @@ const credentialFile =
     path.join('test', 'resources', 'Cloud Tools for TFS Testing.json');
 const describeWithCredentialFile =
     fs.existsSync(credentialFile) ? describe : describe.skip;
+
+interface KubectlVersion {
+  clientVersion: {major: string; minor : string;};
+  serverVersion: {major: string; minor : string;};
+}
+
 describeWithCredentialFile('functional tests', function(): void {
   this.timeout(0);
-  let kubectlVersionPromise: Promise<string>;
+  let kubectlVersionPromise: Promise<KubectlVersion>;
   let taskOutput: TaskResult;
   let endpointAuth: string;
   const variableName = 'outputVariable';
   let env: {[variableName: string]: string};
 
   before('start kubectl version', () => {
-    endpointAuth = JSON.stringify(
-      {
-        parameters: {
-          certificate: fs.readFileSync(credentialFile).toString(),
-        },
-      });
-    kubectlVersionPromise = new Promise<string>((resolve, reject) => {
-      const kubectlProcess =
-          spawn('kubectl', [ 'version --output=json' ], {shell : true});
-      kubectlProcess.on(
-          'exit',
-          () => resolve(kubectlProcess.stdout.read().toString().trim()));
-      kubectlProcess.on('error', reject);
+    endpointAuth = JSON.stringify({
+      parameters : {
+        certificate : fs.readFileSync(credentialFile).toString(),
+      },
     });
+    kubectlVersionPromise =
+        new Promise<string>((resolve, reject) => {
+          const kubectlProcess =
+              spawn('kubectl', [ 'version --output=json' ], {shell : true});
+          kubectlProcess.on(
+              'exit',
+              () => resolve(kubectlProcess.stdout.read().toString().trim()));
+          kubectlProcess.on('error', reject);
+        }).then((stdoutString) => JSON.parse(stdoutString) as KubectlVersion);
   });
 
   beforeEach(async () => {
@@ -67,14 +73,22 @@ describeWithCredentialFile('functional tests', function(): void {
   });
 
   it('should run kubectl version', async () => {
-    const gcloudVersionOutput = await kubectlVersionPromise;
     env['INPUT_command'] = 'version --output=json';
     env['INPUT_outputVariable'] = variableName,
 
     taskOutput = await TaskResult.runTask('run.js', env);
 
-    assert.deepEqual(JSON.parse(gcloudVersionOutput),
-                     JSON.parse(taskOutput.getVariable(variableName)));
+    const variableValue =
+        JSON.parse(taskOutput.getVariable(variableName)) as KubectlVersion;
+    const kubectlVersionOutput = await kubectlVersionPromise;
+    assert.equal(variableValue.clientVersion.major,
+                 kubectlVersionOutput.clientVersion.major);
+    assert.equal(variableValue.clientVersion.minor,
+                 kubectlVersionOutput.clientVersion.minor);
+    assert.equal(variableValue.serverVersion.major,
+                 kubectlVersionOutput.serverVersion.major);
+    assert.equal(variableValue.serverVersion.minor,
+                 kubectlVersionOutput.serverVersion.minor);
   });
 
   const requiredInputs = [ 'serviceEndpoint', 'command', 'cluster', 'zone' ];

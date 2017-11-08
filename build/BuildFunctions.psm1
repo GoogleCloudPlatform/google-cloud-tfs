@@ -99,7 +99,7 @@ function Invoke-CompileTask($task) {
     try {
         # Common module changes as part of development.
         # Update the common module every time.
-        npm install ../common --loglevel warning | Out-Null
+        npm install ../common --loglevel warn | Out-Null
 
         Write-Verbose "Running: tsc"
         tsc

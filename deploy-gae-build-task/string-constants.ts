@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const noGcloudBetaError = 'Deploy to Google App Engine requires the ' +
-  'Google Cloud SDK beta commands.';
-export const oldGcloudVersionError = 'Deploy to Google App Engine requires ' +
-  'at least Google Cloud SDK version 146.0.0.';
+export const oldGcloudVersionError =
+    'Deploy to Google App Engine requires ' +
+    'at least Google Cloud SDK version 174.0.0.';

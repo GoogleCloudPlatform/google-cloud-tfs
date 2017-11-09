@@ -41,6 +41,7 @@ export interface RunOptions {
   yamlSource?: string;
   promote: boolean;
   stopPrevious?: boolean;
+  verbosity: string;
 }
 
 export async function deployGae({
@@ -52,7 +53,8 @@ export async function deployGae({
   endpoint,
   promote,
   stopPrevious,
-  version
+  version,
+  verbosity,
 }: RunOptions): Promise<void> {
 
   // Check that gcloud exists.
@@ -71,13 +73,14 @@ export async function deployGae({
   }
 
   // Set gcloud arguments.
-  const projectArg = endpoint.projectParam;
-  const credentialArg = Endpoint.credentialParam;
 
   const gcloud: ToolRunner =
       task.tool(gcloudPath)
-          .line('beta app deploy --quiet --verbosity=info')
-          .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
+          .line('beta app deploy --quiet')
+          .arg(`--verbosity=${verbosity}`)
+          .arg(`"${yamlPath}"`)
+          .arg(Endpoint.credentialParam)
+          .arg(endpoint.projectParam)
           .arg(`--version="${version || isoNowString()}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')

@@ -45,6 +45,7 @@
     {
       "name": "yamlFileName",
       "type": "pickList",
+      "label": "YAML file name",
       "options": {
         "app.yaml": "app.yaml",
         "index.yaml": "index.yaml",
@@ -56,10 +57,25 @@
       "properties": {
         "EditableOptions": "True"
       },
-      "label": "YAML file name",
       "defaultValue": "app.yaml",
       "required": true,
       "helpMarkDown": "The name of the [YAML configuration file](https://cloud.google.com/appengine/docs/flexible/dotnet/configuration-files) to deploy. [app.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/configuring-your-app-with-app-yaml) or a custom filename defines the deployment of an app. [cron.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/scheduling-jobs-with-cron-yaml), [dispatch.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/how-requests-are-routed#routing_with_a_dispatch_file), [dos.yaml](https://cloud.google.com/appengine/docs/standard/python/config/dosref), [index.yaml](https://cloud.google.com/appengine/docs/flexible/go/configuring-datastore-indexes-with-index-yaml) and [queue.yaml](https://cloud.google.com/appengine/docs/standard/python/config/queueref) configure your app."
+    },
+    {
+      "name": "deployFromImage",
+      "type": "boolean",
+      "label": "Deploy Existing Image",
+      "defaultValue": false,
+      "helpMarkDown": "Deploy an existing docker image stored in [Google Container Registry](https://cloud.google.com/container-registry)."
+    },
+    {
+      "name": "imageUrl",
+      "type": "string",
+      "label": "Image URL",
+      "defaultValue": "gcr.io/$PROJECTID/image-name:image-tag",
+      "required": true,
+      "visibleRule": "deployFromImage = true",
+      "helpMarkDown": "The URL of the image to deploy. Must be from one of the valid [gcr hostnames](https://cloud.google.com/container-registry/docs/pushing-and-pulling#choosing_a_registry_name). Use $PROJECTID to use the project id defined by the connection."
     },
     {
       "name": "copyYaml",
@@ -68,6 +84,7 @@
       "defaultValue": false,
       "required": true,
       "groupName": "copy",
+      "visibleRule": "deployFromImage = false",
       "helpMarkDown": "Select this option if you need the task to copy your YAML file to your deployment source folder."
     },
     {
@@ -77,7 +94,7 @@
       "defaultValue": ".",
       "required": true,
       "groupName": "copy",
-      "visibleRule": "copyYaml = true",
+      "visibleRule": "copyYaml = true && deployFromImage = false",
       "helpMarkDown": "The path to source folder to copy your YAML file from."
     },
     {

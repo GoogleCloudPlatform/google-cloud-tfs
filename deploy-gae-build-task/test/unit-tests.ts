@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as commonExecTypeDef from 'common/exec-options';
+import * as execOptionsTypeDef from 'common/exec-options';
 import * as mockery from 'mockery';
 import * as path from 'path';
 import * as Q from 'q';
@@ -24,7 +24,7 @@ import * as deployGaeTypeDef from '../deploy-gae';
 
 describe('unit tests', () => {
   // Modules to import after mockery setup.
-  let execOptions: typeof commonExecTypeDef;
+  let execOptions: typeof execOptionsTypeDef;
   let tr: typeof trTypeDef;
   let deployGae: typeof deployGaeTypeDef;
   let task: typeof taskTypeDef;
@@ -32,13 +32,13 @@ describe('unit tests', () => {
   // Mocks used in every test.
   let taskLibMock: IMock<typeof taskTypeDef>;
   let deployToolMock: IMock<trTypeDef.ToolRunner>;
-  let endpointMock: IMock<commonExecTypeDef.Endpoint>;
+  let endpointMock: IMock<execOptionsTypeDef.Endpoint>;
   let checkVersionToolMock: IMock<trTypeDef.ToolRunner>;
 
   // Constants used by tests.
   const auth: taskTypeDef.EndpointAuthorization = {
     parameters : {
-      certificate : '{"project_id": "projectId"}',
+      certificate : '{"project_id": "project-id"}',
     },
     scheme : '',
   };
@@ -84,7 +84,7 @@ describe('unit tests', () => {
     };
 
     checkVersionToolMock =
-        Mock.ofType<trTypeDef.ToolRunner>(null, MockBehavior.Strict);
+        Mock.ofType<trTypeDef.ToolRunner>(undefined, MockBehavior.Strict);
     checkVersionToolMock.setup(t => t.line(It.isAny()))
         .returns(() => checkVersionToolMock.object);
     checkVersionToolMock.setup(t => t.execSync(It.isAny()))
@@ -107,6 +107,7 @@ describe('unit tests', () => {
     endpointMock.setup(e => e.initCredentials());
     endpointMock.setup(e => e.clearCredentials());
     endpointMock.setup(e => e.projectParam).callBase();
+    endpointMock.setup(e => e.projectId).callBase();
 
     execResult = {
       stdout,
@@ -116,7 +117,7 @@ describe('unit tests', () => {
     };
 
     deployToolMock =
-        Mock.ofType<trTypeDef.ToolRunner>(null, MockBehavior.Strict);
+        Mock.ofType<trTypeDef.ToolRunner>(undefined, MockBehavior.Strict);
     deployToolMock.setup(r => r.line(It.isAny()))
         .returns(() => deployToolMock.object);
     deployToolMock.setup(r => r.arg(It.isAny()))
@@ -126,14 +127,11 @@ describe('unit tests', () => {
     deployToolMock.setup(t => t.execSync(It.isAny())).returns(() => execResult);
     deployToolMock.setup(t => t.exec((It.isAny())))
         .returns(() => Q.resolve(execResult.code));
-    const p = new Promise<number>((r) => r(4));
-    p.then((i) => typeof i === 'number');
 
     runOptions = {
       endpoint : endpointMock.object,
       yamlFileName : 'app.yaml',
       deploymentPath : 'c:/deploy/path',
-      copyYaml : false,
       promote : false,
     };
   });
@@ -141,12 +139,15 @@ describe('unit tests', () => {
   it('should succeed', async () => {
     await deployGae.deployGae(runOptions);
 
+    deployToolMock.verify(
+        t => t.argIf(undefined,
+                     It.is<string>(arg => arg.includes('--image-url'))),
+        Times.once());
     taskLibMock.verify(t => t.setResult(task.TaskResult.Succeeded, It.isAny()),
                        Times.once());
   });
 
   it('should copy yaml from directory', async () => {
-    runOptions.copyYaml = true;
     runOptions.yamlSource = 'c:/source/path';
     runOptions.yamlFileName = 'app.yaml';
     const appendedSource =
@@ -162,12 +163,13 @@ describe('unit tests', () => {
   });
 
   it('should copy yaml from file', async () => {
-    runOptions.copyYaml = true;
     runOptions.yamlSource = 'c:/source/path/app.yaml';
     runOptions.yamlFileName = 'app.yaml';
-    taskLibMock.setup(t => t.exist(It.isAny())).returns(() => false);
+    const appendedSource =
+        path.join(runOptions.yamlSource, runOptions.yamlFileName);
+    taskLibMock.setup(t => t.exist(appendedSource)).returns(() => false);
     taskLibMock
-        .setup(t => t.cp(runOptions.yamlSource, runOptions.deploymentPath))
+        .setup(t => t.cp(runOptions.yamlSource!, runOptions.deploymentPath))
         .verifiable();
 
     await deployGae.deployGae(runOptions);
@@ -175,5 +177,43 @@ describe('unit tests', () => {
     taskLibMock.verifyAll();
     taskLibMock.verify(t => t.setResult(task.TaskResult.Succeeded, It.isAny()),
                        Times.once());
+  });
+
+  it('should copy yaml from an oddly named directory', async () => {
+    runOptions.yamlSource = 'c:/source/path/app.yaml';
+    runOptions.yamlFileName = 'app.yaml';
+    const appendedSource =
+        path.join(runOptions.yamlSource, runOptions.yamlFileName);
+    taskLibMock.setup(t => t.exist(appendedSource)).returns(() => true);
+    taskLibMock.setup(t => t.cp(appendedSource, runOptions.deploymentPath))
+        .verifiable();
+
+    await deployGae.deployGae(runOptions);
+
+    taskLibMock.verifyAll();
+    taskLibMock.verify(t => t.setResult(task.TaskResult.Succeeded, It.isAny()),
+                       Times.once());
+  });
+
+  it('should deploy to an image url', async () => {
+    const imageUrl = 'gcr.io/repo-project-id/image-name:image-tag';
+    runOptions.imageUrl = imageUrl;
+
+    await deployGae.deployGae(runOptions);
+
+    deployToolMock.verify(t => t.argIf(imageUrl, `--image-url=${imageUrl}`),
+                          Times.once());
+  });
+
+  it('should deploy to an image url replacing wildcard', async () => {
+    const imageUrl = 'gcr.io/$PROJECTID/image-name:image-tag';
+    runOptions.imageUrl = imageUrl;
+
+    await deployGae.deployGae(runOptions);
+
+    const expectedImageUrl = 'gcr.io/project-id/image-name:image-tag';
+    deployToolMock.verify(
+        t => t.argIf(expectedImageUrl, `--image-url=${expectedImageUrl}`),
+        Times.once());
   });
 });

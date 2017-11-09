@@ -16,7 +16,7 @@ import * as exec from 'common/exec-options';
 import {isoNowString} from 'common/format';
 import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
-import {IExecOptions, IExecResult, ToolRunner} from 'vsts-task-lib/toolrunner';
+import {ToolRunner} from 'vsts-task-lib/toolrunner';
 
 import * as strings from './string-constants';
 
@@ -32,27 +32,27 @@ import TaskResult = task.TaskResult;
  */
 
 export interface RunOptions {
+  endpoint: Endpoint;
   deploymentPath: string;
   yamlFileName: string;
-  version?: string;
-  endpoint: Endpoint;
-  storageBucket?: string;
-  copyYaml: boolean;
+  imageUrl?: string;
   yamlSource?: string;
+  storageBucket?: string;
+  version?: string;
   promote: boolean;
   stopPrevious?: boolean;
 }
 
 export async function deployGae({
+  endpoint,
   deploymentPath,
   yamlFileName,
-  storageBucket,
-  copyYaml,
+  imageUrl,
   yamlSource,
-  endpoint,
+  storageBucket,
+  version,
   promote,
   stopPrevious,
-  version
 }: RunOptions): Promise<void> {
 
   // Check that gcloud exists.
@@ -61,13 +61,18 @@ export async function deployGae({
 
   // Move YAML.
   const yamlPath = path.join(deploymentPath, yamlFileName);
-  if (copyYaml) {
+  if (yamlSource) {
     const appendedSource = path.join(yamlSource, yamlFileName);
     if (yamlSource.endsWith(yamlFileName) && !task.exist(appendedSource)) {
       task.cp(yamlSource, deploymentPath);
     } else {
       task.cp(appendedSource, deploymentPath);
     }
+  }
+
+  // Replace $PROJECTID in imageUrl.
+  if (imageUrl) {
+    imageUrl = imageUrl.replace('$PROJECTID', endpoint.projectId);
   }
 
   // Set gcloud arguments.
@@ -79,18 +84,17 @@ export async function deployGae({
           .line('beta app deploy --quiet --verbosity=info')
           .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
           .arg(`--version="${version || isoNowString()}"`)
+          .argIf(imageUrl, `--image-url=${imageUrl}`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')
           .argIf(!promote, '--no-promote')
           .argIf(promote && stopPrevious, '--stop-previous-version')
           .argIf(promote && !stopPrevious, '--no-stop-previous-version');
 
-  const execOptions: IExecOptions = exec.getDefaultExecOptions();
-
   // Write credential file.
   await endpoint.usingAsync(async () => {
     // Run gcloud. Do it async so console output is sent to TFS immediately.
-    await gcloud.exec(execOptions);
+    await gcloud.exec(exec.getDefaultExecOptions());
     task.setResult(TaskResult.Succeeded, 'Deployment succeeded');
   });
 }
@@ -101,9 +105,9 @@ function checkGcloudVersion(gcloudPath: string): void {
     ['beta']: string;
   }
   const versionTool = task.tool(gcloudPath).line('version --format=json');
-  const result: IExecResult = versionTool.execSync(exec.getQuietExecOptions());
+  const result = versionTool.execSync(exec.getQuietExecOptions());
   const cloudSdkVersionRegex = /\d*/;
-  const versionData = JSON.parse(result.stdout) as GcloudVersion;
+  const versionData: GcloudVersion = JSON.parse(result.stdout) as GcloudVersion;
   const majorVersionString =
       versionData['Google Cloud SDK'].match(cloudSdkVersionRegex)[0];
   if (Number.parseInt(majorVersionString) < 146) {

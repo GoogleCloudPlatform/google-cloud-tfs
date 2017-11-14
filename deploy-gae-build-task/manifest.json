@@ -11,6 +11,9 @@
   ],
   "files": [
     {
+      "path": "run.js" 
+    },
+    {
       "path": "deploy-gae.js"
     },
     {

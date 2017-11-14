@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -34,10 +34,8 @@ import TaskResult = task.TaskResult;
  * @param kubeConfigPath
  * @param endpoint
  */
-export async function applyConfig(
-    dryRun: boolean,
-    endpoint: KubeEndpoint
-): Promise<void> {
+export async function applyConfig(dryRun: boolean,
+                                  endpoint: KubeEndpoint): Promise<void> {
   const updateTag = task.getBoolInput('updateTag', true);
   const configPath = task.getInput('configPath', true);
   const imageName = task.getInput('imageName', updateTag);
@@ -69,9 +67,12 @@ function updateConfig(path: string, imageName: string, imageTag: string): void {
       configObject = yaml.safeLoad(configContents);
       toStringFunction = yaml.safeDump;
     } catch (yamlError) {
-      throw new AggregateError(
-          s.configParseError(path), [jsonError as Error, yamlError as Error]);
+      throw new AggregateError(s.configParseError(path),
+                               [ jsonError as Error, yamlError as Error ]);
     }
+  }
+  if (typeof configObject !== 'object') {
+    throw new Error(s.configFileInvalid(path));
   }
   replaceAllImage(configObject, imageName, imageTag);
   const newConfigContents: string = toStringFunction(configObject);
@@ -85,8 +86,8 @@ function updateConfig(path: string, imageName: string, imageTag: string): void {
  * @param imageName The repository (aka image name) to update with a new tag.
  * @param newTag The new tag to set the image to.
  */
-function replaceAllImage(
-    config: KubeResource, imageName: string, newTag: string): void {
+function replaceAllImage(config: KubeResource, imageName: string,
+                         newTag: string): void {
   const imageFullName = `${imageName}:${newTag}`;
   const imageRegex = RegExp(`^\\s*${imageName}(:\\S+)?\\s*$`);
 
@@ -100,16 +101,14 @@ function replaceAllImage(
 
       for (const key of Object.keys(kubeConfig)) {
         const element = kubeConfig[key];
-        if (typeof element === 'object') {
-          if (element instanceof Array) {
-            for (const arrayElement of element) {
-              if (typeof arrayElement === 'object') {
-                replaceImageInElement(arrayElement);
-              }
+        if (element instanceof Array) {
+          for (const arrayElement of element) {
+            if (typeof arrayElement === 'object') {
+              replaceImageInElement(arrayElement);
             }
-          } else {
-            replaceImageInElement(element);
           }
+        } else if (typeof element === 'object') {
+          replaceImageInElement(element);
         }
       }
     }
@@ -128,11 +127,8 @@ function replaceAllImage(
  *   cluster we are updating.
  * @returns An execution promise.
  */
-async function runKubctlApply(
-    configPath: string,
-    dryRun: boolean,
-    endpoint: KubeEndpoint
-): Promise<void> {
+async function runKubctlApply(configPath: string, dryRun: boolean,
+                              endpoint: KubeEndpoint): Promise<void> {
   await task.tool(task.which('kubectl'))
       .line('apply -f --alsologtostderr')
       .arg(`"${configPath}"`)

@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@ export function deploymentImageSuccess(image: string): string {
   return `Deployment image set to ${image}.`;
 }
 
-export function rescaledDryRun(
-    deploymentName: string, replicas: number): string {
+export function rescaledDryRun(deploymentName: string,
+                               replicas: number): string {
   if (replicas > 1 || replicas === 0) {
     return `Deployment ${deploymentName} rescaled to ` +
-        `${replicas} replicas. (dry run)`;
+           `${replicas} replicas. (dry run)`;
   } else {
     return `Deployment ${deploymentName} rescaled to ` +
-        `${replicas} replica. (dry run)`;
+           `${replicas} replica. (dry run)`;
   }
 }
 
@@ -39,19 +39,22 @@ export function imageSetDryRun(deploymentName: string, image: string): string {
   return `Deployment ${deploymentName} image set to ${image}. (dry run)`;
 }
 
-export function skipRescale(
-    deploymentName: string, replicas: number): string {
+export function skipRescale(deploymentName: string, replicas: number): string {
   if (replicas > 1 || replicas === 0) {
     return `Deployment ${deploymentName} has ${replicas} replicas.` +
-        ' Skipping rescaling.';
+           ' Skipping rescaling.';
   } else {
     return `Deployment ${deploymentName} has ${replicas} replica.` +
-        ' Skipping rescaling.';
+           ' Skipping rescaling.';
   }
 }
 
 export function configParseError(path: string): string {
   return `Config file at ${path} is neither a JSON nor a YAML file.`;
+}
+
+export function configFileInvalid(path: string): string {
+  return `Config file at ${path} is not a valid config.`;
 }
 
 export function configApplied(configPath: string): string {

@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -16,16 +16,13 @@
  * @fileoverview This is the main script run by the container-build-task.
  * @author przybjw@google.com (Jim Przybylinski)
  */
-import {getQuietExecOptions, Endpoint} from 'common/exec-options';
+import {Endpoint, getQuietExecOptions} from 'common/exec-options';
+import {catchAll} from 'common/handle-rejection';
 import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
-import { IExecOptions } from 'vsts-task-lib/toolrunner';
-import {catchAll} from 'common/handle-rejection';
-import {Writable} from 'stream';
+import {IExecOptions} from 'vsts-task-lib/toolrunner';
 
 import * as helper from './container-build-helper';
-
-import WritableStream = NodeJS.WritableStream;
 
 /**
  * Runs the script for the container-build-task
@@ -56,7 +53,6 @@ async function run(): Promise<void> {
       task.getPathInput('cloudBuildFile', useCustomBuild);
   const customSubstitutions = task.getInput('substitutions');
   const imageOutputVariable = task.getInput('imageVariable');
-
 
   const endpoint = new Endpoint(endpointId);
 
@@ -95,18 +91,18 @@ async function run(): Promise<void> {
 
   const gcloud = task.tool(gcloudPath)
                      .line('container builds submit --quiet --format=json')
-                     .arg([projectArg, credentialArg])
+                     .arg([ projectArg, credentialArg ])
                      .arg(`"${deploymentPath}"`)
                      .argIf(useCustomBuild || useDefaultConfig, cloudBuildArg)
                      .argIf(substitutionsArg, substitutionsArg)
                      .argIf(useDockerfile, tagArg);
 
+  helper.listenToOutput(gcloud);
   if (imageOutputVariable) {
     helper.listenForImages(gcloud, imageOutputVariable);
   }
 
   const execOptions: IExecOptions = getQuietExecOptions();
-  execOptions.errStream = (process.stdout as WritableStream) as Writable;
 
   await endpoint.usingAsync(async () => {
     await gcloud.exec(execOptions);

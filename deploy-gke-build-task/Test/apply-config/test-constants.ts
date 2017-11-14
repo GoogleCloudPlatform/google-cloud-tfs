@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -65,15 +65,34 @@ const jsonContents = `
 }
 `;
 const newJsonContents = `{"image":"${imageName}:${imageTag}"}`;
+
 const yamlContents = `
 image: ${imageName}:oldTag
 `;
 const newYamlContents = `image: '${imageName}:${imageTag}'`;
+
+const complexContents = `
+{
+  "index1": [{"image": "${imageName}:oldTag"},"string!"],
+  "index2": {"image": "${imageName}:oldTag"},
+  "index3": null
+}
+`;
+const newComplexContents = `{"index1":[{"image":"${imageName}:${imageTag}"},"string!"],"index2":{"image":"${imageName}:${imageTag}"},"index3":null}`;
+
+const nullContents = 'null';
+
 const invalidContents = `
 {This:}, looks:, like:, a:, csv:, file!
 `;
+const emptyContents = '';
+
+export const emptyConfig = new Config(emptyContents);
 export const invalidConfig = new Config(invalidContents);
+
 export const configs: Configs = {
   json: new Config(jsonContents, newJsonContents),
   yaml: new Config(yamlContents, newYamlContents),
+  complex: new Config(complexContents, newComplexContents),
+  null: new Config(nullContents, nullContents),
 }

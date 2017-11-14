@@ -3,10 +3,9 @@
   "manifestVersion": 1,
   "id": "google-cloud-tfs",
   "name": "Cloud Tools for TFS",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "GoogleCloudTools",
   "targets": [ { "id": "Microsoft.VisualStudio.Services" } ],
-  "demands": [ "api-version/4.0" ],
   "description": "Tools for deploying to Google Cloud Platform.",
   "icons": {
     "large": "images/cloud_512x512.png",
@@ -105,7 +104,7 @@
         "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
         "url": {
           "displayName": "Server Url",
-          "value": "https://www.googleapis.com/"
+          "value": "https://accounts.google.com/o/oauth2"
         },
         "uiContributionId": "google-cloud-endpoint-ui",
         "inputDescriptors": [
@@ -156,18 +155,18 @@
         ],
         "authenticationSchemes": [
           {
-            "type": "ms.vss-endpoint.endpoint-auth-scheme-JWT",
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-cert",
+            "displayName": "Json Key File Contents",
             "inputDescriptors": [
               {
                 "id": "certificate",
-                "name": "Json File contents",
-                "description": "i18n:Place Contents of JSON file here",
-                "inputMode": "textbox",
+                "name": "Json Text",
+                "description": "The contents of the json key file",
+                "inputMode": "TextArea",
                 "isConfidential": true,
                 "validation": {
                   "isRequired": true,
-                  "dataType": "string",
-                  "maxLength": 4000
+                  "dataType": "string"
                 }
               }
             ]
@@ -177,4 +176,3 @@
     }
   ]
 }
-

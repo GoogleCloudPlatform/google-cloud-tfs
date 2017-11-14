@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@
  *   to specified build variables.
  * @author JimWP@google.com
  */
-import {getQuietExecOptions, Endpoint} from 'common/exec-options';
-import * as task from 'vsts-task-lib/task';
-import { IExecOptions } from 'vsts-task-lib/toolrunner';
+import {Endpoint, getQuietExecOptions} from 'common/exec-options';
 import {catchAll} from 'common/handle-rejection';
+import * as task from 'vsts-task-lib/task';
+import {IExecOptions} from 'vsts-task-lib/toolrunner';
 
 import TaskResult = task.TaskResult;
 
@@ -56,28 +56,28 @@ function run(): void {
   const gcloud =
       task.tool(gcloudPath)
           .line('compute reset-windows-password --quiet --format=json')
-          .arg([instance, userArg, zoneArg, projectArg, credentialArg]);
+          .arg([ instance, userArg, zoneArg, projectArg, credentialArg ]);
 
   const execOptions: IExecOptions = getQuietExecOptions();
 
   endpoint.using(() => {
     const gcloudResult = gcloud.execSync(execOptions);
     if (gcloudResult.code !== 0) {
-      task.setResult(
-          TaskResult.Failed,
-          gcloudResult.error && gcloudResult.error.message ||
-              gcloudResult.stderr || gcloudResult.stdout);
+      task.setResult(TaskResult.Failed,
+                     gcloudResult.error && gcloudResult.error.message ||
+                         gcloudResult.stderr || gcloudResult.stdout);
     } else {
       // ReSharper disable once InconsistentNaming
-      const data = JSON.parse(
-          gcloudResult.stdout) as {ip_address: string, password: string};
-      setVariable(
-          machineIpVariable, data.ip_address, false,
-          `Could not find external ip for instance ${instance} in zone ${zone}`);
-      setVariable(
-          passwordVariable, data.password, true,
-          `Could not find new password for instance ${instance}` +
-              ` in zone ${zone}`);
+      const data = JSON.parse(gcloudResult.stdout) as {
+        ip_address: string;
+        password: string;
+      };
+      setVariable(machineIpVariable, data.ip_address, false,
+                  `Could not find external ip for instance ${
+                      instance} in zone ${zone}`);
+      setVariable(passwordVariable, data.password, true,
+                  `Could not find new password for instance ${instance}` +
+                      ` in zone ${zone}`);
     }
   });
 }
@@ -89,14 +89,13 @@ function run(): void {
  * @param secret If the variable should be secret.
  * @param errorMessage The message to fail with if the variable does not exist.
  */
-function setVariable(
-    variable: string, value: string, secret: boolean,
-    errorMessage: string): void {
+function setVariable(variable: string, value: string, secret: boolean,
+                     errorMessage: string): void {
   if (value) {
     task.setVariable(variable, value, secret);
   } else {
     task.setResult(task.TaskResult.Failed, errorMessage);
   }
-};
+}
 
 catchAll(run);

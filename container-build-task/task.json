@@ -7,7 +7,7 @@
   "description": "Build a Docker image with Google Cloud Container Builder.",
   "helpMarkDown": "Use [Google Cloud Container Builder](https://cloud.google.com/container-builder/docs) to build a Docker image and place it in [Google Container Registry](https://cloud.google.com/container-registry/docs).",
   "version": {
-    "Major": 0,
+    "Major": 1,
     "Minor": 0,
     "Patch": 3
   },

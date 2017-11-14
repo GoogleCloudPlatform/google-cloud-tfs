@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 /**
  * @fileoverview This is a test script for the deploy gke task with
- *   a missing serviceEndpoint parameter.
+ *   replacing the image tag in an invalid config file.
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import * as mocks from 'common/register-mocks';
-import * as tc from './test-constants'
+import * as tc from './test-constants';
 
 const runner = tc.getDefaultRunner();
 runner.setInput('configPath', tc.configPath);

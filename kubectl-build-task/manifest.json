@@ -1,0 +1,26 @@
+﻿{
+  "contributions": [
+    {
+      "id": "kubectl-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [ "ms.vss-distributed-task.tasks" ],
+      "properties": {
+        "name": "kubectl-build-task"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "kubectl-build-task.js"
+    },
+    {
+      "path": "run.js"
+    },
+    {
+      "path": "task.json"
+    },
+    {
+      "path": "icon.png"
+    }
+  ]
+}

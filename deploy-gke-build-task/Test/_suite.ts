@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -31,11 +31,9 @@ import * as tc from './test-constants';
 describe('deploy-gke build task', () => {
 
   let runner: MockTestRunner;
-  beforeEach(function() {
-    runner = null;
-  });
+  beforeEach(function(): void { runner = null; });
 
-  afterEach(function() {
+  afterEach(function(): void {
     if (this.currentTest.state === 'failed') {
       console.log(runner.stdout);
       console.log('--------------------');
@@ -47,7 +45,7 @@ describe('deploy-gke build task', () => {
     const testPath = path.join(__dirname, 'no-gcloud.js');
     runner = new MockTestRunner(testPath);
     runner.run();
-    
+
     gcloudAssert.assertGcloudNotRun(runner);
   });
 
@@ -76,9 +74,8 @@ describe('deploy-gke build task', () => {
         runner.run();
 
         gcloudAssert.assertGcloudNotRun(runner);
-        assert(
-            runner.stdOutContained(`Input required: ${param}`),
-            `Should be looking for ${param}.`);
+        assert(runner.stdOutContained(`Input required: ${param}`),
+               `Should be looking for ${param}.`);
       });
     });
   });
@@ -91,9 +88,8 @@ describe('deploy-gke build task', () => {
 
        assert.equal(runner.invokedToolCount, 1, 'Should call gcloud once.');
        assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-       assert(
-           runner.createdErrorIssue(tc.gcloudError),
-           'Should send include stderr as error message.');
+       assert(runner.createdErrorIssue(tc.gcloudError),
+              'Should send include stderr as error message.');
        gcloudAssert.assertKeyFileWritten(runner);
      });
 
@@ -103,9 +99,9 @@ describe('deploy-gke build task', () => {
     runner.run();
     assert.equal(runner.invokedToolCount, 1, 'Should call gcloud once.');
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-    assert(
-        runner.createdErrorIssue('Invalid deployType "invalid"'),
-        'Should error on invalid deployType.');
-    gcloudAssert.assertKubeKeyFileWritten(runner, tc.clusterCredentialExecString);
+    assert(runner.createdErrorIssue('Invalid deployType "invalid"'),
+           'Should error on invalid deployType.');
+    gcloudAssert.assertKubeKeyFileWritten(runner,
+                                          tc.clusterCredentialExecString);
   });
 });

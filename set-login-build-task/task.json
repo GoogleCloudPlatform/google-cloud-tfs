@@ -7,7 +7,7 @@
   "description": "Save to a variable the login password for a Google Compute Engine virtual machine running windows.",
   "helpMarkDown": "[Compute Engine Console](http://console.cloud.google.com/compute) [Compute Engine Docs](https://cloud.google.com/compute/docs/) [Windows Passwords Docs](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances)",
   "version": {
-    "Major": 0,
+    "Major": 1,
     "Minor": 0,
     "Patch": 4
   },
@@ -25,14 +25,14 @@
     },
     {
       "name": "zone",
-      "type": "pickList",
+      "type": "string",
       "label": "Zone",
       "required": true,
       "helpMarkDown": "The zone of the virtual machine to get a new password for."
     },
     {
       "name": "machine",
-      "type": "pickList",
+      "type": "string",
       "label": "Virtual Machine",
       "required": true,
       "helpMarkDown": "The name of the virtual machine to get a new password for."
@@ -59,21 +59,6 @@
       "defaultValue": "build.gcp.vm.ip",
       "required": true,
       "helpMarkDown": "The name of the build variable to store the machine ip in."
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "target": "zone",
-      "endpointId": "$(serviceEndpoint)",
-      "dataSourceName": "ZoneName"
-    },
-    {
-      "target": "machine",
-      "endpointId": "$(serviceEndpoint)",
-      "dataSourceName": "MachineName",
-      "parameters": {
-        "zone": "$(zone)"
-      }
     }
   ],
   "execution": {

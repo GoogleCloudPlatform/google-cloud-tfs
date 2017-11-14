@@ -24,6 +24,13 @@
   ],
   "inputs": [
     {
+      "name": "serviceEndpoint",
+      "type": "connectedService:google-cloud",
+      "label": "GCP connection",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use."
+    },
+    {
       "name": "AllowReporting",
       "label": "Allow anonymous usage statistics",
       "type": "boolean",

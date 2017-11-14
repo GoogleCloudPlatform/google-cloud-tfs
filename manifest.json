@@ -17,6 +17,30 @@
     {
       "path": "images/screenshots",
       "addressable": true
+    },
+    {
+      "path": "main.html",
+      "addressable": true
+    },
+    {
+      "path": "css/main.css",
+      "addressable": true
+    },
+    {
+      "path": "scripts/main.js",
+      "addressable": true
+    },
+    {
+      "path": "scripts/VSS/VSS.SDK.js",
+      "addressable": true
+    },
+    {
+      "path": "scripts/require.js",
+      "addressable": true
+    },
+    {
+      "path": "knockout.js",
+      "addressable": true
     }
   ],
   "categories": [ "Build and release" ],
@@ -59,19 +83,76 @@
   },
   "contributions": [
     {
-      "id": "google-cloud-service-endpoint",
+      "id": "google-cloud-endpoint-ui",
+      "displayname": "Google Cloud Platform service endpoint UI",
+      "type": "ms.vss-endpoint.service-endpoint-ui",
+      "targets": [
+        "ms.vss-endpoint.endpoint-ui-catalog"
+      ],
+      "properties": {
+        "file": "main.html"
+      }
+    },
+    {
+      "id": "google-cloud-endpoint-type",
       "description": "Information for connecting to Google Cloud Platform",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": [ "ms.vss-endpoint.endpoint-types" ],
       "properties": {
-        "name": "GoogleCloudServiceEndpoint",
+        "name": "google-cloud",
         "displayName": "Google Cloud Platform",
         "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
         "url": {
           "displayName": "Server Url",
           "value": "https://accounts.google.com/o/oauth2"
         },
-        "inputDescriptors": [],
+        "uiContributionId": "google-cloud-endpoint-ui",
+        "inputDescriptors": [
+          {
+            "id": "projectid",
+            "name": "Project Name",
+            "description": "Project for connecting to the endpoint",
+            "inputMode": "textbox",
+            "isConfidential": false,
+            "validation": {
+              "isRequired": true,
+              "dataType": "string",
+              "maxLength": 300
+            }
+          }
+        ],
+        "dataSources": [
+          {
+            "name": "TestConnection",
+            "endpointUrl": "https://cloudresourcemanager.googleapis.com/v1beta1/projects",
+            "resultSelector": "jsonpath:$.items[*]"
+          },
+          {
+            "name": "ZoneName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/beta/projects/{{{endpoint.projectid}}}/zones",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "MachineName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/beta/projects/{{{endpoint.projectid}}}/zones/$(zone)/instances",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "RegionName",
+            "endpointUrl": "{{{endpoint.url}}}/compute/v1/projects/{{{endpoint.projectid}}}/regions",
+            "resultSelector": "jsonpath:$.items[*].name"
+          },
+          {
+            "name": "ProjectName",
+            "endpointUrl": "https://cloudresourcemanager.googleapis.com/v1beta1/projects",
+            "resultSelector": "jsonpath:$.projects[*]"
+          },
+          {
+            "name": "ClusterName",
+            "endpointUrl": "https://container.googleapis.com/v1/projects/{{{endpoint.projectid}}}/zones/$(zone)/clusters",
+            "resultSelector": "jsonpath:$.clusters[*].name"
+          }
+        ],
         "authenticationSchemes": [
           {
             "type": "ms.vss-endpoint.endpoint-auth-scheme-cert",

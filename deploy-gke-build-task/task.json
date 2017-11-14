@@ -9,7 +9,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 4
   },
   "category": "Deploy",
   "visibility": [ "Build", "Release" ],
@@ -18,7 +18,7 @@
   "inputs": [
     {
       "name": "serviceEndpoint",
-      "type": "connectedService:GoogleCloudServiceEndpoint",
+      "type": "connectedService:google-cloud",
       "label": "GCP connection",
       "required": true,
       "helpMarkDown": "The Google Cloud Platform connection to use."

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es6",
+    "sourceMap": false,
+    "noImplicitAny": false
+  },
+  "compileOnSave": true,
+  "files": [
+    "knockout/index.d.ts",
+    "main.ts",
+    "VSS/typings/serviceEndpointDetails.d.ts"
+  ]
+}

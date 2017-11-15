@@ -201,7 +201,7 @@ describe('unit tests', () => {
 
     await deployGae.deployGae(runOptions);
 
-    deployToolMock.verify(t => t.argIf(imageUrl, `--image-url=${imageUrl}`),
+    deployToolMock.verify(t => t.argIf(imageUrl, `--image-url="${imageUrl}"`),
                           Times.once());
   });
 
@@ -213,7 +213,7 @@ describe('unit tests', () => {
 
     const expectedImageUrl = 'gcr.io/project-id/image-name:image-tag';
     deployToolMock.verify(
-        t => t.argIf(expectedImageUrl, `--image-url=${expectedImageUrl}`),
+        t => t.argIf(expectedImageUrl, `--image-url="${expectedImageUrl}"`),
         Times.once());
   });
 });

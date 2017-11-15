@@ -71,7 +71,7 @@
     {
       "name": "imageUrl",
       "type": "string",
-      "label": "Image URL",
+      "label": "Image Name",
       "defaultValue": "gcr.io/$PROJECTID/image-name:image-tag",
       "required": true,
       "visibleRule": "deployFromImage = true",

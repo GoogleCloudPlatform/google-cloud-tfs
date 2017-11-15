@@ -84,7 +84,7 @@ export async function deployGae({
           .line('beta app deploy --quiet --verbosity=info')
           .arg([ `"${yamlPath}"`, credentialArg, projectArg ])
           .arg(`--version="${version || isoNowString()}"`)
-          .argIf(imageUrl, `--image-url=${imageUrl}`)
+          .argIf(imageUrl, `--image-url="${imageUrl}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')
           .argIf(!promote, '--no-promote')

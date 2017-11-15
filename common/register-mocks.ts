@@ -132,10 +132,7 @@ export function getDefaultAnswers(): TaskLibAnswers {
     exec : {
       [gcloudVersionExecString] : {
         code : 0,
-        stdout : '{\n' +
-                     '  "Google Cloud SDK": "146.0.0",\n' +
-                     '  "beta": "2016.01.12"\n' +
-                     '}',
+        stdout : JSON.stringify({['Google Cloud SDK']: '174.0.0'}),
       },
     },
   };

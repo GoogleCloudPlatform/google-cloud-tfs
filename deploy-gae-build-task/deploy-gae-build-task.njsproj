@@ -30,7 +30,6 @@
     <TypeScriptCompile Include="legacyTests\missing-copy-yaml.ts" />
     <TypeScriptCompile Include="legacyTests\missing-yaml-file-name.ts" />
     <TypeScriptCompile Include="legacyTests\missing-source-folder.ts" />
-    <TypeScriptCompile Include="legacyTests\no-gcloud-beta.ts" />
     <TypeScriptCompile Include="legacyTests\old-gcloud.ts" />
     <TypeScriptCompile Include="legacyTests\test-strings.ts" />
     <TypeScriptCompile Include="legacyTests\using-source-folder.ts" />

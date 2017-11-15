@@ -39,11 +39,14 @@ async function run(): Promise<void> {
   const deploymentPath = task.getPathInput('deploymentPath', true);
   // The name of the YAML file we want to run on.
   const yamlFileName = task.getInput('yamlFileName', true);
-  // If true, copy the YAML file from the source folder to the deployment
-  // path.
-  const copyYaml = task.getBoolInput('copyYaml', true);
-  // The source folder the YAML file is in.
-  const yamlSource = task.getPathInput('sourceFolder', copyYaml);
+  // The URL of the docker image to deploy.
+  const imageUrl = task.getBoolInput('deployFromImage')
+                       ? task.getInput('imageUrl', true)
+                       : undefined;
+  // The source folder the YAML file to copy is in.
+  const yamlSource = task.getBoolInput('copyYaml', true)
+                         ? task.getPathInput('sourceFolder', true)
+                         : undefined;
   // The storage bucket to send to the --bucket parameter.
   const storageBucket = task.getInput('storageBucket', false);
   // The version to deploy.
@@ -60,14 +63,14 @@ async function run(): Promise<void> {
   const endpoint = new Endpoint(endpointId);
   await deployGae({
     endpoint,
-    copyYaml,
+    deploymentPath,
+    yamlFileName,
+    imageUrl,
     yamlSource,
     storageBucket,
     version,
     promote,
     stopPrevious,
-    deploymentPath,
-    yamlFileName,
     verbosity,
   });
 }

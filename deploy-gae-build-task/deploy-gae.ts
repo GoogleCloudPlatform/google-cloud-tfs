@@ -26,7 +26,7 @@ import TaskResult = task.TaskResult;
 /**
  * @fileoverview This is the main logic of the Deploy to GAE task. It copies
  * the YAML file from the source folder to the deployment path, writes a
- * credential file from the endpoint authorization, and calls gcloud beta app
+ * credential file from the endpoint authorization, and calls gcloud app
  * deploy with various parameters.
  * @author przybjw@google.com (Jim Przybylinski)
  */
@@ -56,10 +56,7 @@ export async function deployGae({
   version,
   verbosity,
 }: RunOptions): Promise<void> {
-
-  // Check that gcloud exists.
-  const gcloudPath = task.which('gcloud', true);
-  checkGcloudVersion(gcloudPath);
+  const gcloudPath = validateGcloud();
 
   // Move YAML.
   const yamlPath = path.join(deploymentPath, yamlFileName);
@@ -73,10 +70,9 @@ export async function deployGae({
   }
 
   // Set gcloud arguments.
-
   const gcloud: ToolRunner =
       task.tool(gcloudPath)
-          .line('beta app deploy --quiet')
+          .line('app deploy --quiet')
           .arg(`--verbosity=${verbosity}`)
           .arg(`"${yamlPath}"`)
           .arg(Endpoint.credentialParam)
@@ -98,22 +94,20 @@ export async function deployGae({
   });
 }
 
-function checkGcloudVersion(gcloudPath: string): void {
+function validateGcloud(): string {
   interface GcloudVersion {
     ['Google Cloud SDK']: string;
-    ['beta']: string;
   }
+
+  const gcloudPath = task.which('gcloud', true);
   const versionTool = task.tool(gcloudPath).line('version --format=json');
   const result: IExecResult = versionTool.execSync(exec.getQuietExecOptions());
   const cloudSdkVersionRegex = /\d*/;
   const versionData = JSON.parse(result.stdout) as GcloudVersion;
   const majorVersionString =
       versionData['Google Cloud SDK'].match(cloudSdkVersionRegex)[0];
-  if (Number.parseInt(majorVersionString) < 146) {
+  if (Number.parseInt(majorVersionString) < 174) {
     throw new Error(strings.oldGcloudVersionError);
   }
-
-  if (!versionData['beta']) {
-    throw new Error(strings.noGcloudBetaError);
-  }
+  return gcloudPath;
 }

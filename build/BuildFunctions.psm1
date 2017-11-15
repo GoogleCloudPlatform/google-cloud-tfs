@@ -28,7 +28,7 @@ function Initialize-Common(){
     pushd common
     try {
         if (-not (Test-Path node_modules)) {
-            npm install | Out-Null
+            npm install --loglevel error | Out-Null
         }
     } finally {
         popd
@@ -58,7 +58,7 @@ function Initialize-TsTask([string]$task) {
     pushd $task
     try {
         if (-not (Test-Path node_modules)) {
-            npm install | Out-Null
+            npm install --loglevel error | Out-Null
         }
     } finally {
         popd
@@ -99,7 +99,7 @@ function Invoke-CompileTask($task) {
     try {
         # Common module changes as part of development.
         # Update the common module every time.
-        npm install ../common | Out-Null
+        npm install ../common --loglevel warn | Out-Null
 
         Write-Verbose "Running: tsc"
         tsc

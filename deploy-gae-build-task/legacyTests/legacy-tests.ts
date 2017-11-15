@@ -56,16 +56,6 @@ describe('legacy tests', () => {
            'Should describe error');
   });
 
-  it('should fail for gcloud with no beta', () => {
-    const testPath = path.join(__dirname, 'no-gcloud-beta.js');
-    runner = new MockTestRunner(testPath);
-    runner.run();
-
-    gcloudAssert.assertGcloudNotRun(runner, true);
-    assert(runner.stdOutContained(strings.noGcloudBetaError),
-           'Should describe error');
-  });
-
   it('should fail when gcloud fails', () => {
     const testPath = path.join(__dirname, 'gcloud-fails.js');
     runner = new MockTestRunner(testPath);

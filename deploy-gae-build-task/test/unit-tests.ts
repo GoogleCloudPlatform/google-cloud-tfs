@@ -77,7 +77,7 @@ describe('unit tests', () => {
   beforeEach('initialize mocks', () => {
     checkVersionResult = {
       stdout : JSON.stringify(
-          {['Google Cloud SDK'] : '150.0.0', ['beta'] : '0.0.0'}),
+          {['Google Cloud SDK'] : '174.0.0'}),
       code : 0,
       error : null,
       stderr : '',

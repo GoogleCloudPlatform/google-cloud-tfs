@@ -7,7 +7,7 @@
   "description": "Deploy your app to Google App Engine.",
   "helpMarkDown": "[Google App Engine Console](http://console.cloud.google.com/appengine) [Google App Engine Docs](https://cloud.google.com/appengine/docs) [gcloud app deploy](https://cloud.google.com/sdk/gcloud/reference/app/deploy)",
   "version": {
-    "Major": 1,
+    "Major": 2,
     "Minor": 0,
     "Patch": 0
   },

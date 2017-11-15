@@ -38,7 +38,7 @@ runner.setInput('promote', 'false');
 
 const execString = [
   mock.gcloudPath,
-  'beta app deploy --quiet --verbosity=info',
+  'app deploy --quiet --verbosity=info',
   strings.yamlParam,
   strings.credentialParam,
   strings.projectParam,

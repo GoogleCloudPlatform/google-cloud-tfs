@@ -30,10 +30,12 @@ install the extension from the extension management page of TFS.
   - [npm][npm]. Should be installed with the Node.js install.
   - [TypeScript][TypeScript]. Install with `npm install -g typescript`
   - [tfx][tfs-cli] The tfs cli. Install with `npm install -g tfx-cli`
+  - [angular] Install with 'npm install angular –save'
 
 ### Build Script
 
-Execute build script `./build/BuildExtension.ps1`. It will download needed
+Go to scripts folder. Execute 'tsc'.
+Go to parent of scripts and execute build script `./build/BuildExtension.ps1`. It will download needed
 modules, build the common files and build tasks, and then package everything
 into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 

@@ -133,6 +133,7 @@ describe('unit tests', () => {
       yamlFileName : 'app.yaml',
       deploymentPath : 'c:/deploy/path',
       promote : false,
+      verbosity : 'info',
     };
   });
 
@@ -215,5 +216,15 @@ describe('unit tests', () => {
     deployToolMock.verify(
         t => t.argIf(expectedImageUrl, `--image-url="${expectedImageUrl}"`),
         Times.once());
+  });
+
+  it('should set verbosity debug', async () => {
+    runOptions.verbosity = 'debug';
+
+    await deployGae.deployGae(runOptions);
+
+    deployToolMock.verify(t => t.arg('--verbosity=debug'), Times.once());
+    taskLibMock.verify(t => t.setResult(task.TaskResult.Succeeded, It.isAny()),
+                       Times.once());
   });
 });

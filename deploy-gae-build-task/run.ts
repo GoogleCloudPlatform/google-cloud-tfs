@@ -55,6 +55,8 @@ async function run(): Promise<void> {
   const promote = task.getBoolInput('promote', true);
   // Toggle between --stop-previous-version and --no-stop-previous-version.
   const stopPrevious = task.getBoolInput('stopPrevious', promote);
+  // The value of the gcloud --verbosity flag.
+  const verbosity = task.getInput('gcloudVerbosity', false) || 'info';
 
   // Set up the key file from the certificate parameter of the service
   // endpoint.
@@ -69,5 +71,6 @@ async function run(): Promise<void> {
     version,
     promote,
     stopPrevious,
+    verbosity,
   });
 }

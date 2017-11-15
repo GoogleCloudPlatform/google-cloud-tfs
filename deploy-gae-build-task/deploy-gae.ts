@@ -41,6 +41,7 @@ export interface RunOptions {
   version?: string;
   promote: boolean;
   stopPrevious?: boolean;
+  verbosity: string;
 }
 
 export async function deployGae({
@@ -53,6 +54,7 @@ export async function deployGae({
   version,
   promote,
   stopPrevious,
+  verbosity,
 }: RunOptions): Promise<void> {
   const gcloudPath = validateGcloud();
 
@@ -75,10 +77,11 @@ export async function deployGae({
   // Set gcloud arguments.
   const gcloud: ToolRunner =
       task.tool(gcloudPath)
-          .line('app deploy --quiet --verbosity=info')
-          .arg([
-            `"${yamlPath}"`, Endpoint.credentialParam, endpoint.projectParam
-          ])
+          .line('app deploy --quiet')
+          .arg(`--verbosity=${verbosity}`)
+          .arg(`"${yamlPath}"`)
+          .arg(Endpoint.credentialParam)
+          .arg(endpoint.projectParam)
           .arg(`--version="${version || isoNowString()}"`)
           .argIf(imageUrl, `--image-url="${imageUrl}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)

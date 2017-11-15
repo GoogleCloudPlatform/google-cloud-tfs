@@ -116,6 +116,23 @@
       "visibleRule": "promote = true",
       "groupName": "advanced",
       "helpMarkDown": "Stop the previously running version when deploying a new version."
+    },
+    {
+      "name": "gcloudVerbosity",
+      "type": "pickList",
+      "label": "Verbosity",
+      "defaultValue": "info",
+      "options": {
+        "debug": "Debug",
+        "info": "Info",
+        "warning": "Warning",
+        "error": "Error",
+        "critical": "Critical",
+        "none": "None"
+      },
+      "required": true,
+      "groupName": "advanced",
+      "helpMarkDown": "The value of the `gcloud --verbosity` flag."
     }
   ],
   "execution": {

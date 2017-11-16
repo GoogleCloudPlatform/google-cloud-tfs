@@ -25,7 +25,6 @@ const describeWithCredentialFile =
 
 interface KubectlVersion {
   clientVersion: {major: string; minor : string;};
-  serverVersion: {major: string; minor : string;};
 }
 
 describeWithCredentialFile('functional tests', function(): void {
@@ -45,7 +44,7 @@ describeWithCredentialFile('functional tests', function(): void {
     kubectlVersionPromise =
         new Promise<string>((resolve, reject) => {
           const kubectlProcess =
-              spawn('kubectl', [ 'version --output=json' ], {shell : true});
+              spawn('kubectl', [ 'version --client --output=json' ], {shell : true});
           kubectlProcess.on(
               'exit',
               () => resolve(kubectlProcess.stdout.read().toString().trim()));
@@ -75,7 +74,7 @@ describeWithCredentialFile('functional tests', function(): void {
   });
 
   it('should run kubectl version', async () => {
-    env['INPUT_command'] = 'version --output=json';
+    env['INPUT_command'] = 'version --client --output=json';
     env['INPUT_outputVariable'] = variableName,
 
     taskOutput = await TaskResult.runTask('run.js', env);
@@ -87,10 +86,6 @@ describeWithCredentialFile('functional tests', function(): void {
                  kubectlVersionOutput.clientVersion.major);
     assert.equal(variableValue.clientVersion.minor,
                  kubectlVersionOutput.clientVersion.minor);
-    assert.equal(variableValue.serverVersion.major,
-                 kubectlVersionOutput.serverVersion.major);
-    assert.equal(variableValue.serverVersion.minor,
-                 kubectlVersionOutput.serverVersion.minor);
   });
 
   const requiredInputs = [ 'serviceEndpoint', 'command', 'cluster', 'zone' ];

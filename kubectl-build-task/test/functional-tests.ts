@@ -69,6 +69,8 @@ describeWithCredentialFile('functional tests', function(): void {
   afterEach('write task output on failure', async function(): Promise<void> {
     if (this.currentTest.state === 'failed') {
       taskOutput.logData();
+      console.log('--- kubectlVersionPromise ---');
+      console.log(JSON.stringify(await kubectlVersionPromise));
     }
   });
 

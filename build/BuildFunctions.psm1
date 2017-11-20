@@ -301,8 +301,9 @@ function Update-AppveyorBuildVersion () {
         Write-Error "Update-AppveyorBuildVersion is only avalable when running in Appveyor."
         return
     }
-        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
-        $manifestVersion = $manifest.version
+
+    $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+    $manifestVersion = $manifest.version
     if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
         if($manifestVersion -ne $env:APPVEYOR_REPO_TAG_NAME){
             throw "Manifest version $manifestVersion does not equal tag version $env:APPVEYOR_REPO_TAG_NAME"

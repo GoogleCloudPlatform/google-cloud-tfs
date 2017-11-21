@@ -24,7 +24,7 @@ const describeWithCredentialFile =
     fs.existsSync(credentialFile) ? describe : describe.skip;
 
 interface KubectlVersion {
-  clientVersion: {major: string; minor : string;};
+  clientVersion: {major: string, minor: string};
 }
 
 describeWithCredentialFile('functional tests', function(): void {
@@ -43,8 +43,8 @@ describeWithCredentialFile('functional tests', function(): void {
     });
     kubectlVersionPromise =
         new Promise<string>((resolve, reject) => {
-          const kubectlProcess =
-              spawn('kubectl', [ 'version --client --output=json' ], {shell : true});
+          const kubectlProcess = spawn(
+              'kubectl', [ 'version --client --output=json' ], {shell : true});
           kubectlProcess.on(
               'exit',
               () => resolve(kubectlProcess.stdout.read().toString().trim()));

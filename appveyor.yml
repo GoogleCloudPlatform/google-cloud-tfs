@@ -5,6 +5,8 @@ environment:
   CLOUDSDK_PYTHON: C:\Python27\python.exe
 
 install:
+  - ps: Import-Module .\build\BuildFunctions.psm1
+  - ps: Update-AppveyorBuildVersion
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
   - gcloud components install kubectl --quiet
@@ -21,8 +23,6 @@ install:
          nuget install secure-file -ExcludeVersion
          secure-file\tools\secure-file -decrypt "kubectl-build-task\test\resources\Cloud Tools for TFS Testing.json.enc" -secret $env:SERVICE_ACCOUNT_SECRET
      }
-  - ps: Import-Module .\build\BuildFunctions.psm1
-  - ps: Update-AppveyorBuildVersion
   - ps: $allTsTasks = Get-TypeScriptTasks
 
 before_build:

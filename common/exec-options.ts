@@ -38,7 +38,7 @@ import WritableStream = NodeJS.WritableStream;
 export function getDefaultExecOptions(): IExecOptions {
   const env: {[key: string]: string;} = {
     'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
-    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.1',
+    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.8',
   };
   const cloudSdkPython = process.env['CLOUDSDK_PYTHON'];
   if (cloudSdkPython) {

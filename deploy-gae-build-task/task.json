@@ -84,7 +84,6 @@
       "defaultValue": false,
       "required": true,
       "groupName": "copy",
-      "visibleRule": "deployFromImage = false",
       "helpMarkDown": "Select this option if you need the task to copy your YAML file to your deployment source folder."
     },
     {
@@ -94,7 +93,7 @@
       "defaultValue": ".",
       "required": true,
       "groupName": "copy",
-      "visibleRule": "copyYaml = true && deployFromImage = false",
+      "visibleRule": "copyYaml = true",
       "helpMarkDown": "The path to source folder to copy your YAML file from."
     },
     {

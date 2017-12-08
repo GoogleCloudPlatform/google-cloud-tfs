@@ -21,7 +21,13 @@ pushd (Join-Path $MyInvocation.MyCommand.Path ..)
 $functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
     cd ..
-
+    
+    cd scripts
+    
+    tsc
+    
+    cd ..
+    
     $allTasks = Get-TypeScriptTasks
 
     if($TasksToBuild -eq $null) {

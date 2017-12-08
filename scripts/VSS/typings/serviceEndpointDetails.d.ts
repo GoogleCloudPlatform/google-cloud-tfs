@@ -5,7 +5,7 @@ declare module "ServiceEndpointDetails" {
     /**
     * Interface defining the configuration that is shared between extension targeted at "ms.vss-endpoint.endpoint-ui-catalog" and the host.
     */
-    export interface IServiceEndpointUIExtensionConfig {
+    export interface IServiceEndpointUiExtensionConfig {
         /**
         * It tells contribution whether configuration is for create or update service endpoint.
         */
@@ -14,7 +14,7 @@ declare module "ServiceEndpointDetails" {
         * Required only if action is update. 
         * It will be used by contribution to use/ render saved endpoints details.
         */
-        serviceEndpointUIExtensionDetails: ServiceEndpointUIExtensionDetails;
+        serviceEndpointUiExtensionDetails: ServiceEndpointUiExtensionDetails;
         /**
         * If false, host will not call getEndpointDetails.
         * This is a mechanism for contribution to validate the endpoint details entered and show any specific error in case the inputs are not valid.
@@ -23,10 +23,10 @@ declare module "ServiceEndpointDetails" {
         /**
         * Function which will be implemented by contribution to get endpoint details from contribution to host.
         */
-        getEndpointDetailsFuncImpl: (getEndpointDetailsFunc: () => IPromise<ServiceEndpointUIExtensionDetails>) => void;
+        getEndpointDetailsFuncImpl: (getEndpointDetailsFunc: () => IPromise<ServiceEndpointUiExtensionDetails>) => void;
     }
 
-    export interface ServiceEndpointUIExtensionDetails {
+    export interface ServiceEndpointUiExtensionDetails {
         type: string;
         name: string;
         url: string;

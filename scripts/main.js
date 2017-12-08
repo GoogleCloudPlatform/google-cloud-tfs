@@ -1,106 +1,108 @@
 define(["require", "exports", "knockout"], function (require, exports, ko) {
-    "use strict";
+    'use strict';
     Object.defineProperty(exports, "__esModule", { value: true });
-    var viewModel = new MyViewModel();
+    let viewModel = new MyViewModel();
     function MyViewModel() {
         this.isUpdate = ko.observable();
-        this.connectionName = ko.observable("");
-        this.scope = ko.observable("");
-        this.certificate = ko.observable("");
-        this.audience = ko.observable("");
-        this.issuer = ko.observable("");
-        this.projectid = ko.observable("");
-        this.privatekey = ko.observable("");
-        this.errors = ko.observable("");
+        this.connectionName = ko.observable('');
+        this.scope = ko.observable('');
+        this.certificate = ko.observable('');
+        this.audience = ko.observable('');
+        this.issuer = ko.observable('');
+        this.projectid = ko.observable('');
+        this.privatekey = ko.observable('');
+        this.errors = ko.observable('');
         this.connectionNameFieldColor = ko.computed(function () {
-            if (this.connectionName().length == 0)
-                return '#fff4ce';
-            else
-                return '#ffffff';
+            if (this.connectionName().length === 0) {
+                return 'cornsilk';
+            }
+            else {
+                return 'white';
+            }
         }, this);
         this.scopeFieldColor = ko.computed(function () {
-            if (this.scope().length == 0)
-                return '#fff4ce';
-            else
-                return '#ffffff';
+            if (this.connectionName().length === 0) {
+                return 'cornsilk';
+            }
+            else {
+                return 'white';
+            }
         }, this);
         this.certificateFieldColor = ko.computed(function () {
-            if (this.certificate().length == 0)
-                return '#fff4ce';
-            else
-                return '#ffffff';
+            if (this.connectionName().length === 0) {
+                return 'cornsilk';
+            }
+            else {
+                return 'white';
+            }
         }, this);
     }
-    VSS.init({
-        usePlatformStyles: true
-    });
+    VSS.init({ usePlatformStyles: true });
     VSS.ready(function () {
         ko.applyBindings(viewModel);
-        var configuration = VSS.getConfiguration();
-        if ((configuration.action == "update") && (!!configuration.serviceEndpointUIExtensionDetails)) {
+        let configuration = VSS.getConfiguration();
+        if ((configuration.action === 'update') &&
+            (!!configuration.serviceEndpointUiExtensionDetails)) {
             viewModel.isUpdate(true);
-            if (configuration.serviceEndpointUIExtensionDetails.name) {
-                viewModel.connectionName(configuration.serviceEndpointUIExtensionDetails.name);
+            if (configuration.serviceEndpointUiExtensionDetails.name) {
+                viewModel.connectionName(configuration.serviceEndpointUiExtensionDetails.name);
             }
-            if (configuration.serviceEndpointUIExtensionDetails.data.scope) {
-                viewModel.scope(configuration.serviceEndpointUIExtensionDetails.data.scope);
+            if (configuration.serviceEndpointUiExtensionDetails.data.scope) {
+                viewModel.scope(configuration.serviceEndpointUiExtensionDetails.data.scope);
             }
-            if (configuration.serviceEndpointUIExtensionDetails.data.audience) {
-                viewModel.audience(configuration.serviceEndpointUIExtensionDetails.data.audience);
+            if (configuration.serviceEndpointUiExtensionDetails.data.audience) {
+                viewModel.audience(configuration.serviceEndpointUiExtensionDetails.data.audience);
             }
-            if (configuration.serviceEndpointUIExtensionDetails.data.issuer) {
-                viewModel.issuer(configuration.serviceEndpointUIExtensionDetails.data.issuer);
+            if (configuration.serviceEndpointUiExtensionDetails.data.issuer) {
+                viewModel.issuer(configuration.serviceEndpointUiExtensionDetails.data.issuer);
             }
-            if (configuration.serviceEndpointUIExtensionDetails.data.projectid) {
-                viewModel.projectid(configuration.serviceEndpointUIExtensionDetails.data.projectid);
+            if (configuration.serviceEndpointUiExtensionDetails.data.projectid) {
+                viewModel.projectid(configuration.serviceEndpointUiExtensionDetails.data.projectid);
             }
-            if (configuration.serviceEndpointUIExtensionDetails.data.privatekey) {
-                viewModel.privatekey(configuration.serviceEndpointUIExtensionDetails.data.privatekey);
+            if (configuration.serviceEndpointUiExtensionDetails.data.privatekey) {
+                viewModel.privatekey(configuration.serviceEndpointUiExtensionDetails.data.privatekey);
             }
         }
         configuration.validateEndpointDetailsFuncImpl(function () {
-            if ((!viewModel.connectionName()) || (!viewModel.scope()) || (!viewModel.certificate())) {
-                viewModel.errors("All fields are required.");
+            viewModel.errors('');
+            if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
+                (!viewModel.certificate())) {
+                viewModel.errors('All fields are required.');
                 return false;
             }
+            let jsonKeyFileContent;
             try {
-                var jsonKeyFileContent = JSON.parse(viewModel.certificate());
+                jsonKeyFileContent = JSON.parse(viewModel.certificate());
             }
             catch (e) {
-                viewModel.errors("Please provide valid json in 'JSON Key File' field");
+                viewModel.errors('Please provide valid json in JSON key file field');
                 return false;
             }
-            if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) || (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
-                viewModel.errors("All fields are required.");
+            if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
+                (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
+                viewModel.errors('All fields are required.');
                 return false;
             }
             return true;
         });
         configuration.getEndpointDetailsFuncImpl(function () {
-            var serviceEndpoint = {};
-            var gcpEndpointDetails = {};
-            var jsonKeyFileContent = JSON.parse(viewModel.certificate());
-            gcpEndpointDetails.issuer = jsonKeyFileContent.client_email;
-            gcpEndpointDetails.audience = jsonKeyFileContent.token_uri;
-            gcpEndpointDetails.privatekey = jsonKeyFileContent.private_key;
-            gcpEndpointDetails.projectid = jsonKeyFileContent.project_id;
-            serviceEndpoint.data = {
-                projectid: gcpEndpointDetails.projectid
-            };
+            let serviceEndpoint = {};
+            let jsonKeyFileContent = JSON.parse(viewModel.certificate());
+            serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
             serviceEndpoint.authorization = {
                 parameters: {
                     certificate: viewModel.certificate(),
                     scope: viewModel.scope(),
-                    issuer: gcpEndpointDetails.issuer,
-                    audience: gcpEndpointDetails.audience,
-                    privatekey: gcpEndpointDetails.privatekey
+                    issuer: jsonKeyFileContent.client_email,
+                    audience: jsonKeyFileContent.token_uri,
+                    privatekey: jsonKeyFileContent.private_key
                 },
-                scheme: "JWT"
+                scheme: 'JWT'
             };
-            serviceEndpoint.url = "https://www.googleapis.com/";
+            serviceEndpoint.url = 'https://www.googleapis.com/';
             serviceEndpoint.name = viewModel.connectionName();
-            var serviceEndpointUIExtensionDetails = serviceEndpoint;
-            return serviceEndpointUIExtensionDetails;
+            let serviceEndpointUiExtensionDetails = serviceEndpoint;
+            return serviceEndpointUiExtensionDetails;
         });
     });
     VSS.notifyLoadSucceeded();

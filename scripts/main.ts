@@ -66,7 +66,7 @@ declare let VSS;
 
 VSS.init({ usePlatformStyles: true });
 
-VSS.ready(function () {
+VSS.ready( () => {
     ko.applyBindings(googleConnectionWindowViewModel);
     let configuration = VSS.getConfiguration();
     if ((configuration.action === 'update') &&
@@ -104,7 +104,7 @@ VSS.ready(function () {
         }
     }
 
-    configuration.validateEndpointDetailsFuncImpl(function () {
+    configuration.validateEndpointDetailsFuncImpl( () => {
         try {
             googleConnectionWindowViewModel.errors('');
             if ((!googleConnectionWindowViewModel.connectionName()) || (!googleConnectionWindowViewModel.scope()) ||
@@ -135,7 +135,7 @@ VSS.ready(function () {
         }
     });
 
-    configuration.getEndpointDetailsFuncImpl(function () {
+    configuration.getEndpointDetailsFuncImpl( () => {
         try {
             let serviceEndpoint: any = {};
             let jsonKeyFileContent = JSON.parse(googleConnectionWindowViewModel.certificate());

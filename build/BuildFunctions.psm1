@@ -263,3 +263,13 @@ function Get-TypeScriptTasks() {
     }
     $dirs.Name | Write-Output
 }
+
+function Invoke-BuildUIScripts () {
+    Write-Verbose "Building UI Script"
+    pushd scripts
+    try {
+        tsc
+    } finally {
+        popd
+    }
+}

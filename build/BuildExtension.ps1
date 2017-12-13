@@ -16,18 +16,12 @@
 [CmdletBinding()]
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
-
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
 $functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
+
     cd ..
-    
-    cd scripts
-    
-    tsc
-    
-    cd ..
-    
+
     $allTasks = Get-TypeScriptTasks
 
     if($TasksToBuild -eq $null) {
@@ -39,6 +33,8 @@ try {
             % { Write-Warning "$_ is not a valid task" }
     }
 
+    Invoke-BuildUIScripts
+    
     if(Test-Path bin) {
         Write-Verbose "Removing bin"
         rm bin -Force -Recurse -ErrorAction Stop

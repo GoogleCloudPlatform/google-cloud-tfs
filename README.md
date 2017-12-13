@@ -34,8 +34,7 @@ install the extension from the extension management page of TFS.
 
 ### Build Script
 
-Go to scripts folder. Execute 'tsc'.
-Go to parent of scripts and execute build script `./build/BuildExtension.ps1`. It will download needed
+Execute build script `./build/BuildExtension.ps1`. It will download needed
 modules, build the common files and build tasks, and then package everything
 into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 

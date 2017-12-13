@@ -8,8 +8,8 @@
   },
   "compileOnSave": true,
   "files": [
-    "knockout/index.d.ts",
     "main.ts",
-    "VSS/typings/serviceEndpointDetails.d.ts"
+    "../node_modules/@types/knockout/index.d.ts",
+    "../node_modules/vss-web-extension-sdk/typings/tfs.d.ts"
   ]
 }

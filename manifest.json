@@ -32,11 +32,11 @@
       "addressable": true
     },
     {
-      "path": "scripts/VSS/VSS.SDK.js",
+      "path": "node_modules/vss-web-extension-sdk/lib/VSS.SDK.js",
       "addressable": true
     },
     {
-      "path": "scripts/require.js",
+      "path": "node_modules/requirejs/require.js",
       "addressable": true
     },
     {

@@ -21,7 +21,7 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
             }
         }, this);
         this.scopeFieldColor = ko.computed(function () {
-            if (this.connectionName().length === 0) {
+            if (this.scope().length === 0) {
                 return 'cornsilk';
             }
             else {
@@ -29,7 +29,7 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
             }
         }, this);
         this.certificateFieldColor = ko.computed(function () {
-            if (this.connectionName().length === 0) {
+            if (this.certificate().length === 0) {
                 return 'cornsilk';
             }
             else {

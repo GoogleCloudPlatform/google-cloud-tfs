@@ -1,8 +1,7 @@
 'use strict';
 
-import { ServiceEndpointUiExtensionDetails }
-    from 'ServiceEndpointDetails';
-import *as ko from 'knockout';
+import { ServiceEndpointUiExtensionDetails } from 'ServiceEndpointDetails';
+import * as ko from 'knockout';
 
 let viewModel = new MyViewModel();
 function MyViewModel() {
@@ -28,7 +27,7 @@ function MyViewModel() {
 
     this.scopeFieldColor = ko.computed(
         function () {
-            if (this.connectionName().length === 0) {
+            if (this.scope().length === 0) {
                 return 'cornsilk';
             } else {
                 return 'white';
@@ -38,7 +37,7 @@ function MyViewModel() {
 
     this.certificateFieldColor = ko.computed(
         function () {
-            if (this.connectionName().length === 0) {
+            if (this.certificate().length === 0) {
                 return 'cornsilk';
             } else {
                 return 'white';
@@ -90,53 +89,64 @@ VSS.ready(function () {
     }
 
     configuration.validateEndpointDetailsFuncImpl(function () {
-        viewModel.errors('');
-        if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
-            (!viewModel.certificate())) {
-            viewModel.errors('All fields are required.');
-            return false;
-        }
-
-        let jsonKeyFileContent;
         try {
-            jsonKeyFileContent = JSON.parse(viewModel.certificate());
-        } catch (e) {
-            viewModel.errors('Please provide valid json in JSON key file field');
+            viewModel.errors('');
+            if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
+                (!viewModel.certificate())) {
+                viewModel.errors('All fields are required.');
+                return false;
+            }
+
+            let jsonKeyFileContent;
+            try {
+                jsonKeyFileContent = JSON.parse(viewModel.certificate());
+            } catch (e) {
+                viewModel.errors('Please provide valid json in JSON key file field');
+                return false;
+            }
+
+            if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
+                (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
+                viewModel.errors('All fields are required.');
+                return false;
+            }
+
+            return true;
+        }
+        catch (e) {
+            viewModel.errors(e.message + "in method validateEndpointDetailsFuncImpl.");
             return false;
         }
-
-        if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
-            (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
-            viewModel.errors('All fields are required.');
-            return false;
-        }
-
-        return true;
     });
 
     configuration.getEndpointDetailsFuncImpl(function () {
+        try {
+            let serviceEndpoint: any = {};
+            let jsonKeyFileContent = JSON.parse(viewModel.certificate());
 
-        let serviceEndpoint: any = {};
-        let jsonKeyFileContent = JSON.parse(viewModel.certificate());
+            serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
+            serviceEndpoint.authorization = {
+                parameters: {
+                    certificate: viewModel.certificate(),
+                    scope: viewModel.scope(),
+                    issuer: jsonKeyFileContent.client_email,
+                    audience: jsonKeyFileContent.token_uri,
+                    privatekey: jsonKeyFileContent.private_key
+                },
+                scheme: 'JWT'
+            };
+            serviceEndpoint.url = 'https://www.googleapis.com/';
+            serviceEndpoint.name = viewModel.connectionName();
+            let serviceEndpointUiExtensionDetails
+                : ServiceEndpointUiExtensionDetails =
+                serviceEndpoint as ServiceEndpointUiExtensionDetails;
 
-        serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
-        serviceEndpoint.authorization = {
-            parameters: {
-                certificate: viewModel.certificate(),
-                scope: viewModel.scope(),
-                issuer: jsonKeyFileContent.client_email,
-                audience: jsonKeyFileContent.token_uri,
-                privatekey: jsonKeyFileContent.private_key
-            },
-            scheme: 'JWT'
-        };
-        serviceEndpoint.url = 'https://www.googleapis.com/';
-        serviceEndpoint.name = viewModel.connectionName();
-        let serviceEndpointUiExtensionDetails
-            : ServiceEndpointUiExtensionDetails =
-            serviceEndpoint as ServiceEndpointUiExtensionDetails;
-
-        return serviceEndpointUiExtensionDetails;
+            return serviceEndpointUiExtensionDetails;
+        }
+        catch (e) {
+            viewModel.errors(e.message + "in method getEndpointDetailsFuncImpl.");
+            return null;
+        }
     });
 });
 VSS.notifyLoadSucceeded();

@@ -64,45 +64,57 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
             }
         }
         configuration.validateEndpointDetailsFuncImpl(function () {
-            viewModel.errors('');
-            if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
-                (!viewModel.certificate())) {
-                viewModel.errors('All fields are required.');
-                return false;
-            }
-            let jsonKeyFileContent;
             try {
-                jsonKeyFileContent = JSON.parse(viewModel.certificate());
+                viewModel.errors('');
+                if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
+                    (!viewModel.certificate())) {
+                    viewModel.errors('All fields are required.');
+                    return false;
+                }
+                let jsonKeyFileContent;
+                try {
+                    jsonKeyFileContent = JSON.parse(viewModel.certificate());
+                }
+                catch (e) {
+                    viewModel.errors('Please provide valid json in JSON key file field');
+                    return false;
+                }
+                if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
+                    (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
+                    viewModel.errors('All fields are required.');
+                    return false;
+                }
+                return true;
             }
             catch (e) {
-                viewModel.errors('Please provide valid json in JSON key file field');
+                viewModel.errors(e.message + "in method validateEndpointDetailsFuncImpl.");
                 return false;
             }
-            if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
-                (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
-                viewModel.errors('All fields are required.');
-                return false;
-            }
-            return true;
         });
         configuration.getEndpointDetailsFuncImpl(function () {
-            let serviceEndpoint = {};
-            let jsonKeyFileContent = JSON.parse(viewModel.certificate());
-            serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
-            serviceEndpoint.authorization = {
-                parameters: {
-                    certificate: viewModel.certificate(),
-                    scope: viewModel.scope(),
-                    issuer: jsonKeyFileContent.client_email,
-                    audience: jsonKeyFileContent.token_uri,
-                    privatekey: jsonKeyFileContent.private_key
-                },
-                scheme: 'JWT'
-            };
-            serviceEndpoint.url = 'https://www.googleapis.com/';
-            serviceEndpoint.name = viewModel.connectionName();
-            let serviceEndpointUiExtensionDetails = serviceEndpoint;
-            return serviceEndpointUiExtensionDetails;
+            try {
+                let serviceEndpoint = {};
+                let jsonKeyFileContent = JSON.parse(viewModel.certificate());
+                serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
+                serviceEndpoint.authorization = {
+                    parameters: {
+                        certificate: viewModel.certificate(),
+                        scope: viewModel.scope(),
+                        issuer: jsonKeyFileContent.client_email,
+                        audience: jsonKeyFileContent.token_uri,
+                        privatekey: jsonKeyFileContent.private_key
+                    },
+                    scheme: 'JWT'
+                };
+                serviceEndpoint.url = 'https://www.googleapis.com/';
+                serviceEndpoint.name = viewModel.connectionName();
+                let serviceEndpointUiExtensionDetails = serviceEndpoint;
+                return serviceEndpointUiExtensionDetails;
+            }
+            catch (e) {
+                viewModel.errors(e.message + "in method getEndpointDetailsFuncImpl.");
+                return null;
+            }
         });
     });
     VSS.notifyLoadSucceeded();

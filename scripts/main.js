@@ -1,8 +1,8 @@
-define(["require", "exports", "knockout"], function (require, exports, ko) {
-    'use strict';
-    Object.defineProperty(exports, "__esModule", { value: true });
-    let viewModel = new MyViewModel();
-    function MyViewModel() {
+'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
+const ko = require("knockout");
+class GoogleConnectionWindowgoogleConnectionWindowViewModel {
+    constructor() {
         this.isUpdate = ko.observable();
         this.connectionName = ko.observable('');
         this.scope = ko.observable('');
@@ -12,7 +12,7 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
         this.projectid = ko.observable('');
         this.privatekey = ko.observable('');
         this.errors = ko.observable('');
-        this.connectionNameFieldColor = ko.computed(function () {
+        this.connectionNameFieldColor = ko.computed(() => {
             if (this.connectionName().length === 0) {
                 return 'cornsilk';
             }
@@ -20,7 +20,7 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
                 return 'white';
             }
         }, this);
-        this.scopeFieldColor = ko.computed(function () {
+        this.scopeFieldColor = ko.computed(() => {
             if (this.scope().length === 0) {
                 return 'cornsilk';
             }
@@ -28,7 +28,7 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
                 return 'white';
             }
         }, this);
-        this.certificateFieldColor = ko.computed(function () {
+        this.certificateFieldColor = ko.computed(() => {
             if (this.certificate().length === 0) {
                 return 'cornsilk';
             }
@@ -37,69 +37,71 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
             }
         }, this);
     }
-    VSS.init({ usePlatformStyles: true });
-    VSS.ready(function () {
-        ko.applyBindings(viewModel);
-        let configuration = VSS.getConfiguration();
-        if ((configuration.action === 'update') &&
-            (!!configuration.serviceEndpointUiExtensionDetails)) {
-            viewModel.isUpdate(true);
-            if (configuration.serviceEndpointUiExtensionDetails.name) {
-                viewModel.connectionName(configuration.serviceEndpointUiExtensionDetails.name);
-            }
-            if (configuration.serviceEndpointUiExtensionDetails.data.scope) {
-                viewModel.scope(configuration.serviceEndpointUiExtensionDetails.data.scope);
-            }
-            if (configuration.serviceEndpointUiExtensionDetails.data.audience) {
-                viewModel.audience(configuration.serviceEndpointUiExtensionDetails.data.audience);
-            }
-            if (configuration.serviceEndpointUiExtensionDetails.data.issuer) {
-                viewModel.issuer(configuration.serviceEndpointUiExtensionDetails.data.issuer);
-            }
-            if (configuration.serviceEndpointUiExtensionDetails.data.projectid) {
-                viewModel.projectid(configuration.serviceEndpointUiExtensionDetails.data.projectid);
-            }
-            if (configuration.serviceEndpointUiExtensionDetails.data.privatekey) {
-                viewModel.privatekey(configuration.serviceEndpointUiExtensionDetails.data.privatekey);
-            }
+}
+let googleConnectionWindowViewModel = new GoogleConnectionWindowgoogleConnectionWindowViewModel();
+VSS.init({ usePlatformStyles: true });
+VSS.ready(function () {
+    ko.applyBindings(googleConnectionWindowViewModel);
+    let configuration = VSS.getConfiguration();
+    if ((configuration.action === 'update') &&
+        (!!configuration.serviceEndpointUiExtensionDetails)) {
+        googleConnectionWindowViewModel.isUpdate(true);
+        if (configuration.serviceEndpointUiExtensionDetails.name) {
+            googleConnectionWindowViewModel.connectionName(configuration.serviceEndpointUiExtensionDetails.name);
         }
-        configuration.validateEndpointDetailsFuncImpl(function () {
-            try {
-                viewModel.errors('');
-                if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
-                    (!viewModel.certificate())) {
-                    viewModel.errors('All fields are required.');
+        if (configuration.serviceEndpointUiExtensionDetails.data.scope) {
+            googleConnectionWindowViewModel.scope(configuration.serviceEndpointUiExtensionDetails.data.scope);
+        }
+        if (configuration.serviceEndpointUiExtensionDetails.data.audience) {
+            googleConnectionWindowViewModel.audience(configuration.serviceEndpointUiExtensionDetails.data.audience);
+        }
+        if (configuration.serviceEndpointUiExtensionDetails.data.issuer) {
+            googleConnectionWindowViewModel.issuer(configuration.serviceEndpointUiExtensionDetails.data.issuer);
+        }
+        if (configuration.serviceEndpointUiExtensionDetails.data.projectid) {
+            googleConnectionWindowViewModel.projectid(configuration.serviceEndpointUiExtensionDetails.data.projectid);
+        }
+        if (configuration.serviceEndpointUiExtensionDetails.data.privatekey) {
+            googleConnectionWindowViewModel.privatekey(configuration.serviceEndpointUiExtensionDetails.data.privatekey);
+        }
+    }
+    configuration.validateEndpointDetailsFuncImpl(function () {
+        try {
+            googleConnectionWindowViewModel.errors('');
+            if ((!googleConnectionWindowViewModel.connectionName()) || (!googleConnectionWindowViewModel.scope()) ||
+                (!googleConnectionWindowViewModel.certificate())) {
+                googleConnectionWindowViewModel.errors('All fields are required.');
                     return false;
                 }
                 let jsonKeyFileContent;
                 try {
-                    jsonKeyFileContent = JSON.parse(viewModel.certificate());
+                jsonKeyFileContent = JSON.parse(googleConnectionWindowViewModel.certificate());
                 }
                 catch (e) {
-                    viewModel.errors('Please provide valid json in JSON key file field');
+                googleConnectionWindowViewModel.errors('Please provide valid json in JSON key file field');
                     return false;
                 }
                 if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
                     (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
-                    viewModel.errors('All fields are required.');
+                googleConnectionWindowViewModel.errors('All fields are required.');
                     return false;
                 }
                 return true;
-            }
-            catch (e) {
-                viewModel.errors(e.message + "in method validateEndpointDetailsFuncImpl.");
-                return false;
-            }
-        });
-        configuration.getEndpointDetailsFuncImpl(function () {
-            try {
+        }
+        catch (e) {
+            googleConnectionWindowViewModel.errors(e.message + " Details:" + e.stack);
+            return false;
+        }
+    });
+    configuration.getEndpointDetailsFuncImpl(function () {
+        try {
                 let serviceEndpoint = {};
-                let jsonKeyFileContent = JSON.parse(viewModel.certificate());
+            let jsonKeyFileContent = JSON.parse(googleConnectionWindowViewModel.certificate());
                 serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
                 serviceEndpoint.authorization = {
                     parameters: {
-                        certificate: viewModel.certificate(),
-                        scope: viewModel.scope(),
+                    certificate: googleConnectionWindowViewModel.certificate(),
+                    scope: googleConnectionWindowViewModel.scope(),
                         issuer: jsonKeyFileContent.client_email,
                         audience: jsonKeyFileContent.token_uri,
                         privatekey: jsonKeyFileContent.private_key
@@ -107,15 +109,15 @@ define(["require", "exports", "knockout"], function (require, exports, ko) {
                     scheme: 'JWT'
                 };
                 serviceEndpoint.url = 'https://www.googleapis.com/';
-                serviceEndpoint.name = viewModel.connectionName();
+            serviceEndpoint.name = googleConnectionWindowViewModel.connectionName();
                 let serviceEndpointUiExtensionDetails = serviceEndpoint;
                 return serviceEndpointUiExtensionDetails;
-            }
-            catch (e) {
-                viewModel.errors(e.message + "in method getEndpointDetailsFuncImpl.");
-                return null;
-            }
-        });
+        }
+        catch (e) {
+            googleConnectionWindowViewModel.errors(e.message + " Details:" + e.stack);
+            return null;
+        }
     });
-    VSS.notifyLoadSucceeded();
 });
+VSS.notifyLoadSucceeded();
+//# sourceMappingURL=main.js.map

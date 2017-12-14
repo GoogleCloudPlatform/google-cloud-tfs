@@ -28,7 +28,7 @@ function Initialize-Common(){
     pushd common
     try {
         if (-not (Test-Path node_modules)) {
-            npm install | Out-Null
+            npm install --loglevel error | Out-Null
         }
     } finally {
         popd
@@ -58,7 +58,7 @@ function Initialize-TsTask([string]$task) {
     pushd $task
     try {
         if (-not (Test-Path node_modules)) {
-            npm install | Out-Null
+            npm install --loglevel error | Out-Null
         }
     } finally {
         popd
@@ -99,7 +99,7 @@ function Invoke-CompileTask($task) {
     try {
         # Common module changes as part of development.
         # Update the common module every time.
-        npm install ../common | Out-Null
+        npm install ../common --loglevel warn | Out-Null
 
         Write-Verbose "Running: tsc"
         tsc
@@ -111,7 +111,7 @@ function Invoke-CompileTask($task) {
     }
 }
 
-function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter) {
+function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
     $jobs = $tasks | % {
         Start-Job -ArgumentList $pwd, $_, $reporter -ScriptBlock {
@@ -120,7 +120,11 @@ function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter) {
             Invoke-MochaTest -task $args[1] -reporter $args[2]
         }
     }
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
+    $jobErrors = $null
+    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+    if ($throwOnError -and $jobErrors) {
+        throw $jobErrors
+    }
 }
 
 function Invoke-MochaTest([string]$task, [string]$reporter) {
@@ -137,7 +141,7 @@ function Invoke-MochaTest([string]$task, [string]$reporter) {
         nyc $nycArgs
 
         if ($LASTEXITCODE -ne 0) {
-            throw "mocha failed  for task $task"
+            throw "mocha failed for task $task"
         }
     } finally {
         popd
@@ -298,4 +302,24 @@ function Get-TypeScriptTasks() {
         $fileNames -contains "task.json" -and $fileNames -contains "tsconfig.json"
     }
     $dirs.Name | Write-Output
+}
+
+function Update-AppveyorBuildVersion () {
+    if (!$env:APPVEYOR) {
+        Write-Error "Update-AppveyorBuildVersion is only avalable when running in Appveyor."
+        return
+    }
+
+    $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+    $manifestVersion = $manifest.version
+    if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
+        if($manifestVersion -ne $env:APPVEYOR_REPO_TAG_NAME){
+            throw "Manifest version $manifestVersion does not equal tag version $env:APPVEYOR_REPO_TAG_NAME"
+        }
+        $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_NUMBER"
+    } else {
+        $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
+        $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_NUMBER"
+    }
+    Update-AppveyorBuild -Version $version
 }

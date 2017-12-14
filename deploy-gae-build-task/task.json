@@ -7,7 +7,7 @@
   "description": "Deploy your app to Google App Engine.",
   "helpMarkDown": "[Google App Engine Console](http://console.cloud.google.com/appengine) [Google App Engine Docs](https://cloud.google.com/appengine/docs) [gcloud app deploy](https://cloud.google.com/sdk/gcloud/reference/app/deploy)",
   "version": {
-    "Major": 1,
+    "Major": 2,
     "Minor": 0,
     "Patch": 0
   },
@@ -45,6 +45,7 @@
     {
       "name": "yamlFileName",
       "type": "pickList",
+      "label": "YAML file name",
       "options": {
         "app.yaml": "app.yaml",
         "index.yaml": "index.yaml",
@@ -56,10 +57,25 @@
       "properties": {
         "EditableOptions": "True"
       },
-      "label": "YAML file name",
       "defaultValue": "app.yaml",
       "required": true,
       "helpMarkDown": "The name of the [YAML configuration file](https://cloud.google.com/appengine/docs/flexible/dotnet/configuration-files) to deploy. [app.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/configuring-your-app-with-app-yaml) or a custom filename defines the deployment of an app. [cron.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/scheduling-jobs-with-cron-yaml), [dispatch.yaml](https://cloud.google.com/appengine/docs/flexible/dotnet/how-requests-are-routed#routing_with_a_dispatch_file), [dos.yaml](https://cloud.google.com/appengine/docs/standard/python/config/dosref), [index.yaml](https://cloud.google.com/appengine/docs/flexible/go/configuring-datastore-indexes-with-index-yaml) and [queue.yaml](https://cloud.google.com/appengine/docs/standard/python/config/queueref) configure your app."
+    },
+    {
+      "name": "deployFromImage",
+      "type": "boolean",
+      "label": "Deploy Existing Image",
+      "defaultValue": false,
+      "helpMarkDown": "Deploy an existing docker image stored in [Google Container Registry](https://cloud.google.com/container-registry)."
+    },
+    {
+      "name": "imageUrl",
+      "type": "string",
+      "label": "Image Name",
+      "defaultValue": "gcr.io/$PROJECTID/image-name:image-tag",
+      "required": true,
+      "visibleRule": "deployFromImage = true",
+      "helpMarkDown": "The URL of the image to deploy. Must be from one of the valid [gcr hostnames](https://cloud.google.com/container-registry/docs/pushing-and-pulling#choosing_a_registry_name). Use $PROJECTID to use the project id defined by the connection."
     },
     {
       "name": "copyYaml",
@@ -116,11 +132,28 @@
       "visibleRule": "promote = true",
       "groupName": "advanced",
       "helpMarkDown": "Stop the previously running version when deploying a new version."
+    },
+    {
+      "name": "gcloudVerbosity",
+      "type": "pickList",
+      "label": "Verbosity",
+      "defaultValue": "info",
+      "options": {
+        "debug": "Debug",
+        "info": "Info",
+        "warning": "Warning",
+        "error": "Error",
+        "critical": "Critical",
+        "none": "None"
+      },
+      "required": true,
+      "groupName": "advanced",
+      "helpMarkDown": "The value of the `gcloud --verbosity` flag."
     }
   ],
   "execution": {
     "Node": {
-      "target": "deploy-gae.js"
+      "target": "run.js"
     }
   }
 }

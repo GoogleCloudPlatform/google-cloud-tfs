@@ -1,0 +1,22 @@
+{
+  "name": "kubectl-build-task",
+  "version": "0.0.1",
+  "description": "A TFS build task to run an arbitrary kubectl command.",
+  "license": "Apache-2.0",
+  "author": "Google Cloud Tools",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
+  "main": "run.js",
+  "dependencies": {
+    "common": "file:../common",
+    "vsts-task-lib": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.40",
+    "@types/mockery": "^1.4.29",
+    "@types/node": "^7.0.6",
+    "@types/q": "0.0.32",
+    "mocha": "^3.2.0",
+    "mockery": "^2.1.0",
+    "typemoq": "^2.0.1"
+  }
+}

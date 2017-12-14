@@ -14,8 +14,17 @@
     "@types/escape-string-regexp": "0.0.30",
     "@types/js-yaml": "^3.5.29",
     "@types/mocha": "^2.2.39",
+    "@types/mockery": "^1.4.29",
     "@types/node": "^7.0.6",
     "@types/q": "0.0.32",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "mockery": "^2.1.0",
+    "typemoq": "^2.1.0"
+  },
+  "nyc": {
+    "exclude": [
+      "legacyTests/**",
+      "test/**"
+    ]
   }
 }

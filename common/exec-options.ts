@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved
+// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -36,17 +36,20 @@ import WritableStream = NodeJS.WritableStream;
  * @returns {IExecOptions} for gcloud calls.
  */
 export function getDefaultExecOptions(): IExecOptions {
+  const env: {[key: string]: string;} = {
+    'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
+    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.8',
+  };
+  const cloudSdkPython = process.env['CLOUDSDK_PYTHON'];
+  if (cloudSdkPython) {
+    env['CLOUDSDK_PYTHON'] = cloudSdkPython;
+  }
   return {
-    windowsVerbatimArguments: true,
-    errStream: process.stdout as WritableStream,
-    env: {
-      'CLOUDSDK_METRICS_ENVIRONMENT': 'cloud-tools-tfs',
-      'CLOUDSDK_METRICS_ENVIRONMENT_VERSION': '0.0.1',
-    } as {
-      [variableName: string]: string;
-    },
-    ignoreReturnCode: false,
-    failOnStdErr: false,
+    env,
+    windowsVerbatimArguments : true,
+    errStream : process.stdout as WritableStream,
+    ignoreReturnCode : false,
+    failOnStdErr : false,
   } as IExecOptions;
 }
 
@@ -58,8 +61,8 @@ export function getQuietExecOptions(): IExecOptions {
   // Hide the stream output.
   // Hopefully replace this with execOptions.silent when that works.
   const protoWriter: PropertyDescriptorMap = {
-    write: {
-      value(chunk: Buffer | string, encoding?: string, callback?: Function):
+    write : {
+      value(chunk: Buffer|string, encoding?: string, callback?: Function):
           Boolean {
             let chunkString: string;
             if (encoding && chunk instanceof Buffer) {
@@ -140,17 +143,13 @@ export class Endpoint {
   /**
    * Deletes the json key file.
    */
-  clearCredentials(): void {
-    fs.unlinkSync(Endpoint.jsonKeyFilePath);
-  }
+  clearCredentials(): void { fs.unlinkSync(Endpoint.jsonKeyFilePath); }
 
   /**
    * The project id as a gcloud parameter.
    * @returns {string} --project="projectId"
    */
-  get projectParam(): string {
-    return `--project="${this.projectId}"`;
-  }
+  get projectParam(): string { return `--project="${this.projectId}"`; }
 }
 
 /**
@@ -184,19 +183,17 @@ export class KubeEndpoint extends Endpoint {
     try {
       const execOptions: IExecOptions = this.quietKubectlExecOptions;
       execOptions.env['KUBECONFIG'] = sc.kubeConfigPath;
-      const result = task.tool(task.which('gcloud'))
+      const result = task.tool(task.which('gcloud', true))
                          .line('container clusters get-credentials')
                          .arg(this.cluster)
                          .arg(`--zone=${this.zone}`)
                          .arg(this.projectParam)
                          .arg(KubeEndpoint.credentialParam)
                          .execSync(execOptions);
-      if (result.code !== 0) {
-        if (result.error) {
-          throw result.error;
-        } else {
-          throw new Error(result.stderr);
-        }
+      if (result.error) {
+        throw result.error;
+      } else if (result.code !== 0) {
+        throw new Error(result.stderr);
       }
     } catch (e) {
       super.clearCredentials();
@@ -239,7 +236,7 @@ export class KubeEndpoint extends Endpoint {
   setKubectlEnv(execOptions: IExecOptions): void {
     const credentialVariableName = 'GOOGLE_APPLICATION_CREDENTIALS';
     const useDefaultCredentialsVariableName =
-      'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS';
+        'CLOUDSDK_CONTAINER_USE_APPLICATION_DEFAULT_CREDENTIALS';
     execOptions.env[credentialVariableName] = sc.jsonKeyFilePath;
     execOptions.env[useDefaultCredentialsVariableName] = 'true';
   }

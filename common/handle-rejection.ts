@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ process.on('exit', failUnhandled);
  * message.
  * @param promise The promise or promise function to catch.
  */
-export async function catchAll<T>(promise: PromiseLike<T> | (() => void)):
-    Promise<void> {
+export async function catchAll<T>(promise: PromiseLike<T>|
+                                  (() => void)): Promise<void> {
   try {
     if (promise instanceof Function) {
       promise();
@@ -60,7 +60,7 @@ const unhandledRejections = new Map<PromiseLike<{}>, Error>();
 
 function addUnhandled(reason: Error, promise: PromiseLike<{}>): void {
   unhandledRejections.set(promise, reason);
-};
+}
 
 function removeUnhandled(reason: undefined, promise: PromiseLike<{}>): void {
   if (!unhandledRejections.delete(promise)) {
@@ -69,11 +69,11 @@ function removeUnhandled(reason: undefined, promise: PromiseLike<{}>): void {
       console.log(arguments[i]);
     }
   }
-};
+}
 
 function failUnhandled(): void {
   for (const reason of unhandledRejections.values()) {
     task.error(s.unhandledRejectionErrorMessage);
     task.setResult(task.TaskResult.Failed, reason.message);
   }
-};
+}

@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @fileoverview This is the main script run by the deploy-gae-build-task.
- *   It takes input from the TFS build task GUI (defined by task.json).
- *   It then, if asked, copies the YAML file from the source folder to the
- *   deployment path. I writes a credential file from the endpoint
- *   authorization, and calls gcloud beta app deploy with various parameters.
- * @author przybjw@google.com (Jim Przybylinski)
- */
-import {catchAll} from 'common/handle-rejection';
-
 import * as exec from 'common/exec-options';
 import {isoNowString} from 'common/format';
 import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
-import {IExecOptions, IExecResult, ToolRunner} from 'vsts-task-lib/toolrunner';
+import {ToolRunner} from 'vsts-task-lib/toolrunner';
 
 import * as strings from './string-constants';
 
@@ -34,89 +24,94 @@ import Endpoint = exec.Endpoint;
 import TaskResult = task.TaskResult;
 
 /**
- * Runs the script
+ * @fileoverview This is the main logic of the Deploy to GAE task. It copies
+ * the YAML file from the source folder to the deployment path, writes a
+ * credential file from the endpoint authorization, and calls gcloud app
+ * deploy with various parameters.
+ * @author przybjw@google.com (Jim Przybylinski)
  */
-async function run():Promise<void> {
-  // Check that gcloud exists.
-  const gcloudPath = task.which('gcloud', true);
-  checkGcloudVersion(gcloudPath);
 
-  // Get inputs from GUI.
-  // The id of the GCP service endpoint to get the credentials from.
-  const endpointId = task.getInput('serviceEndpoint', true);
-  // The path of the deployment files.
-  const deploymentPath = task.getPathInput('deploymentPath', true);
-  // The name of the YAML file we want to run on.
-  const yamlFileName = task.getInput('yamlFileName', true);
-  // If true, copy the YAML file from the source folder to the deployment
-  // path.
-  const copyYaml = task.getBoolInput('copyYaml', true);
-  // The source folder the YAML file is in.
-  const sourceFolder = task.getPathInput('sourceFolder', copyYaml);
-  // The storage bucket to send to the --bucket parameter.
-  const storageBucket = task.getInput('storageBucket', false);
-  // The version to deploy.
-  const versionInput = task.getInput('version', false);
-  // Toggle between --promote and --no-promote parameters.
-  const promote = task.getBoolInput('promote', true);
-  // Toggle between --stop-previous-version and --no-stop-previous-version.
-  const stopPrevious = task.getBoolInput('stopPrevious', promote);
+export interface RunOptions {
+  endpoint: Endpoint;
+  deploymentPath: string;
+  yamlFileName: string;
+  imageUrl?: string;
+  yamlSource?: string;
+  storageBucket?: string;
+  version?: string;
+  promote: boolean;
+  stopPrevious?: boolean;
+  verbosity: string;
+}
+
+export async function deployGae({
+  endpoint,
+  deploymentPath,
+  yamlFileName,
+  imageUrl,
+  yamlSource,
+  storageBucket,
+  version,
+  promote,
+  stopPrevious,
+  verbosity,
+}: RunOptions): Promise<void> {
+  const gcloudPath = validateGcloud();
 
   // Move YAML.
   const yamlPath = path.join(deploymentPath, yamlFileName);
-  if (copyYaml) {
-    task.cp(path.join(sourceFolder, yamlFileName), deploymentPath);
+  if (yamlSource) {
+    const appendedSource = path.join(yamlSource, yamlFileName);
+    if (yamlSource.endsWith(yamlFileName) && !task.exist(appendedSource)) {
+      task.cp(yamlSource, deploymentPath);
+    } else {
+      task.cp(appendedSource, deploymentPath);
+    }
   }
 
-  // Set version
-  const version = versionInput || isoNowString();
-
-  // Set up the key file from the certificate parameter of the service
-  // endpoint.
-  const endpoint = new Endpoint(endpointId);
+  // Replace $PROJECTID in imageUrl.
+  if (imageUrl) {
+    imageUrl = imageUrl.replace('$PROJECTID', endpoint.projectId);
+  }
 
   // Set gcloud arguments.
-  const projectArg = endpoint.projectParam;
-  const credentialArg = Endpoint.credentialParam;
-
   const gcloud: ToolRunner =
       task.tool(gcloudPath)
-          .line('beta app deploy --quiet --verbosity=info')
-          .arg([`"${yamlPath}"`, credentialArg, projectArg])
-          .argIf(version, `--version="${version}"`)
+          .line('app deploy --quiet')
+          .arg(`--verbosity=${verbosity}`)
+          .arg(`"${yamlPath}"`)
+          .arg(Endpoint.credentialParam)
+          .arg(endpoint.projectParam)
+          .arg(`--version="${version || isoNowString()}"`)
+          .argIf(imageUrl, `--image-url="${imageUrl}"`)
           .argIf(storageBucket, `--bucket="${storageBucket}"`)
           .argIf(promote, '--promote')
           .argIf(!promote, '--no-promote')
           .argIf(promote && stopPrevious, '--stop-previous-version')
           .argIf(promote && !stopPrevious, '--no-stop-previous-version');
 
-  const execOptions: IExecOptions = exec.getDefaultExecOptions();
-
   // Write credential file.
-  await endpoint.usingAsync(async() => {
+  await endpoint.usingAsync(async () => {
     // Run gcloud. Do it async so console output is sent to TFS immediately.
-    await gcloud.exec(execOptions);
+    await gcloud.exec(exec.getDefaultExecOptions());
     task.setResult(TaskResult.Succeeded, 'Deployment succeeded');
   });
 }
 
-function checkGcloudVersion(gcloudPath: string): void {
+function validateGcloud(): string {
+  interface GcloudVersion {
+    ['Google Cloud SDK']: string;
+  }
+
+  const gcloudPath = task.which('gcloud', true);
   const versionTool = task.tool(gcloudPath).line('version --format=json');
-  const result: IExecResult = versionTool.execSync(exec.getQuietExecOptions());
+  const result = versionTool.execSync(exec.getQuietExecOptions());
   const cloudSdkVersionRegex = /\d*/;
-  const versionData = JSON.parse(result.stdout) as {
-    ['Google Cloud SDK']: string,
-    ['beta']: string,
-  };
+  const versionData: GcloudVersion = JSON.parse(result.stdout) as GcloudVersion;
   const majorVersionString =
       versionData['Google Cloud SDK'].match(cloudSdkVersionRegex)[0];
-  if (Number.parseInt(majorVersionString) < 146) {
+  if (Number.parseInt(majorVersionString) < 174) {
     throw new Error(strings.oldGcloudVersionError);
   }
-
-  if (!versionData['beta']) {
-    throw new Error(strings.noGcloudBetaError);
-  }
-};
-
-catchAll(run());
+  return gcloudPath;
+}

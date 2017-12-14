@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved
+// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -43,10 +43,9 @@ const project = 'projectId';
 export const projectParam = `--project="${project}"`;
 
 const endpointAuth: EndpointAuthorization = {
-  parameters: {certificate: `{"project_id": "${project}"}`},
-  scheme: 'Certificate',
+  parameters : {certificate : `{"project_id": "${project}"}`},
+  scheme : 'Certificate',
 };
-
 
 /**
  * Registers mocks for task.getEndpointAuthorization, task.writeFile,
@@ -55,8 +54,8 @@ const endpointAuth: EndpointAuthorization = {
  * @param files A map from filename to file contents to use in the
  * fs.readFileSync mock.
  */
-export function registerCommonMocks(
-    runner: TaskMockRunner, files?: Map<string, string>): void {
+export function registerCommonMocks(runner: TaskMockRunner,
+                                    files?: Map<string, string>): void {
   runner.registerMockExport(
       'getEndpointAuthorization', (id: string): EndpointAuthorization => {
         console.log(`[task.getEndpointAuthorization]${id}`);
@@ -73,11 +72,8 @@ export function registerCommonMocks(
 
   runner.registerMock('fs', getFsMock(files));
 
-  runner.registerMock('common/format', {
-    isoNowString(): string {
-      return mockIsoString;
-    }
-  });
+  runner.registerMock('common/format',
+                      {isoNowString() : string { return mockIsoString; }});
 }
 
 /**
@@ -89,19 +85,18 @@ export function registerCommonMocks(
  */
 export function getFsMock(files?: Map<string, string>): typeof fs {
   return Object.create(fs, {
-    unlinkSync: {
-      value(file: string): void {
-        console.log(`[fs.unlinkSync]${file}`);
-      },
+    unlinkSync : {
+      value(file: string) : void { console.log(`[fs.unlinkSync]${file}`); },
     },
-    readFileSync: {
-      value(file: string): string | Buffer {
-        if (files && files.has(file)) {
-          return files.get(file);
-        } else {
-          return fs.readFileSync.apply(fs, arguments);
-        }
-      },
+    readFileSync : {
+      value(file: string) : string |
+          Buffer {
+            if (files && files.has(file)) {
+              return files.get(file);
+            } else {
+              return fs.readFileSync.apply(fs, arguments);
+            }
+          },
     },
   });
 }
@@ -126,21 +121,18 @@ export const gcloudVersionExecString = `${gcloudPath} version --format=json`;
  */
 export function getDefaultAnswers(): TaskLibAnswers {
   return {
-    which: {
-      'gcloud': gcloudPath,
-      'kubectl': kubectlPath,
+    which : {
+      'gcloud' : gcloudPath,
+      'kubectl' : kubectlPath,
     },
-    checkPath: {
-      [gcloudPath]: true,
-      [kubectlPath]: true,
+    checkPath : {
+      [gcloudPath] : true,
+      [kubectlPath] : true,
     },
-    exec: {
-      [gcloudVersionExecString]: {
-        code: 0,
-        stdout: '{\n' +
-            '  "Google Cloud SDK": "146.0.0",\n' +
-            '  "beta": "2016.01.12"\n' +
-            '}',
+    exec : {
+      [gcloudVersionExecString] : {
+        code : 0,
+        stdout : JSON.stringify({['Google Cloud SDK']: '174.0.0'}),
       },
     },
   };

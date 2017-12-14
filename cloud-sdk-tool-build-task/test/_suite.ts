@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -24,19 +24,8 @@ import {MockTestRunner} from 'vsts-task-lib/mock-test';
 
 import {CloudSdkPackage} from '../cloud-sdk-package';
 
-describe('cloud-sdk-tool', function() {
+describe('cloud-sdk-tool', function(): void {
   this.timeout(0);
-
-  let runner: MockTestRunner;
-  beforeEach(function() { runner = null; });
-
-  afterEach(function() {
-    if (this.currentTest.state === 'failed') {
-      console.log(runner.stdout);
-      console.log('--------------------');
-      console.log(runner.stderr);
-    }
-  });
 
   it('fails installing kubectl', async () => {
     process.env['Agent_Version'] = '2.115.0';
@@ -44,6 +33,9 @@ describe('cloud-sdk-tool', function() {
         path.join(process.env['TEMP'], 'TfsTemp');
     process.env['Agent_ToolsDirectory'] =
       path.join(process.env['TEMP'], 'TfsTools');
-    await new CloudSdkPackage('176.0.0').aquire(true);
+
+    const latestVersion = await CloudSdkPackage.queryLatestVersion();
+    await new CloudSdkPackage(latestVersion).aquire(true);
+
   });
 });

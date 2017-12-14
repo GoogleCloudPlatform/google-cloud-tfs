@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Google Inc. All Rights Reserved
+﻿// Copyright 2017 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ export class CloudSdkPackage {
     });
 
     const data: string = await new Promise<string>((resolve) => {
-      let rawData: string = '';
+      let rawData = '';
       message.on('data', (chunk: string) => rawData += chunk);
       message.on('end', () => resolve(rawData));
     });
@@ -50,14 +50,14 @@ export class CloudSdkPackage {
 
   isCached(): boolean { return this.toolPath && this.toolPath.length > 0; }
 
-  async init(allowReporting: boolean) {
+  async init(allowReporting: boolean): Promise<void> {
     toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
     await task.tool(task.which('gcloud'))
         .line(`config set disable_usage_reporting ${!allowReporting}`)
         .exec();
   }
 
-  async aquire(allowReporting: boolean) {
+  async aquire(allowReporting: boolean): Promise<void> {
     const downloadPath: string =
         await toolLib.downloadTool(this.getDownloadUrl());
     const extractedPath: string = await this.extractArchive(downloadPath);
@@ -66,18 +66,18 @@ export class CloudSdkPackage {
     const installerPath: string =
         path.join(this.toolPath, 'google-cloud-sdk', this.getInstallFile());
     const execOptions = getDefaultExecOptions();
+    execOptions.env['PROCESSOR_ARCHITECTURE'] =
+        process.env['PROCESSOR_ARCHITECTURE'];
     execOptions.env['CLOUDSDK_CORE_DISABLE_PROMPTS'] = 'true';
     await task.tool(installerPath)
         .line('--quiet')
         .line(`--usage-reporting ${allowReporting}`)
+        .line('--additional-components kubectl')
         .exec(execOptions);
     toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
-    await task.tool(task.which('gcloud'))
-        .line('components install kubectl beta')
-        .exec(execOptions);
   }
 
-  private getInstallFile() {
+  private getInstallFile(): string {
     switch (os.platform()) {
     case 'win32':
       return 'install.bat';
@@ -106,7 +106,7 @@ export class CloudSdkPackage {
     }
   }
 
-  private getOsArchString() {
+  private getOsArchString(): string {
     switch (os.arch()) {
     case 'x64':
       return 'x86_64';

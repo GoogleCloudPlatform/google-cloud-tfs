@@ -14,33 +14,34 @@
 
 import {getDefaultExecOptions} from 'common/exec-options';
 import * as http from 'http';
-import {ClientRequest, IncomingMessage} from 'http';
 import * as os from 'os';
 import * as path from 'path';
-import * as task from 'vsts-task-lib';
+import * as task from 'vsts-task-lib/task';
 import * as toolLib from 'vsts-task-tool-lib/tool';
 
 const cloudSdkId = 'google-cloud-sdk';
 const urlRoot = 'http://dl.google.com/dl/cloudsdk/channels/rapid';
 const downloadUrlRoot = `${urlRoot}/downloads`;
+const versionDoc = `${urlRoot}/components-2.json`;
 
 export class CloudSdkPackage {
-  private readonly version: string;
+  readonly version: string;
   private toolPath: string;
 
-  constructor(versionString: string) {
-    this.version = toolLib.cleanVersion(versionString);
-    this.toolPath = toolLib.findLocalTool(cloudSdkId, this.version);
+  constructor(versionString: string, di = {toolLib}) {
+    this.version = di.toolLib.cleanVersion(versionString);
+    if (!(this.version && this.version.length > 0)) {
+      throw new Error(`Given version ${versionString} is not a valid version.`);
+    }
+    this.toolPath = di.toolLib.findLocalTool(cloudSdkId, this.version);
   }
 
-  static async queryLatestVersion(): Promise<string> {
-    const versionDoc = `${urlRoot}/components-2.json`;
-    const message = await new Promise<IncomingMessage>((resolve, reject) => {
-      const request: ClientRequest = http.get(versionDoc, resolve);
-      request.on('error', reject);
-    });
+  static async queryLatestVersion(di = {http}): Promise<string> {
+    const message = await new Promise<http.IncomingMessage>(
+        (resolve,
+         reject) => { di.http.get(versionDoc, resolve).on('error', reject); });
 
-    const data: string = await new Promise<string>((resolve) => {
+    const data = await new Promise<string>((resolve) => {
       let rawData = '';
       message.on('data', (chunk: string) => rawData += chunk);
       message.on('end', () => resolve(rawData));
@@ -48,37 +49,56 @@ export class CloudSdkPackage {
     return JSON.parse(data)['version'] as string;
   }
 
-  isCached(): boolean { return this.toolPath && this.toolPath.length > 0; }
-
-  async init(allowReporting: boolean): Promise<void> {
-    toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
-    await task.tool(task.which('gcloud'))
-        .line(`config set disable_usage_reporting ${!allowReporting}`)
-        .exec();
+  static async createPackage(versionSpec?: string, di = {http, task, toolLib}):
+      Promise<CloudSdkPackage> {
+    let version: string;
+    if (!versionSpec) {
+      version = await CloudSdkPackage.queryLatestVersion(di);
+      di.task.debug(`Latest version ${version} selected.`);
+    } else if (di.toolLib.isExplicitVersion(versionSpec)) {
+      version = versionSpec;
+      di.task.debug(`Version ${version} selected.`);
+    } else {
+      throw new Error('Version, if set, must be an explicit version.');
+    }
+    return new CloudSdkPackage(version, di);
   }
 
-  async aquire(allowReporting: boolean): Promise<void> {
+  isCached(): boolean { return this.toolPath && this.toolPath.length > 0; }
+
+  getToolPath(): string { return this.toolPath; }
+
+  async init(allowReporting: boolean, di = {toolLib, task}): Promise<void> {
+    di.toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
+    await di.task.tool(di.task.which('gcloud'))
+        .line(`config set disable_usage_reporting ${!allowReporting}`)
+        .exec(getDefaultExecOptions());
+  }
+
+  async aquire(allowReporting: boolean,
+               di = {toolLib, task, os}): Promise<void> {
     const downloadPath: string =
-        await toolLib.downloadTool(this.getDownloadUrl());
-    const extractedPath: string = await this.extractArchive(downloadPath);
-    this.toolPath = await toolLib.cacheDir(extractedPath, cloudSdkId,
-                                           this.version, os.arch());
+        await di.toolLib.downloadTool(this.getDownloadUrl(di));
+    const extractedPath: string = await this.extractArchive(downloadPath, di);
+    this.toolPath = await di.toolLib.cacheDir(extractedPath, cloudSdkId,
+                                              this.version, di.os.arch());
     const installerPath: string =
-        path.join(this.toolPath, 'google-cloud-sdk', this.getInstallFile());
+        path.join(this.toolPath, 'google-cloud-sdk', this.getInstallFile(di));
     const execOptions = getDefaultExecOptions();
+    execOptions.env['CLOUDSDK_CORE_DISABLE_PROMPTS'] = 'true';
+    execOptions.env['PATH'] = process.env['PATH'];
     execOptions.env['PROCESSOR_ARCHITECTURE'] =
         process.env['PROCESSOR_ARCHITECTURE'];
-    execOptions.env['CLOUDSDK_CORE_DISABLE_PROMPTS'] = 'true';
-    await task.tool(installerPath)
+    await di.task.tool(installerPath)
         .line('--quiet')
         .line(`--usage-reporting ${allowReporting}`)
         .line('--additional-components kubectl')
         .exec(execOptions);
-    toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
+    di.toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
   }
 
-  private getInstallFile(): string {
-    switch (os.platform()) {
+  private getInstallFile(di = {os}): string {
+    switch (di.os.platform()) {
     case 'win32':
       return 'install.bat';
     case 'linux':
@@ -86,14 +106,14 @@ export class CloudSdkPackage {
     case 'darwin':
       return 'install.sh';
     default:
-      throw new Error(`Unsupported operating system: ${os.platform()}.`);
+      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 
-  private getDownloadUrl(): string {
+  private getDownloadUrl(di = {os}): string {
     const filePrefix = `google-cloud-sdk-${this.version}`;
-    const archString = this.getOsArchString();
-    switch (os.platform()) {
+    const archString = this.getOsArchString(di);
+    switch (di.os.platform()) {
     case 'win32':
       return `${downloadUrlRoot}/${filePrefix}-windows-` +
              `${archString}-bundled-python.zip`;
@@ -102,31 +122,32 @@ export class CloudSdkPackage {
     case 'darwin':
       return `${downloadUrlRoot}/${filePrefix}-darwin-${archString}.tar.gz`;
     default:
-      throw new Error(`Unsupported operating system: ${os.platform()}.`);
+      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 
-  private getOsArchString(): string {
-    switch (os.arch()) {
+  private getOsArchString(di = {os}): string {
+    switch (di.os.arch()) {
     case 'x64':
       return 'x86_64';
     case 'x86':
       return 'x86';
     default:
-      throw new Error(`Unsupported architecture: ${os.arch()}`);
+      throw new Error(`Unsupported architecture: ${di.os.arch()}`);
     }
   }
 
-  private async extractArchive(file: string): Promise<string> {
-    switch (os.platform()) {
+  private async extractArchive(file: string,
+                               di = {toolLib, os}): Promise<string> {
+    switch (di.os.platform()) {
     case 'win32':
-      return await toolLib.extractZip(file);
+      return await di.toolLib.extractZip(file);
     case 'linux':
-      return await toolLib.extractTar(file);
+      return await di.toolLib.extractTar(file);
     case 'darwin':
-      return await toolLib.extractTar(file);
+      return await di.toolLib.extractTar(file);
     default:
-      throw new Error(`Unsupported operating system: ${os.platform()}.`);
+      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 }

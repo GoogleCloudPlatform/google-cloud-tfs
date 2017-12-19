@@ -14,9 +14,12 @@
     "vsts-task-tool-lib": "^0.4.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^5.0.0",
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.6",
     "@types/q": "0.0.32",
-    "mocha": "^3.2.0"
+    "fs-extra": "^5.0.0",
+    "mocha": "^3.2.0",
+    "typemoq": "^2.1.0"
   }
 }

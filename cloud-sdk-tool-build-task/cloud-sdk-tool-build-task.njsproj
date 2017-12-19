@@ -27,7 +27,17 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <TypeScriptCompile Include="cloud-sdk-package.ts" />
-    <TypeScriptCompile Include="test\_suite.ts" />
+    <TypeScriptCompile Include="test\functional-tests.ts">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\unit-tests.ts">
+      <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\_suite.ts">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="test\" />

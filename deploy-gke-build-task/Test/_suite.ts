@@ -29,7 +29,6 @@ import {MockTestRunner} from 'vsts-task-lib/mock-test';
 import * as tc from './test-constants';
 
 describe('deploy-gke build task', () => {
-
   let runner: MockTestRunner;
   beforeEach(function(): void { runner = null; });
 
@@ -66,7 +65,7 @@ describe('deploy-gke build task', () => {
       'dryRun',
     ];
 
-    requiredParameters.forEach((param: string) => {
+    for (const param of requiredParameters) {
       it(`should fail with missing ${param} parameter`, () => {
         const kebobed = toKebabCase(param);
         const testPath = path.join(__dirname, `missing-${kebobed}.js`);
@@ -77,7 +76,7 @@ describe('deploy-gke build task', () => {
         assert(runner.stdOutContained(`Input required: ${param}`),
                `Should be looking for ${param}.`);
       });
-    });
+    }
   });
 
   it('should fail when "gcloud container clusters get-credentials" fails',

@@ -17,25 +17,15 @@
  * @author przybjw@google.com (Jim Przybylinski)
  */
 import {catchAll} from 'common/handle-rejection';
-import * as task from 'vsts-task-lib';
-import * as toolLib from 'vsts-task-tool-lib/tool';
+import * as task from 'vsts-task-lib/task';
+
 import {CloudSdkPackage} from './cloud-sdk-package';
 
 async function run(): Promise<void> {
   const versionSpec = task.getInput('version', false);
   const allowReporting = task.getBoolInput('allowReporting', true);
 
-  let version: string;
-  if (!versionSpec) {
-    version = await CloudSdkPackage.queryLatestVersion();
-    task.debug(`Latest version ${version} selected.`);
-  } else if (toolLib.isExplicitVersion(versionSpec)) {
-    version = versionSpec;
-    task.debug(`Version ${version} selected.`);
-  } else {
-    throw new Error('Version, if set, must be an explicit version.');
-  }
-  const cloudSdkPackage = new CloudSdkPackage(version);
+  const cloudSdkPackage = await CloudSdkPackage.createPackage(versionSpec);
   if (cloudSdkPackage.isCached()) {
     task.debug(`Initializing cached version`);
     await cloudSdkPackage.init(allowReporting);

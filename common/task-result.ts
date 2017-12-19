@@ -28,11 +28,11 @@ export class TaskResult {
 
   static async runTask(taskScript: string,
                        env: {[key: string]: string}): Promise<TaskResult> {
-    Object.keys(process.env).forEach((variableName) => {
+    for (const variableName of Object.keys(process.env)) {
       if (env[variableName] === undefined) {
         env[variableName] = process.env[variableName];
       }
-    });
+    }
     const options:
         ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
     const taskProcess = fork(taskScript, [], options);
@@ -53,11 +53,11 @@ export class TaskResult {
     const setVariableTag =
         `##vso[task.setvariable variable=${variableName};secret=${secret};]`;
     let value: string = undefined;
-    this.outputData.forEach((line) => {
+    for (const line of this.outputData) {
       if (line.startsWith(setVariableTag)) {
         value = line.substring(setVariableTag.length);
       }
-    });
+    }
     return value;
   }
 

@@ -26,11 +26,9 @@ describe('deploy-gke using values', () => {
   const credentialExecString = tc.clusterCredentialExecString;
 
   let runner: MockTestRunner;
-  beforeEach(function() {
-    runner = null;
-  });
+  beforeEach(() => { runner = null; });
 
-  afterEach(function() {
+  afterEach(function(): void {
     if (this.currentTest.state === 'failed') {
       console.log(runner.stdout);
       console.log('--------------------');
@@ -46,7 +44,7 @@ describe('deploy-gke using values', () => {
       'replicas',
     ];
 
-    requiredParameters.forEach((param: string) => {
+    for (const param of requiredParameters) {
       it(`should fail with missing ${param} parameter`, () => {
         const kebobed = toKebabCase(param);
         const testPath = path.join(__dirname, `missing-${kebobed}.js`);
@@ -56,14 +54,12 @@ describe('deploy-gke using values', () => {
         assert(runner.failed, 'Should have failed.');
         ctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
         assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-        assert(
-            runner.createdErrorIssue(`Input required: ${param}`),
-            `Should be looking for ${param}.`);
-        assert.equal(
-            runner.invokedToolCount, 1,
-            'Should only run the kube credentials command');
+        assert(runner.createdErrorIssue(`Input required: ${param}`),
+               `Should be looking for ${param}.`);
+        assert.equal(runner.invokedToolCount, 1,
+                     'Should only run the kube credentials command');
       });
-    });
+    }
   });
 
   it('should fail with non-integer replica.', () => {
@@ -77,9 +73,8 @@ describe('deploy-gke using values', () => {
     assert(
         runner.createdErrorIssue(s.nanReplicaMessage(tc.invalidReplicaString)),
         'Should warn for invalid replica parameter.');
-    assert.equal(
-        runner.invokedToolCount, 1,
-        'Should only run the kube credentials command');
+    assert.equal(runner.invokedToolCount, 1,
+                 'Should only run the kube credentials command');
   });
 
   it('should fail with negative integer replicas.', () => {
@@ -91,12 +86,10 @@ describe('deploy-gke using values', () => {
     ctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
     const message = s.negitiveReplicaMessage(tc.invalidReplicaNegitive);
-    assert(
-        runner.createdErrorIssue(message),
-        'Should warn for invalid replica parameter.');
-    assert.equal(
-        runner.invokedToolCount, 1,
-        'Should only run the kube credentials command');
+    assert(runner.createdErrorIssue(message),
+           'Should warn for invalid replica parameter.');
+    assert.equal(runner.invokedToolCount, 1,
+                 'Should only run the kube credentials command');
   });
 
   it('should fail if get deployments fails.', () => {
@@ -107,9 +100,8 @@ describe('deploy-gke using values', () => {
     assert(runner.failed, 'Should have failed.');
     ctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-    assert(
-        runner.createdErrorIssue(tc.gcloudError),
-        'Should error with gcloud stderr.');
+    assert(runner.createdErrorIssue(tc.gcloudError),
+           'Should error with gcloud stderr.');
     assert.equal(
         runner.invokedToolCount, 2,
         'Should run two commands (get credentials and get deployments)');
@@ -126,7 +118,6 @@ describe('deploy-gke using values', () => {
     assert.equal(
         runner.invokedToolCount, 2,
         'Should run two commands (get credentials and get deployments)');
-
   });
 
   it('should fail when kubectl run fails', () => {
@@ -188,13 +179,11 @@ describe('deploy-gke using values', () => {
     assert.equal(
         runner.invokedToolCount, 2,
         'Should run two commands (get credentials and get deployments).');
-    assert(
-        runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
-        'Should see skip set image message.');
-    assert(
-        runner.stdOutContained(
-            s.skipRescale(tc.deploymentName, tc.replicasInt)),
-        'Should see skip rescale message.');
+    assert(runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
+           'Should see skip set image message.');
+    assert(runner.stdOutContained(
+               s.skipRescale(tc.deploymentName, tc.replicasInt)),
+           'Should see skip rescale message.');
   });
 
   it('should succeed at just scale', () => {
@@ -208,9 +197,8 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 3, 'Should run three commands.');
     assert(runner.ran(tc.kubectlScaleExecString), 'Should run scale.');
-    assert(
-        runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
-        'Should see skip set image message.');
+    assert(runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
+           'Should see skip set image message.');
   });
 
   it('should succeed at just set image', () => {
@@ -224,10 +212,9 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 3, 'Should run three commands.');
     assert(runner.ran(tc.kubectlSetImageExecString), 'Should run set image.');
-    assert(
-        runner.stdOutContained(
-            s.skipRescale(tc.deploymentName, tc.replicasInt)),
-        'Should see skip rescale message.');
+    assert(runner.stdOutContained(
+               s.skipRescale(tc.deploymentName, tc.replicasInt)),
+           'Should see skip rescale message.');
   });
 
   it('should succeed at just scale in a dry run', () => {
@@ -240,13 +227,11 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.errorIssues.length, 0, 'Should have no errors.');
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 2, 'Should run two commands.');
-    assert(
-        runner.stdOutContained(
-            s.rescaledDryRun(tc.deploymentName, tc.moreReplicasInt)),
-        'Should receive replica dry run message.');
-    assert(
-        runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
-        'Should see skip set image message.');
+    assert(runner.stdOutContained(
+               s.rescaledDryRun(tc.deploymentName, tc.moreReplicasInt)),
+           'Should receive replica dry run message.');
+    assert(runner.stdOutContained(s.skipSetImage(tc.deploymentName, tc.image)),
+           'Should see skip set image message.');
   });
 
   it('should succeed at just set image in a dry run', () => {
@@ -259,14 +244,12 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.errorIssues.length, 0, 'Should have no errors.');
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 2, 'Should run two commands.');
-    assert(
-        runner.stdOutContained(
-            s.imageSetDryRun(tc.deploymentName, tc.newImage)),
-        'Should receive replica dry run message.');
-    assert(
-        runner.stdOutContained(
-            s.skipRescale(tc.deploymentName, tc.replicasInt)),
-        'Should see skip rescale message.');
+    assert(runner.stdOutContained(
+               s.imageSetDryRun(tc.deploymentName, tc.newImage)),
+           'Should receive replica dry run message.');
+    assert(runner.stdOutContained(
+               s.skipRescale(tc.deploymentName, tc.replicasInt)),
+           'Should see skip rescale message.');
   });
 
   it('should fail when kubectl scale fails.', () => {
@@ -279,8 +262,8 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 4, 'Should run four commands.');
-    assert(
-        runner.ran(tc.kubectlSetImageExecString), 'Should have run set image.');
+    assert(runner.ran(tc.kubectlSetImageExecString),
+           'Should have run set image.');
     assert(runner.ran(tc.kubectlScaleExecString), 'Should have run scale.');
   });
 
@@ -294,8 +277,8 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 4, 'Should run four commands.');
-    assert(
-        runner.ran(tc.kubectlSetImageExecString), 'Should have run set image.');
+    assert(runner.ran(tc.kubectlSetImageExecString),
+           'Should have run set image.');
     assert(runner.ran(tc.kubectlScaleExecString), 'Should have run scale.');
   });
 
@@ -310,8 +293,8 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 4, 'Should run four commands.');
     assert(runner.ran(tc.kubectlScaleExecString), 'Should have run scale.');
-    assert(
-        runner.ran(tc.kubectlSetImageExecString), 'Should have run set image.');
+    assert(runner.ran(tc.kubectlSetImageExecString),
+           'Should have run set image.');
   });
 
   it('should succeed with both scale and set image', () => {
@@ -325,8 +308,8 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 4, 'Should run four commands.');
     assert(runner.ran(tc.kubectlScaleExecString), 'Should have run scale.');
-    assert(
-        runner.ran(tc.kubectlSetImageExecString), 'Should have run set image.');
+    assert(runner.ran(tc.kubectlSetImageExecString),
+           'Should have run set image.');
   });
 
   it('should succeed with both scale and set image in a dry run', () => {
@@ -340,13 +323,11 @@ describe('deploy-gke using values', () => {
     assert.equal(runner.errorIssues.length, 0, 'Should have no errors.');
     assert.equal(runner.warningIssues, 0, 'Should have no warnings.');
     assert.equal(runner.invokedToolCount, 2, 'Should run two commands.');
-    assert(
-        runner.stdOutContained(
-            s.rescaledDryRun(tc.deploymentName, tc.moreReplicasInt)),
-        'Should receive replica dry run message.');
-    assert(
-        runner.stdOutContained(
-            s.imageSetDryRun(tc.deploymentName, tc.newImage)),
-        'Should receive set image dry run message.');
+    assert(runner.stdOutContained(
+               s.rescaledDryRun(tc.deploymentName, tc.moreReplicasInt)),
+           'Should receive replica dry run message.');
+    assert(runner.stdOutContained(
+               s.imageSetDryRun(tc.deploymentName, tc.newImage)),
+           'Should receive set image dry run message.');
   });
 });

@@ -16,26 +16,13 @@
  * @fileoverview This is a test suite that tests the cloud-sdk-tool task.
  * @author przybjw@google.com (Jim Przybylinski)
  */
-import 'mocha';
 
-import * as assert from 'assert';
-import * as path from 'path';
-import {MockTestRunner} from 'vsts-task-lib/mock-test';
+describe('cloud-sdk-tool', () => {
+  // ReSharper disable once CommonJsExternalModule
+  /* tslint:disable-next-line no-require-imports */
+  require('./unit-tests');
 
-import {CloudSdkPackage} from '../cloud-sdk-package';
-
-describe('cloud-sdk-tool', function(): void {
-  this.timeout(0);
-
-  it('fails installing kubectl', async () => {
-    process.env['Agent_Version'] = '2.115.0';
-    process.env['Agent_TempDirectory'] =
-        path.join(process.env['TEMP'], 'TfsTemp');
-    process.env['Agent_ToolsDirectory'] =
-      path.join(process.env['TEMP'], 'TfsTools');
-
-    const latestVersion = await CloudSdkPackage.queryLatestVersion();
-    await new CloudSdkPackage(latestVersion).aquire(true);
-
-  });
+  // ReSharper disable once CommonJsExternalModule
+  /* tslint:disable-next-line no-require-imports */
+  require('./functional-tests');
 });

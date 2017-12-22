@@ -32,8 +32,6 @@ try {
             ? { $_ -notin $allTasks } |
             % { Write-Warning "$_ is not a valid task" }
     }
-
-    Invoke-BuildUIScripts
     
     if(Test-Path bin) {
         Write-Verbose "Removing bin"

@@ -1,0 +1,21 @@
+{
+  "name": "gcp-ui-build-task",
+  "version": "0.0.1",
+  "description": "Google Cloud Platform service endpoint UI.",
+  "license": "Apache-2.0",
+  "author": "Google Cloud Tools",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
+  "dependencies": {
+    "vss-web-extension-sdk": "^4.126.2",
+    "requirejs": "^2.3.5",
+    "react": "^16.2.0",
+    "mousetrap": "^1.6.1",
+    "knockout": "^3.4.2",
+    "jqueryui": "^1.11.1",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.6.39",
+    "@types/knockout": "^3.4.47"
+  }
+}

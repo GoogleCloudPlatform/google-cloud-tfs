@@ -1,0 +1,37 @@
+{
+  "contributions": [
+    {
+      "id": "google-cloud-endpoint-ui",
+      "displayname": "Google Cloud Platform service endpoint UI",
+      "type": "ms.vss-endpoint.service-endpoint-ui",
+      "targets": [
+        "ms.vss-endpoint.endpoint-ui-catalog"
+      ],
+      "properties": {
+        "file": "main.html"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "css/main.css",
+      "addressable": true
+    },
+    {
+      "path": "main.js",
+      "addressable": true
+    },
+    {
+      "path": "node_modules/vss-web-extension-sdk/lib/VSS.SDK.js",
+      "addressable": true
+    },
+    {
+      "path": "node_modules/requirejs/require.js",
+      "addressable": true
+    },
+    {
+      "path": "knockout.js",
+      "addressable": true
+    }
+  ]
+}

@@ -9,7 +9,7 @@
   "compileOnSave": true,
   "files": [
     "main.ts",
-    "../node_modules/@types/knockout/index.d.ts",
-    "../node_modules/vss-web-extension-sdk/typings/tfs.d.ts"
+    "node_modules/@types/knockout/index.d.ts",
+    "node_modules/vss-web-extension-sdk/typings/tfs.d.ts"
   ]
 }

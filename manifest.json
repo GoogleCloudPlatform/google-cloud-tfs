@@ -22,6 +22,10 @@
     {
       "path": "main.html",
       "addressable": true
+    },
+    {
+      "path": "knockout.js",
+      "addressable": true
     }
   ],
   "categories": [ "Build and release" ],

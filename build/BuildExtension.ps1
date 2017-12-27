@@ -38,10 +38,16 @@ try {
         rm bin -Force -Recurse -ErrorAction Stop
     }
 
+    Initialize-TsTask "gcp-endpoint-ui"
     if (-not $SkipInit){
         Initialize-All $tasks
     }
 
+    if (-not (Test-Path "knockout.js")) {
+        cp gcp-endpoint-ui\node_modules\knockout\build\output\knockout-latest.js knockout.js
+    }
+
+    Invoke-CompileTask "gcp-endpoint-ui"
     if (-not $SkipCompile) {
         Invoke-CompileAll $tasks
     }

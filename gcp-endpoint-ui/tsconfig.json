@@ -4,7 +4,11 @@
     "module": "amd",
     "target": "es6",
     "sourceMap": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "types": [
+      "vss-web-extension-sdk"
+    ]
   },
   "compileOnSave": true,
   "files": [

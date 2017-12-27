@@ -1,6 +1,6 @@
 'use strict';
 
-import { ServiceEndpointUiExtensionDetails } from 'ServiceEndpointDetails';
+import { ServiceEndpointUiExtensionDetails } from 'TFS/DistributedTask/ServiceEndpoint/ExtensionContracts';
 import * as ko from 'knockout';
 
 class GoogleConnectionWindowgoogleConnectionWindowViewModel {

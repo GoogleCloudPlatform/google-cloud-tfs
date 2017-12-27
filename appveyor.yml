@@ -20,7 +20,8 @@ install:
 
 before_build:
   - ps: Initialize-All $allTsTasks
-
+  - ps: Initialize-TsTask "gcp-endpoint-ui" 
+  
 before_package:
   - ps: Merge-ExtensionPackage $allTsTasks
 

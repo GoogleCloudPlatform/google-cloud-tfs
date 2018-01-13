@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "common", "common\common.njsproj", "{8ABCF5FE-EC92-4FFB-96E5-821790941E57}"
 EndProject
@@ -47,6 +47,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "deploy-gke-build-task", "de
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "install-cloud-sdk-build-task", "install-cloud-sdk-build-task\install-cloud-sdk-build-task.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "gcp-endpoint-ui", "gcp-endpoint-ui\gcp-endpoint-ui.njsproj", "{3138018B-AEB2-4B13-835D-4977ED12EAC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,8 +79,15 @@ Global
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3138018B-AEB2-4B13-835D-4977ED12EAC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3138018B-AEB2-4B13-835D-4977ED12EAC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3138018B-AEB2-4B13-835D-4977ED12EAC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3138018B-AEB2-4B13-835D-4977ED12EAC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC266CC6-19B3-466D-8E9E-93A47692A6A9}
 	EndGlobalSection
 EndGlobal

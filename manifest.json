@@ -18,6 +18,14 @@
     {
       "path": "images/screenshots",
       "addressable": true
+    },
+    {
+      "path": "main.html",
+      "addressable": true
+    },
+    {
+      "path": "knockout.js",
+      "addressable": true
     }
   ],
   "categories": [ "Build and release" ],
@@ -60,18 +68,19 @@
   },
   "contributions": [
     {
-      "id": "service-endpoint",
+      "id": "google-cloud-endpoint-type",
       "description": "Information for connecting to Google Cloud Platform",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": [ "ms.vss-endpoint.endpoint-types" ],
       "properties": {
-        "name": "google-cloud-service-endpoint",
+        "name": "google-cloud",
         "displayName": "Google Cloud Platform",
         "helpMarkDown": "[Get Json Key File](https://console.cloud.google.com/iam-admin/serviceaccounts)",
         "url": {
           "displayName": "Server Url",
           "value": "https://www.googleapis.com/"
         },
+        "uiContributionId": "google-cloud-endpoint-ui",
         "inputDescriptors": [
           {
             "id": "projectid",
@@ -87,6 +96,11 @@
           }
         ],
         "dataSources": [
+          {
+            "name": "TestConnection",
+            "endpointUrl": "https://cloudresourcemanager.googleapis.com/v1beta1/projects",
+            "resultSelector": "jsonpath:$.items[*]"
+          },
           {
             "name": "ZoneName",
             "endpointUrl": "{{{endpoint.url}}}/compute/beta/projects/{{{endpoint.projectid}}}/zones",

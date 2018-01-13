@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "amd",
+    "target": "es6",
+    "sourceMap": false,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "types": [
+      "vss-web-extension-sdk"
+    ]
+  },
+  "compileOnSave": true,
+  "files": [
+    "main.ts",
+    "node_modules/@types/knockout/index.d.ts",
+    "node_modules/vss-web-extension-sdk/typings/tfs.d.ts"
+  ]
+}

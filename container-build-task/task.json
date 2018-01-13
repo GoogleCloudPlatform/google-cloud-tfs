@@ -9,7 +9,7 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   },
   "category": "Package",
   "visibility": [ "Build", "Release" ],
@@ -26,7 +26,7 @@
     {
       "name": "serviceEndpoint",
       "label": "GCP connection",
-      "type": "connectedService:google-cloud-service-endpoint",
+      "type": "connectedService:google-cloud",
       "required": true,
       "helpMarkDown": "The Google Cloud Platform connection to use."
     },

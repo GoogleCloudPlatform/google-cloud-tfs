@@ -16,10 +16,10 @@
 [CmdletBinding()]
 Param([string[]]$TasksToBuild, [switch]$SkipInit, [switch]$SkipCompile, [switch]$SkipTest)
 
-
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
 $functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru
 try {
+
     cd ..
 
     $allTasks = Get-TypeScriptTasks
@@ -32,17 +32,19 @@ try {
             ? { $_ -notin $allTasks } |
             % { Write-Warning "$_ is not a valid task" }
     }
-
+    
     if(Test-Path bin) {
         Write-Verbose "Removing bin"
         rm bin -Force -Recurse -ErrorAction Stop
     }
 
     if (-not $SkipInit){
+        Initialize-TsTask "gcp-endpoint-ui"
         Initialize-All $tasks
     }
 
     if (-not $SkipCompile) {
+        Invoke-CompileTask "gcp-endpoint-ui"
         Invoke-CompileAll $tasks
     }
         

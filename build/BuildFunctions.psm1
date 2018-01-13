@@ -224,8 +224,16 @@ function Merge-ExtensionPackage([string[]]$tasks){
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
+
+    if (-not (Test-Path "knockout.js")) {
+        cp gcp-endpoint-ui\node_modules\knockout\build\output\knockout-latest.js knockout.js
+    }
+
     Write-Verbose "Running: tfx extension create --output-path bin"
     tfx extension create --manifestGlobs **/manifest.json --output-path bin
+    if ($LASTEXITCODE -ne 0) {
+        throw "tfx failed!"
+    }
 }
 
 function Update-TaskBeforePackage([string]$task) {

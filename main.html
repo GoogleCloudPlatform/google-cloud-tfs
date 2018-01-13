@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google Cloud Platform Endpoint</title>
+    <link rel="stylesheet" type="text/css" href="gcp-endpoint-ui/css/main.css">
+</head>
+
+<body>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <div data-bind="template: { name: 'gcp-template' }"></div>
+    <script type="text/html" id="gcp-template">
+        <div class="add_gcp_connections_dialog services_dialog">
+            <table>
+                <tr>
+                    <td>
+                        <label for="connectionName">Connection Name</label>
+                    </td>
+                    <td>
+                        <input class="textbox" data-bind="value: connectionName, valueUpdate: ['blur', 'afterkeydown'], style: { 'background-color': connectionNameFieldColor() }"
+                            required id="connectionName" type="text" />
+                    </td>
+                </tr>
+                <!-- ko if: isUpdate() -->
+                <tr>
+                    <td>
+                        <label for="audience">Audience</label>
+                    </td>
+                    <td>
+                        <input class="textbox" type="text" readonly="readonly" id="audience" data-bind="value: audience" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Issuer</label></td>
+                    <td>
+                        <input class="textbox" type="text" readonly="readonly" data-bind="value: issuer" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="projectid">Project Id</label></td>
+                    <td>
+                        <input class="textbox" type="text" readonly="readonly" id="projectid" data-bind="value: projectid" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="privatekey">Private Key</label></td>
+                    <td>
+                        <input class="textbox" placeholder="*****" required readonly="readonly" id="privatekey" type="text" />
+                    </td>
+                </tr>
+                <!-- /ko -->
+                <tr>
+                    <td>
+                        <label for="scope">Google Cloud Platform scope</label>
+                    </td>
+                    <td>
+                        <input class="textbox" id="scope" type="text" data-bind="value: scope, valueUpdate: ['blur', 'afterkeydown'], style: { 'background-color': scopeFieldColor() }"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="certificate">JSON Key File</label>
+                    </td>
+                    <td>
+                        <textarea class="textbox" required id="certificate" rows="5" cols="10" data-bind="value: certificate, valueUpdate: ['blur', 'afterkeydown'], style: { 'background-color': certificateFieldColor() }, attr: { placeholder: isUpdate() ? '*****' : '' }"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank">Get JSON File</a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <br>
+            <div class="error-list" data-bind="text: errors">
+            </div>
+        </div>
+    </script>
+    <script src="gcp-endpoint-ui/node_modules/requirejs/require.js"></script>
+    <script>
+        require(["gcp-endpoint-ui/node_modules/vss-web-extension-sdk/lib/VSS.SDK", "gcp-endpoint-ui/main"], function (VSS, main) { })
+    </script>
+</body>
+
+</html>

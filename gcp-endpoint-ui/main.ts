@@ -1,6 +1,21 @@
+// Copyright 2018 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 'use strict';
 
-import { ServiceEndpointUiExtensionDetails } from 'TFS/DistributedTask/ServiceEndpoint/ExtensionContracts';
+import { ServiceEndpointUiExtensionDetails }
+    from 'TFS/DistributedTask/ServiceEndpoint/ExtensionContracts';
 import * as ko from 'knockout';
 
 class GoogleConnectionWindowgoogleConnectionWindowViewModel {
@@ -18,7 +33,7 @@ class GoogleConnectionWindowgoogleConnectionWindowViewModel {
     public certificateFieldColor: KnockoutComputed<string>;
 
     constructor() {
-        this.isUpdate = ko.observable();
+        this.isUpdate = ko.observable<boolean>();
         this.connectionName = ko.observable('');
         this.scope = ko.observable('');
         this.certificate = ko.observable('');
@@ -60,107 +75,99 @@ class GoogleConnectionWindowgoogleConnectionWindowViewModel {
     }
 }
 
-let googleConnectionWindowViewModel = new GoogleConnectionWindowgoogleConnectionWindowViewModel();
+let viewModel = new GoogleConnectionWindowgoogleConnectionWindowViewModel();
 
 declare let VSS;
 
 VSS.init({ usePlatformStyles: true });
 
 VSS.ready( () => {
-    ko.applyBindings(googleConnectionWindowViewModel);
+    ko.applyBindings(viewModel);
     let configuration = VSS.getConfiguration();
-    if ((configuration.action === 'update') &&
-        (!!configuration.serviceEndpointUiExtensionDetails)) {
-        googleConnectionWindowViewModel.isUpdate(true);
+    let details = configuration.serviceEndpointUiExtensionDetails;
+    if ((configuration.action === 'update') && (details)) {
+        viewModel.isUpdate(true);
 
-        if (configuration.serviceEndpointUiExtensionDetails.name) {
-            googleConnectionWindowViewModel.connectionName(
-                configuration.serviceEndpointUiExtensionDetails.name);
+        if (details.name) {
+            viewModel.connectionName(details.name);
         }
 
-        if (configuration.serviceEndpointUiExtensionDetails.data.scope) {
-            googleConnectionWindowViewModel.scope(
-                configuration.serviceEndpointUiExtensionDetails.data.scope);
+        if (details.data.scope) {
+            viewModel.scope(details.data.scope);
         }
 
-        if (configuration.serviceEndpointUiExtensionDetails.data.audience) {
-            googleConnectionWindowViewModel.audience(
-                configuration.serviceEndpointUiExtensionDetails.data.audience);
+        if (details.data.audience) {
+            viewModel.audience(details.data.audience);
         }
 
-        if (configuration.serviceEndpointUiExtensionDetails.data.issuer) {
-            googleConnectionWindowViewModel.issuer(
-                configuration.serviceEndpointUiExtensionDetails.data.issuer);
+        if (details.data.issuer) {
+            viewModel.issuer(details.data.issuer);
         }
 
-        if (configuration.serviceEndpointUiExtensionDetails.data.projectid) {
-            googleConnectionWindowViewModel.projectid(
-                configuration.serviceEndpointUiExtensionDetails.data.projectid);
+        if (details.data.projectid) {
+            viewModel.projectid(details.data.projectid);
         }
 
-        if (configuration.serviceEndpointUiExtensionDetails.data.privatekey) {
-            googleConnectionWindowViewModel.privatekey(
-                configuration.serviceEndpointUiExtensionDetails.data.privatekey);
+        if (details.data.privatekey) {
+            viewModel.privatekey(details.data.privatekey);
         }
     }
 
     configuration.validateEndpointDetailsFuncImpl( () => {
         try {
-            googleConnectionWindowViewModel.errors('');
-            if ((!googleConnectionWindowViewModel.connectionName()) || (!googleConnectionWindowViewModel.scope()) ||
-                (!googleConnectionWindowViewModel.certificate())) {
-                googleConnectionWindowViewModel.errors('All fields are required.');
+            viewModel.errors('');
+            if ((!viewModel.connectionName()) || (!viewModel.scope()) ||
+                    (!viewModel.certificate())) {
+                viewModel.errors('All fields are required.');
                 return false;
             }
 
-            let jsonKeyFileContent;
+            let jsonKey;
             try {
-                jsonKeyFileContent = JSON.parse(googleConnectionWindowViewModel.certificate());
+                jsonKey = JSON.parse(viewModel.certificate());
             } catch (e) {
-                googleConnectionWindowViewModel.errors('Please provide valid json in JSON key file field');
+                viewModel.errors(
+                    'Please provide valid json in JSON key file field');
                 return false;
             }
 
-            if ((!jsonKeyFileContent.client_email) || (!jsonKeyFileContent.token_uri) ||
-                (!jsonKeyFileContent.private_key) || (!jsonKeyFileContent.project_id)) {
-                googleConnectionWindowViewModel.errors('All fields are required.');
+            if ((!jsonKey.client_email) || (!jsonKey.token_uri) ||
+                (!jsonKey.private_key) || (!jsonKey.project_id)) {
+                viewModel.errors('All fields are required.');
                 return false;
             }
 
             return true;
-        }
-        catch (e) {
-            googleConnectionWindowViewModel.errors(e.message + " Details:" + e.stack);
+        } catch (e) {
+            viewModel.errors(e.message + ' Details:' + e.stack);
             return false;
         }
     });
 
     configuration.getEndpointDetailsFuncImpl( () => {
         try {
-            let serviceEndpoint: any = {};
-            let jsonKeyFileContent = JSON.parse(googleConnectionWindowViewModel.certificate());
+            let jsonKeyFileContent =
+                JSON.parse(viewModel.certificate());
 
-            serviceEndpoint.data = { projectid: jsonKeyFileContent.project_id };
-            serviceEndpoint.authorization = {
-                parameters: {
-                    certificate: googleConnectionWindowViewModel.certificate(),
-                    scope: googleConnectionWindowViewModel.scope(),
-                    issuer: jsonKeyFileContent.client_email,
-                    audience: jsonKeyFileContent.token_uri,
-                    privatekey: jsonKeyFileContent.private_key
+            return {
+                type: null,
+                data: { projectid: jsonKeyFileContent.project_id },
+                authorization: {
+                    parameters: {
+                        certificate:
+                            viewModel.certificate(),
+                        scope: viewModel.scope(),
+                        issuer: jsonKeyFileContent.client_email,
+                        audience: jsonKeyFileContent.token_uri,
+                        privatekey: jsonKeyFileContent.private_key
+                    },
+                    scheme: 'JWT'
                 },
-                scheme: 'JWT'
-            };
-            serviceEndpoint.url = 'https://www.googleapis.com/';
-            serviceEndpoint.name = googleConnectionWindowViewModel.connectionName();
-            let serviceEndpointUiExtensionDetails
-                : ServiceEndpointUiExtensionDetails =
-                serviceEndpoint as ServiceEndpointUiExtensionDetails;
-
-            return serviceEndpointUiExtensionDetails;
-        }
-        catch (e) {
-            googleConnectionWindowViewModel.errors(e.message + " Details:" + e.stack);
+                url: 'https://www.googleapis.com/',
+                name: viewModel.connectionName(),
+            } as ServiceEndpointUiExtensionDetails;
+        } catch (e) {
+            viewModel.errors(e.message + ' Details:' + e.stack);
             return null;
         }
     });

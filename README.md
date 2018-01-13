@@ -30,7 +30,6 @@ install the extension from the extension management page of TFS.
   - [npm][npm]. Should be installed with the Node.js install.
   - [TypeScript][TypeScript]. Install with `npm install -g typescript`
   - [tfx][tfs-cli] The tfs cli. Install with `npm install -g tfx-cli`
-  - [angular] Install with 'npm install angular –save'
 
 ### Build Script
 

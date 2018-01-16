@@ -132,6 +132,8 @@ export class CloudSdkPackage {
       return 'x86_64';
     case 'x86':
       return 'x86';
+    case 'ia32':
+      return 'x86';
     default:
       throw new Error(`Unsupported architecture: ${di.os.arch()}`);
     }

@@ -438,6 +438,25 @@ describe('unit tests', () => {
           Times.once());
     });
 
+    it('aquires from a ia32 windows environment correctly', async () => {
+      osMock.setup(os => os.platform()).returns(() => 'win32');
+      osMock.setup(os => os.arch()).returns(() => 'ia32');
+
+      await sdkPackage.aquire(true, di);
+
+      toolLibMock.verify(
+          toolLib => toolLib.downloadTool(It.is(
+              (s: string) => s.endsWith('windows-x86-bundled-python.zip'))),
+          Times.once());
+      toolLibMock.verify(toolLib => toolLib.extractZip(It.isAny()),
+                         Times.once());
+      toolLibMock.verify(toolLib => toolLib.extractTar(It.isAny()),
+                         Times.never());
+      taskMock.verify(
+          task => task.tool(It.is((s: string) => s.endsWith('install.bat'))),
+          Times.once());
+    });
+
     it('aquires from a 64 bit mac environment correctly', async () => {
       osMock.setup(os => os.platform()).returns(() => 'darwin');
       osMock.setup(os => os.arch()).returns(() => 'x64');

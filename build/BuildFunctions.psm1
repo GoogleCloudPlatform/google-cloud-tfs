@@ -152,12 +152,7 @@ function Send-Coverage() {
     Write-Host "Sending Code Coverage reports."
     $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
     Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-    $reports = ls -Recurse -Include coverage-final.json
-    $reports.FullName | % {
-        # codecov uploads code coverage reports to codecov.io.
-        Write-Verbose "Running: bash codecov.sh -f $_"
-        bash codecov.sh -f $_
-    }
+    bash codecov.sh
 }
 
 function Publish-TasksLocal([string[]]$tasks) {

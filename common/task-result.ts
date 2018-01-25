@@ -79,4 +79,26 @@ export class TaskResult {
     }
     return [ 'succeeded', successMessage ];
   }
+
+  getDebugLines(this: TaskResult, match: string | RegExp | null = null): string[] {
+    const taskDebugTag = '##vso[task.debug]';
+    const debugLines: string[] = [];
+    for (const chunk of this.outputData) {
+      if (chunk.startsWith(taskDebugTag)) {
+        const line = chunk.substring(taskDebugTag.length);
+        if (match === null) {
+          debugLines.push(line);
+        } else if (typeof match === 'string') {
+          if (line.includes(match)) {
+            debugLines.push(line);
+          }
+        } else {
+          if (match.test(line)) {
+            debugLines.push(line);
+          }
+        }
+      }
+    }
+    return debugLines;
+  }
 }

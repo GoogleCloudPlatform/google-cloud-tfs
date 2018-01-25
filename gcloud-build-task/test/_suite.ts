@@ -13,7 +13,6 @@
 // limitations under the License.
 
 describe('gcloud-build-task', () => {
-
   // ReSharper disable once CommonJsExternalModule
   /* tslint:disable-next-line no-require-imports */
   require('./unit-tests');

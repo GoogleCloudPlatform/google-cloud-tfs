@@ -29,9 +29,13 @@ describe('functional tests', function(): void {
 
   beforeEach(async () => {
     const tempDirPromise =
-        fs.remove(agentTempDir).then(() => fs.mkdir(agentTempDir));
+        fs.remove(agentTempDir)
+            .then(() => fs.readdir(path.dirname(agentTempDir)))
+            .then(() => fs.mkdir(agentTempDir));
     const toolsDirPromise =
-        fs.remove(agentToolsDir).then(() => fs.mkdir(agentToolsDir));
+        fs.remove(agentToolsDir)
+            .then(() => fs.readdir(path.dirname(agentToolsDir)))
+            .then(() => fs.mkdir(agentToolsDir));
     taskOutput = undefined;
     env = {
       ['INPUT_allowReporting'] : 'false',
@@ -78,5 +82,17 @@ describe('functional tests', function(): void {
     taskOutput = await TaskResult.runTask('cloud-sdk-tool.js', env);
 
     assert.equal(taskOutput.getStatus()[0], 'failed');
+  });
+
+  it('updates cached version', async () => {
+    const targetVersion = '176.0.0';
+    env['INPUT_version'] = targetVersion;
+    await TaskResult.runTask('cloud-sdk-tool.js', env);
+
+    taskOutput = await TaskResult.runTask('cloud-sdk-tool.js', env);
+
+    assert.equal(taskOutput.getStatus()[0], 'succeeded');
+    assert.equal(taskOutput.getDebugLines('Initializing cached version').length,
+                 1);
   });
 });

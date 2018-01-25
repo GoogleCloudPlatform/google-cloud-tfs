@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "common", "common\common.njsproj", "{8ABCF5FE-EC92-4FFB-96E5-821790941E57}"
 EndProject
@@ -58,6 +58,9 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "kubectl-build-task", "kubec
 	EndProjectSection
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "cloud-sdk-tool-build-task", "cloud-sdk-tool-build-task\cloud-sdk-tool-build-task.njsproj", "{50D73809-62B3-485F-9211-0AB681CCEFFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8ABCF5FE-EC92-4FFB-96E5-821790941E57} = {8ABCF5FE-EC92-4FFB-96E5-821790941E57}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

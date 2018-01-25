@@ -181,7 +181,7 @@ describe('unit tests', () => {
       di = {
         http : httpMock.object,
         toolLib : toolLibMock.object,
-        task : taskMock.object
+        task : taskMock.object,
       };
     });
 
@@ -371,7 +371,7 @@ describe('unit tests', () => {
       di = {
         toolLib : toolLibMock.object,
         task : taskMock.object,
-        os : osMock.object
+        os : osMock.object,
       };
 
       const mockVersion = '1.0.0-mockVersion';
@@ -528,6 +528,27 @@ describe('unit tests', () => {
       taskMock.verify(
           task => task.tool(It.is((s: string) => s.endsWith('install.sh'))),
           Times.once());
+    });
+
+    it('fails for an usupported os', async () => {
+      osMock.setup(os => os.platform()).returns(() => 'android');
+
+      await sdkPackage.aquire(true, di).then(
+          () => assert.fail(
+              undefined, new Error('Unsupported operating system: android.')),
+          (e: Error) => assert.equal(e.message,
+                                     'Unsupported operating system: android.'));
+    });
+
+    it('fails for an usupported architecture', async () => {
+      osMock.setup(os => os.platform()).returns(() => 'linux');
+      osMock.setup(os => os.arch()).returns(() => 'unknownArch');
+
+      await sdkPackage.aquire(true, di).then(
+          () => assert.fail(
+              undefined, new Error('Unsupported architecture: unknownArch.')),
+          (e: Error) => assert.equal(e.message,
+                                     'Unsupported architecture: unknownArch.'));
     });
   });
 });

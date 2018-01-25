@@ -25,7 +25,6 @@ import * as deployGaeTypeDef from '../deploy-gae';
 describe('unit tests', () => {
   // Modules to import after mockery setup.
   let execOptions: typeof execOptionsTypeDef;
-  let tr: typeof trTypeDef;
   let deployGae: typeof deployGaeTypeDef;
   let task: typeof taskTypeDef;
 
@@ -37,9 +36,7 @@ describe('unit tests', () => {
 
   // Constants used by tests.
   const auth: taskTypeDef.EndpointAuthorization = {
-    parameters : {
-      certificate : '{"project_id": "project-id"}',
-    },
+    parameters : {certificate : '{"project_id": "project-id"}'},
     scheme : '',
   };
   const stdout = 'stdout';
@@ -62,7 +59,6 @@ describe('unit tests', () => {
     mockery.registerMock('vsts-task-lib/task', taskLibMock.object);
 
     execOptions = require('common/exec-options');
-    tr = require('vsts-task-lib/toolrunner');
     deployGae = require('../deploy-gae');
     task = require('vsts-task-lib/task');
     // ReSharper restore CommonJsExternalModule
@@ -76,8 +72,7 @@ describe('unit tests', () => {
 
   beforeEach('initialize mocks', () => {
     checkVersionResult = {
-      stdout : JSON.stringify(
-          {['Google Cloud SDK'] : '174.0.0'}),
+      stdout : JSON.stringify({['Google Cloud SDK'] : '174.0.0'}),
       code : 0,
       error : null,
       stderr : '',

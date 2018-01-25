@@ -21,7 +21,7 @@ describe('functional tests', function(): void {
   let gcloudVersionPromise: Promise<string>;
   let taskOutput: TaskResult;
   const endpointAuth = JSON.stringify({
-    parameters : {certificate : JSON.stringify({project_id : 'projectId'})}
+    parameters : {certificate : JSON.stringify({project_id : 'projectId'})},
   });
   const variableName = 'outputVariable';
   let env: {[variableName: string]: string};
@@ -65,13 +65,12 @@ describe('functional tests', function(): void {
   });
 
   const requiredInputs = [ 'serviceEndpoint', 'command' ];
-  for (let input of requiredInputs) {
+  for (const input of requiredInputs) {
     it(`should fail missing required input ${input}`, async () => {
       env[`INPUT_${input}`] = undefined;
 
       taskOutput = await TaskResult.runTask('run.js', env);
       assert.equal(taskOutput.getStatus()[0], 'failed');
-
     });
   }
 

@@ -19,6 +19,17 @@ import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
 import * as toolLib from 'vsts-task-tool-lib/tool';
 
+type ValidPlatform = 'win32'|'linux'|'darwin';
+type ValidArch = 'x64'|'x86'|'ia32';
+
+function isValidPlatform(platform: string): platform is ValidPlatform {
+  return platform === 'win32' || platform === 'linux' || platform === 'darwin';
+}
+
+function isValidArch(arch: string): arch is ValidArch {
+  return arch === 'x64' || arch === 'x86' || arch === 'ia32';
+}
+
 const cloudSdkId = 'google-cloud-sdk';
 const urlRoot = 'http://dl.google.com/dl/cloudsdk/channels/rapid';
 const downloadUrlRoot = `${urlRoot}/downloads`;
@@ -28,7 +39,7 @@ export class CloudSdkPackage {
   readonly version: string;
   private toolPath: string;
 
-  constructor(versionString: string, di = {toolLib}) {
+  constructor(versionString: string, di: {toolLib: typeof toolLib}) {
     this.version = di.toolLib.cleanVersion(versionString);
     if (!(this.version && this.version.length > 0)) {
       throw new Error(`Given version ${versionString} is not a valid version.`);
@@ -36,7 +47,7 @@ export class CloudSdkPackage {
     this.toolPath = di.toolLib.findLocalTool(cloudSdkId, this.version);
   }
 
-  static async queryLatestVersion(di = {http}): Promise<string> {
+  static async queryLatestVersion(di: {http: typeof http}): Promise<string> {
     const message = await new Promise<http.IncomingMessage>(
         (resolve,
          reject) => { di.http.get(versionDoc, resolve).on('error', reject); });
@@ -64,7 +75,9 @@ export class CloudSdkPackage {
     return new CloudSdkPackage(version, di);
   }
 
-  isCached(): boolean { return this.toolPath && this.toolPath.length > 0; }
+  isCached(): boolean {
+    return this.toolPath && this.toolPath.length > 0 || false;
+  }
 
   getToolPath(): string { return this.toolPath; }
 
@@ -77,13 +90,23 @@ export class CloudSdkPackage {
 
   async aquire(allowReporting: boolean,
                di = {toolLib, task, os}): Promise<void> {
-    const downloadPath: string =
-        await di.toolLib.downloadTool(this.getDownloadUrl(di));
-    const extractedPath: string = await this.extractArchive(downloadPath, di);
+    const platform = di.os.platform();
+    if (!isValidPlatform(platform)) {
+      throw new Error(`Unsupported operating system: ${platform}.`);
+    }
+    const arch = di.os.arch();
+    if (!isValidArch(arch)) {
+      throw new Error(`Unsupported architecture: ${arch}.`);
+    }
+    const downloadUrl = this.getDownloadUrl(platform, arch);
+    const downloadPath = await di.toolLib.downloadTool(downloadUrl);
+    const extractedPath =
+        await CloudSdkPackage.extractArchive(platform, downloadPath, di);
     this.toolPath = await di.toolLib.cacheDir(extractedPath, cloudSdkId,
-                                              this.version, di.os.arch());
-    const installerPath: string =
-        path.join(this.toolPath, 'google-cloud-sdk', this.getInstallFile(di));
+                                              this.version, arch);
+    const installFile = CloudSdkPackage.getInstallFile(platform);
+    const installerPath =
+        path.join(this.toolPath, 'google-cloud-sdk', installFile);
     const execOptions = getDefaultExecOptions();
     execOptions.env['CLOUDSDK_CORE_DISABLE_PROMPTS'] = 'true';
     execOptions.env['PATH'] = process.env['PATH'];
@@ -97,23 +120,21 @@ export class CloudSdkPackage {
     di.toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
   }
 
-  private getInstallFile(di = {os}): string {
-    switch (di.os.platform()) {
+  private static getInstallFile(platform: ValidPlatform): string {
+    switch (platform) {
     case 'win32':
       return 'install.bat';
     case 'linux':
       return 'install.sh';
     case 'darwin':
       return 'install.sh';
-    default:
-      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 
-  private getDownloadUrl(di = {os}): string {
+  private getDownloadUrl(platform: ValidPlatform, arch: ValidArch): string {
     const filePrefix = `google-cloud-sdk-${this.version}`;
-    const archString = this.getOsArchString(di);
-    switch (di.os.platform()) {
+    const archString = CloudSdkPackage.getOsArchString(arch);
+    switch (platform) {
     case 'win32':
       return `${downloadUrlRoot}/${filePrefix}-windows-` +
              `${archString}-bundled-python.zip`;
@@ -121,35 +142,30 @@ export class CloudSdkPackage {
       return `${downloadUrlRoot}/${filePrefix}-linux-${archString}.tar.gz`;
     case 'darwin':
       return `${downloadUrlRoot}/${filePrefix}-darwin-${archString}.tar.gz`;
-    default:
-      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 
-  private getOsArchString(di = {os}): string {
-    switch (di.os.arch()) {
+  private static getOsArchString(arch: ValidArch): string {
+    switch (arch) {
     case 'x64':
       return 'x86_64';
     case 'x86':
       return 'x86';
     case 'ia32':
       return 'x86';
-    default:
-      throw new Error(`Unsupported architecture: ${di.os.arch()}`);
     }
   }
 
-  private async extractArchive(file: string,
-                               di = {toolLib, os}): Promise<string> {
-    switch (di.os.platform()) {
+  private static async extractArchive(
+      platform: ValidPlatform, file: string,
+      di: {toolLib: typeof toolLib, os: typeof os}): Promise<string> {
+    switch (platform) {
     case 'win32':
       return await di.toolLib.extractZip(file);
     case 'linux':
       return await di.toolLib.extractTar(file);
     case 'darwin':
       return await di.toolLib.extractTar(file);
-    default:
-      throw new Error(`Unsupported operating system: ${di.os.platform()}.`);
     }
   }
 }

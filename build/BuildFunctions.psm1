@@ -70,10 +70,10 @@ function Invoke-CompileAll([string[]]$tasks) {
     Write-Host "Compiling TypeScript modules and tasks"
     Invoke-CompileCommon
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Invoke-CompileTask -task $args[1]
+            Invoke-CompileTask -task $using:_
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
@@ -114,10 +114,10 @@ function Invoke-CompileTask($task) {
 function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_, $reporter -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Invoke-MochaTest -task $args[1] -reporter $args[2]
+            Invoke-MochaTest -task $using:_ -reporter $using:reporter
         }
     }
     $jobErrors = $null
@@ -150,20 +150,17 @@ function Invoke-MochaTest([string]$task, [string]$reporter) {
 
 function Send-Coverage() {
     Write-Host "Sending Code Coverage reports."
-    $reports = ls -Recurse -Include coverage-final.json
-    $reports.FullName | % {
-        # codecov uploads code coverage reports to codecov.io.
-        Write-Verbose "Running: codecov -f $_"
-        codecov -f $_
-    }
+    $env:PATH = "C:\msys64\usr\bin;$env:PATH"
+    Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+    bash codecov.sh
 }
 
 function Publish-TasksLocal([string[]]$tasks) {
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Publish-TsTaskLocal -task $args[1]
+            Publish-TsTaskLocal -task $using:_
         }
     }
     Publish-PsTaskLocal "install-cloud-sdk-build-task"
@@ -219,10 +216,10 @@ function Publish-TsTaskLocal($task) {
 function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] $version) {
     Write-Host "Building package"
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Update-TaskBeforePackage -task $args[1]
+            Update-TaskBeforePackage -task $using:_
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
@@ -296,22 +293,19 @@ function Get-TypeScriptTasks() {
     $dirs.Name | Write-Output
 }
 
-function Update-AppveyorBuildVersion () {
+function Update-AppveyorBuildVersion() {
     if (!$env:APPVEYOR) {
         Write-Error "Update-AppveyorBuildVersion is only avalable when running in Appveyor."
         return
     }
 
-    $manifest = Get-Content .\manifest.json | ConvertFrom-Json
-    $manifestVersion = $manifest.version
     if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
+        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        $manifestVersion = $manifest.version
         if($manifestVersion -ne $env:APPVEYOR_REPO_TAG_NAME){
             throw "Manifest version $manifestVersion does not equal tag version $env:APPVEYOR_REPO_TAG_NAME"
         }
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_NUMBER"
-    } else {
-        $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
-        $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_NUMBER"
+        Update-AppveyorBuild -Version $version
     }
-    Update-AppveyorBuild -Version $version
 }

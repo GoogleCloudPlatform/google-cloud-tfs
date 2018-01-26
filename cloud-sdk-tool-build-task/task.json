@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
   "id": "0f664e0d-1cde-4d41-8400-a9408b637918",
   "name": "cloud-sdk-tool-build-task",
-  "friendlyName": "Google Cloud Sdk Tool",
+  "friendlyName": "Google Cloud Sdk Tool Installer",
   "description": "Finds or downloads and caches a version of the Google Cloud Sdk.",
   "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks.",
   "category": "Tool",
@@ -12,14 +12,14 @@
     "Minor": 0,
     "Patch": 1
   },
-  "instanceNameFormat": "Use Google Cloud Sdk $(version)",
+  "instanceNameFormat": "Use Google Cloud SDK $(version)",
   "inputs": [
     {
       "name": "version",
       "type": "string",
       "label": "Version",
       "required": false,
-      "helpMarkDown": "The version of the Cloud Sdk. Leave blank to get the latest."
+      "helpMarkDown": "The version of the Cloud SDK. Leave blank to get the latest version."
     },
     {
       "name": "allowReporting",

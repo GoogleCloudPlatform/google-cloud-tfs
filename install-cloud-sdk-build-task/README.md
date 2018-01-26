@@ -1,7 +1,12 @@
-# ![GCP][GCPLogo] Install Google Cloud Sdk Build Task
+# ![GCP][GCPLogo] Install Google Cloud SDK Build Task
 
 This task finds or installs the [Google Cloud SDK][CloudSdk].
 It can then do some basic configuration.
+
+## Install Google Cloud SDK Build Task vs Google Cloud SDK Tool Installer Build Task
+
+The [Gooogle Cloud SDK Tool Installer Build Task][GoogleCloudSdkToolInstaller] is faster than this task,
+and allows caching of Goolge Cloud SDK versions, but requires the  [VSTS Tool Installers][ToolInstallers] feature.
 
 ## Usage
 
@@ -29,8 +34,10 @@ Cloud SDK.
   - **Install Path**: The path on the agent to install the Cloud SDK. Defaults to '%LOCALAPPDATA%\\Google\\Cloud SDK'.
   - **Force Install**: Check this to force an install of the Cloud SDK even if it already exists on the path.
   - **Clean Install Path**: Check this to remove files from the target installation path.
-
-[GCPLogo]: ../images/cloud_64x64.png
-[InstallCloudSdkParameters]: ../images/screenshots/install-cloud-sdk-inputs.png
+  
 [CloudSdk]: https://cloud.google.com/sdk
 [UsageStats]: https://cloud.google.com/sdk/usage-statistics
+[ToolInstallers]: https://docs.microsoft.com/en-us/vsts/build-release/concepts/process/tasks#tool-installers
+[GoogleCloudSdkToolInstaller]: ../cloud-sdk-tool-build-task/README.md
+[GCPLogo]: ../images/cloud_64x64.png
+[InstallCloudSdkParameters]: ../images/screenshots/install-cloud-sdk-inputs.png

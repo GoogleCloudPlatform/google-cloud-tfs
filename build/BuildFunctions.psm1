@@ -70,10 +70,10 @@ function Invoke-CompileAll([string[]]$tasks) {
     Write-Host "Compiling TypeScript modules and tasks"
     Invoke-CompileCommon
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Invoke-CompileTask -task $args[1]
+            Invoke-CompileTask -task $using:_
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
@@ -114,10 +114,10 @@ function Invoke-CompileTask($task) {
 function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_, $reporter -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Invoke-MochaTest -task $args[1] -reporter $args[2]
+            Invoke-MochaTest -task $using:_ -reporter $using:reporter
         }
     }
     $jobErrors = $null
@@ -157,10 +157,10 @@ function Send-Coverage() {
 
 function Publish-TasksLocal([string[]]$tasks) {
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Publish-TsTaskLocal -task $args[1]
+            Publish-TsTaskLocal -task $using:_
         }
     }
     Publish-PsTaskLocal "install-cloud-sdk-build-task"
@@ -216,10 +216,10 @@ function Publish-TsTaskLocal($task) {
 function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] $version) {
     Write-Host "Building package"
     $jobs = $tasks | % {
-        Start-Job -ArgumentList $pwd, $_ -ScriptBlock {
-            cd $args[0]
+        Start-Job {
+            cd $using:pwd
             Import-Module ./build/BuildFunctions.psm1
-            Update-TaskBeforePackage -task $args[1]
+            Update-TaskBeforePackage -task $using:_
         }
     }
     $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob

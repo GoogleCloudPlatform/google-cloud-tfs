@@ -20,7 +20,9 @@ install:
   - ps: |
      if ($env:SERVICE_ACCOUNT_SECRET) {
          nuget install secure-file -ExcludeVersion
-         secure-file\tools\secure-file -decrypt "kubectl-build-task\test\resources\Cloud Tools for TFS Testing.json.enc" -secret $env:SERVICE_ACCOUNT_SECRET
+         secure-file\tools\secure-file `
+            -decrypt "kubectl-build-task\test\resources\Cloud Tools for TFS Testing.json.enc" `
+            -secret $env:SERVICE_ACCOUNT_SECRET
      }
   - ps: $allTsTasks = Get-TypeScriptTasks
 

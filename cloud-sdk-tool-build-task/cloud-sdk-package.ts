@@ -19,26 +19,50 @@ import * as path from 'path';
 import * as task from 'vsts-task-lib/task';
 import * as toolLib from 'vsts-task-tool-lib/tool';
 
+/**
+ * @fileoverview The class CloudSDKPackage implements a Tool Installer for the  Google Cloud SDK.
+ */
 type ValidPlatform = 'win32'|'linux'|'darwin';
 type ValidArch = 'x64'|'x86'|'ia32';
 
+/**
+ * Validates that the given platform is one of the supported operating systems.
+ * @returns {boolean} true if platform is a ValidPlatform, false otherwise.
+ */
 function isValidPlatform(platform: string): platform is ValidPlatform {
   return platform === 'win32' || platform === 'linux' || platform === 'darwin';
 }
 
+/**
+ * Validates that the given processor architecture is one of the supported processor architectures.
+ */
 function isValidArch(arch: string): arch is ValidArch {
   return arch === 'x64' || arch === 'x86' || arch === 'ia32';
 }
 
+// Id of the Google Cloud SDK Tool.
 const cloudSdkId = 'google-cloud-sdk';
+// Root of the urls to get data from.
 const urlRoot = 'http://dl.google.com/dl/cloudsdk/channels/rapid';
+// Root url of all Google Cloud SDK download archives.
 const downloadUrlRoot = `${urlRoot}/downloads`;
+// Url of the version doc describing all Google Cloud SDK versions.
 const versionDoc = `${urlRoot}/components-2.json`;
 
+/**
+ * This class implements finding, installing, and caching as a tool the Goolge Cloud SDK.
+ */
 export class CloudSdkPackage {
+  // The Version of the Google Cloud SDK this package will download.
   readonly version: string;
+  // The path of the cached package.
   private toolPath: string;
-
+  
+  /**
+   * Initializes the Cloud SDK package.
+   * @param {string} versionString - The version of the Cloud SDK this package will represend.
+   * @param {object} di - Dependency injection object used in unit tests.
+   */
   constructor(versionString: string, di: {toolLib: typeof toolLib}) {
     this.version = di.toolLib.cleanVersion(versionString);
     if (!(this.version && this.version.length > 0)) {
@@ -46,7 +70,10 @@ export class CloudSdkPackage {
     }
     this.toolPath = di.toolLib.findLocalTool(cloudSdkId, this.version);
   }
-
+  
+  /**
+   * Returns the latest version of the Cloud SDK.
+   */
   static async queryLatestVersion(di: {http: typeof http}): Promise<string> {
     const message = await new Promise<http.IncomingMessage>(
         (resolve,
@@ -59,7 +86,10 @@ export class CloudSdkPackage {
     });
     return JSON.parse(data)['version'] as string;
   }
-
+  
+  /**
+   * Factory method for creating a Cloud SDK package object.
+   */
   static async createPackage(versionSpec?: string, di = {http, task, toolLib}):
       Promise<CloudSdkPackage> {
     let version: string;
@@ -74,13 +104,22 @@ export class CloudSdkPackage {
     }
     return new CloudSdkPackage(version, di);
   }
-
+  
+  /**
+   * Returns true if this version of the Cloud SDK tool is cached in the tool cache.
+   */
   isCached(): boolean {
     return this.toolPath && this.toolPath.length > 0 || false;
   }
 
+  /**
+   * Returns the path to the cached Cloud SDK.
+   */
   getToolPath(): string { return this.toolPath; }
-
+  
+  /**
+   * Initializes the cached Cloud SDK, setting the report usage data parameter.
+   */
   async init(allowReporting: boolean, di = {toolLib, task}): Promise<void> {
     di.toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
     await di.task.tool(di.task.which('gcloud'))
@@ -88,6 +127,9 @@ export class CloudSdkPackage {
         .exec(getDefaultExecOptions());
   }
 
+  /**
+   * Downloads, installs, and caches an unchached version of the Cloud SDK.
+   */
   async aquire(allowReporting: boolean,
                di = {toolLib, task, os}): Promise<void> {
     const platform = di.os.platform();
@@ -120,6 +162,9 @@ export class CloudSdkPackage {
     di.toolLib.prependPath(path.join(this.toolPath, 'google-cloud-sdk', 'bin'));
   }
 
+  /**
+   * Gets the script file used to install the Cloud SDK on the given platform.
+   */
   private static getInstallFile(platform: ValidPlatform): string {
     switch (platform) {
     case 'win32':
@@ -131,6 +176,9 @@ export class CloudSdkPackage {
     }
   }
 
+  /**
+   * Get the download URL of this Cloud SDK version for the given platform and architecture.
+   */
   private getDownloadUrl(platform: ValidPlatform, arch: ValidArch): string {
     const filePrefix = `google-cloud-sdk-${this.version}`;
     const archString = CloudSdkPackage.getOsArchString(arch);
@@ -144,7 +192,11 @@ export class CloudSdkPackage {
       return `${downloadUrlRoot}/${filePrefix}-darwin-${archString}.tar.gz`;
     }
   }
-
+  
+  /**
+   * Gets the architecture string for the package that support the given
+   * processor architecture.
+   */
   private static getOsArchString(arch: ValidArch): string {
     switch (arch) {
     case 'x64':
@@ -156,6 +208,9 @@ export class CloudSdkPackage {
     }
   }
 
+  /**
+   * Executes the approprate archive unzip method for the given platform on the given file.
+   */
   private static async extractArchive(
       platform: ValidPlatform, file: string,
       di: {toolLib: typeof toolLib, os: typeof os}): Promise<string> {

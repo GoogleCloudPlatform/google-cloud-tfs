@@ -125,14 +125,14 @@ export class CloudSdkPackage {
    * Initialize a cached version, or aquire, cache and initalize a new version.
    * @param allowReporting If true, allow usage reporting.
    */
-  async initializeOrAquire(allowReporting: boolean,
+  async initializeOrAcquire(allowReporting: boolean,
                            di = {toolLib, task, os}): Promise<void> {
     if (this.isCached()) {
       task.debug(`Initializing cached version`);
       await this.initialize(allowReporting, di);
     } else {
       task.debug(`Aquiring new version`);
-      await this.aquire(allowReporting, di);
+      await this.acquire(allowReporting, di);
     }
   }
 
@@ -150,7 +150,7 @@ export class CloudSdkPackage {
   /**
    * Downloads, installs, and caches an unchached version of the Cloud SDK.
    */
-  async aquire(allowReporting: boolean,
+  async acquire(allowReporting: boolean,
                di = {toolLib, task, os}): Promise<void> {
     const platform = di.os.platform();
     if (!isValidPlatform(platform)) {

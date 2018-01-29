@@ -337,7 +337,7 @@ describe('unit tests', () => {
           .returns(() => mockToolPath);
       const objectUnderTest = new CloudSdkPackage(mockVersion, di);
 
-      await objectUnderTest.initializeOrAquire(true, di);
+      await objectUnderTest.initializeOrAcquire(true, di);
 
       taskMock.verify(t => t.tool(mockGcloudPath), Times.once());
     });
@@ -348,7 +348,7 @@ describe('unit tests', () => {
           .returns(() => null);
       const objectUnderTest = new CloudSdkPackage(mockVersion, di);
 
-      await objectUnderTest.initializeOrAquire(true, di);
+      await objectUnderTest.initializeOrAcquire(true, di);
       
       taskMock.verify(t => t.tool(It.is<string>(s => s !== mockGcloudPath)),
                       Times.once());
@@ -480,7 +480,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'win32');
       osMock.setup(os => os.arch()).returns(() => 'x64');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(
           toolLib => toolLib.downloadTool(It.is(
@@ -499,7 +499,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'win32');
       osMock.setup(os => os.arch()).returns(() => 'x86');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(
           toolLib => toolLib.downloadTool(It.is(
@@ -518,7 +518,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'win32');
       osMock.setup(os => os.arch()).returns(() => 'ia32');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(
           toolLib => toolLib.downloadTool(It.is(
@@ -537,7 +537,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'darwin');
       osMock.setup(os => os.arch()).returns(() => 'x64');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(
           toolLib => toolLib.downloadTool(
@@ -556,7 +556,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'darwin');
       osMock.setup(os => os.arch()).returns(() => 'x86');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(toolLib => toolLib.downloadTool(It.is(
                              (s: string) => s.endsWith('darwin-x86.tar.gz'))),
@@ -574,7 +574,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'linux');
       osMock.setup(os => os.arch()).returns(() => 'x64');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(toolLib => toolLib.downloadTool(It.is(
                              (s: string) => s.endsWith('linux-x86_64.tar.gz'))),
@@ -592,7 +592,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'linux');
       osMock.setup(os => os.arch()).returns(() => 'x86');
 
-      await sdkPackage.aquire(true, di);
+      await sdkPackage.acquire(true, di);
 
       toolLibMock.verify(toolLib => toolLib.downloadTool(It.is(
                              (s: string) => s.endsWith('linux-x86.tar.gz'))),
@@ -609,7 +609,7 @@ describe('unit tests', () => {
     it('fails for an usupported os', async () => {
       osMock.setup(os => os.platform()).returns(() => 'android');
 
-      await sdkPackage.aquire(true, di).then(
+      await sdkPackage.acquire(true, di).then(
           () => assert.fail(
               undefined, new Error('Unsupported operating system: android.')),
           (e: Error) => assert.equal(e.message,
@@ -620,7 +620,7 @@ describe('unit tests', () => {
       osMock.setup(os => os.platform()).returns(() => 'linux');
       osMock.setup(os => os.arch()).returns(() => 'unknownArch');
 
-      await sdkPackage.aquire(true, di).then(
+      await sdkPackage.acquire(true, di).then(
           () => assert.fail(
               undefined, new Error('Unsupported architecture: unknownArch.')),
           (e: Error) => assert.equal(e.message,

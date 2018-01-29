@@ -8,10 +8,10 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>kubectl-build-task</Name>
-    <TypeScriptToolsVersion>latest</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' "/>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' "/>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' " />
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " />
   <ItemGroup>
     <TypeScriptCompile Include="kubectl-build-task.ts" />
     <TypeScriptCompile Include="run.ts" />

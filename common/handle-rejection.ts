@@ -62,7 +62,7 @@ function addUnhandled(reason: Error, promise: PromiseLike<{}>): void {
   unhandledRejections.set(promise, reason);
 }
 
-function removeUnhandled(reason: undefined, promise: PromiseLike<{}>): void {
+function removeUnhandled(_: any, promise: PromiseLike<{}>): void {
   if (!unhandledRejections.delete(promise)) {
     task.debug(s.unremovedRejectionMessage);
     for (let i = 0; i < arguments.length; i++) {

@@ -12,12 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-describe('gcloud-build-task', () => {
-  // ReSharper disable once CommonJsExternalModule
-  /* tslint:disable-next-line no-require-imports */
-  require('./unit-tests');
+/**
+ * @fileoverview This is the main script run by the cloud-sdk-tool task.
+ * @author przybjw@google.com (Jim Przybylinski)
+ */
+import {catchAll} from 'common/handle-rejection';
+import * as task from 'vsts-task-lib/task';
 
-  // ReSharper disable once CommonJsExternalModule
-  /* tslint:disable-next-line no-require-imports */
-  require('./functional-tests');
-});
+import {CloudSdkPackage} from './cloud-sdk-package';
+
+async function run(): Promise<void> {
+  const versionSpec = task.getInput('version', false);
+  const allowReporting = task.getBoolInput('allowReporting', true);
+
+  const cloudSdkPackage = await CloudSdkPackage.createPackage(versionSpec);
+  cloudSdkPackage.initializeOrAcquire(allowReporting);
+}
+
+catchAll(run());

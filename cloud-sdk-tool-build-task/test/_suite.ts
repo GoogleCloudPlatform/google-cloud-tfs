@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-describe('gcloud-build-task', () => {
+/**
+ * @fileoverview This is a test suite that tests the cloud-sdk-tool task.
+ * @author przybjw@google.com (Jim Przybylinski)
+ */
+
+describe('cloud-sdk-tool', () => {
   // ReSharper disable once CommonJsExternalModule
   /* tslint:disable-next-line no-require-imports */
   require('./unit-tests');

@@ -28,11 +28,11 @@ export class TaskResult {
 
   static async runTask(taskScript: string,
                        env: {[key: string]: string}): Promise<TaskResult> {
-    Object.keys(process.env).forEach((variableName) => {
+    for (const variableName of Object.keys(process.env)) {
       if (env[variableName] === undefined) {
         env[variableName] = process.env[variableName];
       }
-    });
+    }
     const options:
         ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
     const taskProcess = fork(taskScript, [], options);
@@ -53,11 +53,11 @@ export class TaskResult {
     const setVariableTag =
         `##vso[task.setvariable variable=${variableName};secret=${secret};]`;
     let value: string = undefined;
-    this.outputData.forEach((line) => {
+    for (const line of this.outputData) {
       if (line.startsWith(setVariableTag)) {
         value = line.substring(setVariableTag.length);
       }
-    });
+    }
     return value;
   }
 
@@ -78,5 +78,27 @@ export class TaskResult {
       }
     }
     return [ 'succeeded', successMessage ];
+  }
+
+  getDebugLines(this: TaskResult, match: string | RegExp | null = null): string[] {
+    const taskDebugTag = '##vso[task.debug]';
+    const debugLines: string[] = [];
+    for (const chunk of this.outputData) {
+      if (chunk.startsWith(taskDebugTag)) {
+        const line = chunk.substring(taskDebugTag.length);
+        if (match === null) {
+          debugLines.push(line);
+        } else if (typeof match === 'string') {
+          if (line.includes(match)) {
+            debugLines.push(line);
+          }
+        } else {
+          if (match.test(line)) {
+            debugLines.push(line);
+          }
+        }
+      }
+    }
+    return debugLines;
   }
 }

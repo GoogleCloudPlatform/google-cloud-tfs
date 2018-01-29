@@ -1,31 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProjectGuid>7340f853-0853-43b8-9f85-c958e3152435</ProjectGuid>
+    <ProjectGuid>50d73809-62b3-485f-9211-0ab681cceffd</ProjectGuid>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <OutputPath>.</OutputPath>
     <EnableTypeScript>true</EnableTypeScript>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="manifest.json" />
-    <Content Include="task.json" />
+    <Content Include="task.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="test\mocha.opts" />
     <Content Include="tsconfig.json" />
-    <TypeScriptCompile Include="gcloud-build-task.ts" />
-    <TypeScriptCompile Include="run.ts" />
+    <TypeScriptCompile Include="cloud-sdk-tool.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="cloud-sdk-package.ts" />
     <TypeScriptCompile Include="test\functional-tests.ts">
       <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\unit-tests.ts">
       <SubType>Code</SubType>
+      <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\_suite.ts">
       <TestFramework>Mocha</TestFramework>

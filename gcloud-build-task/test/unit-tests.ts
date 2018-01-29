@@ -23,7 +23,6 @@ import * as gcloudTypeDef from '../gcloud-build-task';
 describe('unit tests', () => {
   // Modules to import after mockery setup.
   let execOptions: typeof commonExecTypeDef;
-  let tr: typeof trTypeDef;
   let gcloud: typeof gcloudTypeDef;
   let task: typeof taskTypeDef;
 
@@ -35,9 +34,7 @@ describe('unit tests', () => {
   // Constants used by tests.
   const command = 'some command';
   const auth: taskTypeDef.EndpointAuthorization = {
-    parameters : {
-      certificate : '{"project_id": "projectId"}',
-    },
+    parameters : {certificate : '{"project_id": "projectId"}'},
     scheme : '',
   };
   const stdout = 'stdout';
@@ -59,7 +56,6 @@ describe('unit tests', () => {
     mockery.registerMock('vsts-task-lib/task', taskLibMock.object);
 
     execOptions = require('common/exec-options');
-    tr = require('vsts-task-lib/toolrunner');
     gcloud = require('../gcloud-build-task');
     task = require('vsts-task-lib/task');
     // ReSharper restore CommonJsExternalModule
@@ -116,7 +112,6 @@ describe('unit tests', () => {
   });
 
   it('should succeed with simple execution', () => {
-
     gcloud.runGcloud(runOptions);
 
     gcloudToolMock.verifyAll();

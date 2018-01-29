@@ -26,11 +26,9 @@ describe('deploy-gke with apply config', () => {
   const credentialExecString = tc.clusterCredentialExecString;
 
   let runner: MockTestRunner;
-  beforeEach(function() {
-    runner = null;
-  });
+  beforeEach(() => { runner = null; });
 
-  afterEach(function() {
+  afterEach(function(): void {
     if (this.currentTest.state === 'failed') {
       console.log(runner.stdout);
       console.log('--------------------');
@@ -46,7 +44,7 @@ describe('deploy-gke with apply config', () => {
       'imageTag',
     ];
 
-    requiredParameters.forEach((param: string) => {
+    for (const param of requiredParameters) {
       it(`should fail with missing ${param} parameter`, () => {
         const kebobed = toKebabCase(param);
         const testPath = path.join(__dirname, `missing-${kebobed}.js`);
@@ -56,11 +54,10 @@ describe('deploy-gke with apply config', () => {
         assert(runner.failed, 'Should have failed.');
         GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
         assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-        assert(
-            runner.createdErrorIssue(`Input required: ${param}`),
-            `Should be looking for ${param}.`);
+        assert(runner.createdErrorIssue(`Input required: ${param}`),
+               `Should be looking for ${param}.`);
       });
-    });
+    }
   });
 
   for (const configType of Object.keys(tc.configs)) {
@@ -74,9 +71,8 @@ describe('deploy-gke with apply config', () => {
       GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
       assert.equal(runner.errorIssues.length, 0, 'Should have no errors.');
       assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
-      assert(
-          runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
-          'Should have written update to config.');
+      assert(runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+             'Should have written update to config.');
       const wroteNewContents = runner.stdOutContained(
           `[task.writeFile contents]${tc.configs[configType].newContents}`);
       assert(wroteNewContents, 'New contents should be correct.');
@@ -91,9 +87,8 @@ describe('deploy-gke with apply config', () => {
     assert(runner.failed, 'Should have failed.');
     GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 3, 'Should have three errors.');
-    assert(
-        !runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
-        'Should not have written update to config.');
+    assert(!runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+           'Should not have written update to config.');
 
     const ranKubeCtlApply = runner.ran(execString);
     assert(!ranKubeCtlApply, 'Should not have run kubectl apply.');
@@ -106,9 +101,8 @@ describe('deploy-gke with apply config', () => {
     assert(runner.failed, 'Should have failed.');
     GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-    assert(
-      !runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
-      'Should not have written update to config.');
+    assert(!runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+           'Should not have written update to config.');
 
     const ranKubeCtlApply = runner.ran(execString);
     assert(!ranKubeCtlApply, 'Should not have run kubectl apply.');
@@ -121,9 +115,8 @@ describe('deploy-gke with apply config', () => {
     assert(runner.failed, 'Should have failed.');
     GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 1, 'Should have one error.');
-    assert(
-        !runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
-        'Should not have written update to config.');
+    assert(!runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+           'Should not have written update to config.');
     assert(runner.ran(execString), 'Should have run kubectl apply.');
   });
 
@@ -152,16 +145,14 @@ describe('deploy-gke with apply config', () => {
     GctTfsAssert.assertKubeKeyFileWritten(runner, credentialExecString);
     assert.equal(runner.errorIssues.length, 0, 'Should have no errors.');
     assert.equal(runner.warningIssues.length, 0, 'Should have no warnings.');
-    assert(
-        runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
-        'Should have written update to config.');
+    assert(runner.stdOutContained(`[task.writeFile]${tc.configPath}`),
+           'Should have written update to config.');
     const wroteNewContents = runner.stdOutContained(
         `[task.writeFile contents]${tc.configs.json.newContents}`);
     assert(wroteNewContents, 'New contents should be correct.');
 
-    assert(
-        runner.stdOutContained(tc.configs.json.contents),
-        'Should write contents of file to output.');
+    assert(runner.stdOutContained(tc.configs.json.contents),
+           'Should write contents of file to output.');
     assert(runner.ran(dryExecString), 'Should have run kubectl apply.');
   });
 });

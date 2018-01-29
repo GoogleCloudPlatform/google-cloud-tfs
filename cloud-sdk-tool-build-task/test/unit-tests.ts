@@ -169,7 +169,7 @@ describe('unit tests', () => {
       assert.throws(() => {
         const sdkPackage =
             new CloudSdkPackage(invalidVersion, {toolLib : toolLibMock.object});
-        assert.fail(sdkPackage, '');
+        assert.fail(sdkPackage, null);
       });
     });
   });
@@ -192,7 +192,19 @@ describe('unit tests', () => {
           .setup(toolLib => toolLib.findLocalTool(It.isAny(), It.isAny()))
           .returns(() => null);
 
-      const sdkPackage = await CloudSdkPackage.createPackage(undefined, di);
+      const sdkPackage = await CloudSdkPackage.createPackage(null, di);
+
+      assert.equal(sdkPackage.version, mockVersion);
+    });
+
+    it('should query latest with empty version spec', async () => {
+      const mockVersion = '1.0.0-mockVersion';
+      setupHttpGet(httpMock, [ `{"version":"${mockVersion}"}` ]);
+      toolLibMock
+          .setup(toolLib => toolLib.findLocalTool(It.isAny(), It.isAny()))
+          .returns(() => null);
+
+      const sdkPackage = await CloudSdkPackage.createPackage('', di);
 
       assert.equal(sdkPackage.version, mockVersion);
     });
@@ -279,7 +291,71 @@ describe('unit tests', () => {
     });
   });
 
-  describe('#init(allowReporting: boolean)', () => {
+  describe('#initalizeOrAquire(allowReporting: boolean)', () => {
+    const mockGcloudPath = 'a:/gcloud/path';
+    const mockVersion = '1.0.0-mockVersion';
+    const mockToolPath = 'a:/tool/path';
+    let toolRunnerMock: IMock<toolRunner.ToolRunner>;
+    let di: {toolLib: typeof toolLib, task: typeof task, os: typeof os};
+
+    beforeEach('init dependency injection objects and mocks', () => {
+      di = {
+        toolLib : toolLibMock.object,
+        task : taskMock.object,
+        os : osMock.object,
+      };
+
+      osMock.setup(os => os.platform()).returns(() => 'win32');
+      osMock.setup(os => os.arch()).returns(() => 'x86');
+
+      toolLibMock.setup(toolLib => toolLib.prependPath(It.isAny()))
+          .returns(() => null);
+      toolLibMock.setup(tl => tl.downloadTool(It.isAny()))
+          .returns(() => Promise.resolve('a:/archive/file.zip'));
+      toolLibMock
+          .setup(
+              tl => tl.cacheDir(It.isAny(), It.isAny(), It.isAny(), It.isAny()))
+          .returns(() => Promise.resolve(mockToolPath));
+      toolLibMock.setup(tl => tl.extractZip(It.isAny()))
+          .returns(() => Promise.resolve('a:/archive/folder'));
+
+      toolRunnerMock = Mock.ofType<toolRunner.ToolRunner>();
+      toolRunnerMock.setup(tr => tr.line(It.isAny()))
+          .returns(() => toolRunnerMock.object);
+      toolRunnerMock.setup(tr => tr.exec(It.isAny()))
+          .returns(() => Q.resolve(0));
+
+      taskMock.setup(task => task.which('gcloud'))
+          .returns(() => mockGcloudPath);
+      taskMock.setup(task => task.tool(It.isAny()))
+          .returns(() => toolRunnerMock.object);
+    });
+
+    it('should init cached version', async () => {
+      toolLibMock
+          .setup(tl => tl.findLocalTool(It.isAny(), It.isAny(), It.isAny()))
+          .returns(() => mockToolPath);
+      const objectUnderTest = new CloudSdkPackage(mockVersion, di);
+
+      await objectUnderTest.initializeOrAquire(true, di);
+
+      taskMock.verify(t => t.tool(mockGcloudPath), Times.once());
+    });
+
+    it('should aquire new version', async () => {
+      toolLibMock
+          .setup(tl => tl.findLocalTool(It.isAny(), It.isAny(), It.isAny()))
+          .returns(() => null);
+      const objectUnderTest = new CloudSdkPackage(mockVersion, di);
+
+      await objectUnderTest.initializeOrAquire(true, di);
+      
+      taskMock.verify(t => t.tool(It.is<string>(s => s !== mockGcloudPath)),
+                      Times.once());
+    });
+  });
+
+  describe('#initalize(allowReporting: boolean)', () => {
     const mockToolPath = 'a:/tool/path';
     let toolRunnerMock: IMock<toolRunner.ToolRunner>;
     let di: {toolLib: typeof toolLib, task: typeof task};
@@ -311,7 +387,7 @@ describe('unit tests', () => {
       toolRunnerMock.setup(tr => tr.exec(It.isAny()))
           .returns(() => Q.resolve(0));
 
-      await sdkPackage.init(false, di);
+      await sdkPackage.initialize(false, di);
 
       toolLibMock.verify(toolLib => toolLib.prependPath(toolPathToPrepend),
                          Times.once());
@@ -321,7 +397,7 @@ describe('unit tests', () => {
       toolRunnerMock.setup(tr => tr.exec(It.isAny()))
           .returns(() => Q.resolve(0));
 
-      await sdkPackage.init(false, di);
+      await sdkPackage.initialize(false, di);
 
       toolRunnerMock.verify(tr => tr.exec(It.isAny()), Times.once());
       toolRunnerMock.verify(
@@ -333,7 +409,7 @@ describe('unit tests', () => {
       toolRunnerMock.setup(tr => tr.exec(It.isAny()))
           .returns(() => Q.resolve(0));
 
-      await sdkPackage.init(true, di);
+      await sdkPackage.initialize(true, di);
 
       toolRunnerMock.verify(tr => tr.exec(It.isAny()), Times.once());
       toolRunnerMock.verify(
@@ -347,7 +423,7 @@ describe('unit tests', () => {
           .returns(() => Q.reject<number>(error));
 
       try {
-        await sdkPackage.init(true, di);
+        await sdkPackage.initialize(true, di);
       } catch (e) {
         if (e === error) {
           return;

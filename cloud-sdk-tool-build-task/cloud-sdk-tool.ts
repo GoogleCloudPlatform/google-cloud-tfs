@@ -26,13 +26,7 @@ async function run(): Promise<void> {
   const allowReporting = task.getBoolInput('allowReporting', true);
 
   const cloudSdkPackage = await CloudSdkPackage.createPackage(versionSpec);
-  if (cloudSdkPackage.isCached()) {
-    task.debug(`Initializing cached version`);
-    await cloudSdkPackage.init(allowReporting);
-  } else {
-    task.debug(`Aquiring new version`);
-    await cloudSdkPackage.aquire(allowReporting);
-  }
+  cloudSdkPackage.initializeOrAquire(allowReporting);
 }
 
 catchAll(run());

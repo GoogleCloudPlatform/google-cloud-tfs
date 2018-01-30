@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
   "id": "07916dae-cb7c-45ad-937e-5eb34961e47b",
   "name": "install-cloud-sdk-build-task",
   "friendlyName": "Install Google Cloud SDK",

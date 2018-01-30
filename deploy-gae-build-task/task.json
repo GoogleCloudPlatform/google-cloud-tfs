@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
   "id": "70d5eb24-96c7-461a-a95e-5f3f7dadf17a",
   "name": "deploy-gae-build-task",
   "friendlyName": "Deploy to Google App Engine",

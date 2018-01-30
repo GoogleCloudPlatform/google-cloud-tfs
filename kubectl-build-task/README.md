@@ -21,5 +21,5 @@ build tasks.
    `--output json` is recommended, as new lines are removed.
 
  [GCPLogo]: ../images/cloud_64x64.png
- [gcloud-inputs]: ../images/kubectl-inputs.png
+ [gcloud-inputs]: ../images/screenshots/kubectl-inputs.png
  [kubectl]: https://cloud.google.com/sdk/gcloud/reference/

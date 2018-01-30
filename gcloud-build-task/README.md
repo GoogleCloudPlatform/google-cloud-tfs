@@ -22,6 +22,6 @@ build tasks.
    `--format json` is recommended, as new lines are removed.
 
  [GCPLogo]: ../images/cloud_64x64.png
- [gcloud-inputs]: ../images/gcloud-inputs.png
+ [gcloud-inputs]: ../images/screenshots/gcloud-inputs.png
 
  [gcloud]: https://cloud.google.com/sdk/gcloud/reference/

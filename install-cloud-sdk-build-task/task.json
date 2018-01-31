@@ -5,21 +5,19 @@
   "friendlyName": "Install Google Cloud SDK",
   "author": "Google Cloud Tools",
   "description": "Installs and configures the Google Cloud SDK.",
-  "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks.",
+  "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks. This task will install it on a windows build agent.",
   "version": {
     "Major": 0,
     "Minor": 0,
     "Patch": 4
   },
   "category": "Utility",
-  "visibility": [ "Build", "Release" ],
   "demands": [],
   "groups": [
     {
       "name": "advanced",
       "displayName": "Advanced",
-      "isExpanded": false,
-      "tags": []
+      "isExpanded": false
     }
   ],
   "inputs": [

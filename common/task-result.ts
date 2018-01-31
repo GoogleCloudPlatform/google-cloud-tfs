@@ -80,7 +80,7 @@ export class TaskResult {
     return [ 'succeeded', successMessage ];
   }
 
-  getDebugLines(this: TaskResult, match: string | RegExp | null = null): string[] {
+  getDebugLines(this: TaskResult, match: string|RegExp|null = null): string[] {
     const taskDebugTag = '##vso[task.debug]';
     const debugLines: string[] = [];
     for (const chunk of this.outputData) {

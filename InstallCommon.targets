@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="InstallCommonModule">
+    <Exec Command="npm install $(MSBuildThisFileDirectory)/common" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+  <PropertyGroup>
+    <BuildDependsOn>
+      InstallCommonModule;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+</Project>

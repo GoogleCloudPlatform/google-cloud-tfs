@@ -1,6 +1,5 @@
 ﻿{
-  "$schema":
-    "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
   "id": "A8532465-D382-41CE-AEF6-48916FD7F6BA",
   "name": "kubectl-build-task",
   "friendlyName": "Kubectl Command Line",
@@ -11,11 +10,17 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 2
   },
   "category": "Utility",
-  "visibility": ["Build", "Release"],
   "demands": [],
+  "groups": [
+    {
+      "name": "advanced",
+      "displayName": "Advanced",
+      "isExpanded": false
+    }
+  ],
   "inputs": [
     {
       "name": "serviceEndpoint",
@@ -32,25 +37,25 @@
       "helpMarkDown": "The [kubectl command](https://kubernetes.io/docs/user-guide/kubectl-overview/) to run."
     },
     {
-      "name": "cluster",
-      "type": "string",
-      "label": "Cluster Name",
-      "required": true,
-      "helpMarkDown": "The name of the cluster to target."
-    },
-    {
       "name": "zone",
       "type": "string",
       "label": "Zone",
       "required": true,
-      "helpMarkDown": "The zone the cluster resides in."
+      "helpMarkDown": "The zone of the target cluster."
+    },
+    {
+      "name": "cluster",
+      "type": "string",
+      "label": "Cluster Name",
+      "required": true,
+      "helpMarkDown": "The name of the target cluster."
     },
     {
       "name": "ignoreReturnCode",
       "label": "Ignore Return Code",
       "type": "boolean",
       "required": true,
-      "helpMarkDown": "When checked, a non-zero return code from gcloud will not cause this task to fail.",
+      "helpMarkDown": "When checked, this task will succeed even if kubectl reports a failure.",
       "defaultValue": false,
       "groupName": "advanced"
     },
@@ -59,7 +64,7 @@
       "label": "StdOut build variable",
       "type": "string",
       "required": false,
-      "helpMarkDown": "The name of the build variable in which to store the contents of the gcloud stdout.",
+      "helpMarkDown": "The name of a build variable in which the output from kubectl is saved. `--output json` is recommended, as new lines are removed.",
       "groupName": "advanced"
     }
   ],

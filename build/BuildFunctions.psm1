@@ -307,16 +307,13 @@ function Update-AppveyorBuildVersion() {
         return
     }
 
-    $manifest = Get-Content .\manifest.json | ConvertFrom-Json
-    $manifestVersion = $manifest.version
     if ([bool]::Parse($env:APPVEYOR_REPO_TAG)) {
+        $manifest = Get-Content .\manifest.json | ConvertFrom-Json
+        $manifestVersion = $manifest.version
         if($manifestVersion -ne $env:APPVEYOR_REPO_TAG_NAME){
             throw "Manifest version $manifestVersion does not equal tag version $env:APPVEYOR_REPO_TAG_NAME"
         }
         $version = "$env:APPVEYOR_REPO_TAG_NAME+$env:APPVEYOR_BUILD_NUMBER"
-    } else {
-        $timestamp = ([datetime]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToString("yyyyMMddTHHmmss")
-        $version = "$manifestVersion-$timestamp+$env:APPVEYOR_BUILD_NUMBER"
+        Update-AppveyorBuild -Version $version
     }
-    Update-AppveyorBuild -Version $version
 }

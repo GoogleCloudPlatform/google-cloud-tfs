@@ -10,7 +10,7 @@ and allows caching of Goolge Cloud SDK versions, but requires the  [VSTS Tool In
 
 ## Usage
 
-This task only works on build agents with PowerShell (windows build agents).
+This task only works on Windows build agents.
 
 If the Google Cloud SDK is already installed for all users on the build agent,
 this task is unnecessary. If, however, the Google Cloud SDK is installed for

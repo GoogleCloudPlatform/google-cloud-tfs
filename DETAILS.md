@@ -3,8 +3,8 @@
 This extension provides a service endpoint and build tasks to make deploying to
 Google Cloud Platform a breeze.
 
-[TODO(przybjw) - Uncomment once live]: Quickstart and How-To documentation can be found at
-[TODO(przybjw) - Uncomment once live]: https://cloud.google.com/tools/cloud-tools-tfs/docs/community
+[TODO(przybjw) - Uncomment once live]: # Quickstart and How-To documentation can be found at
+[TODO(przybjw) - Uncomment once live]: # https://cloud.google.com/tools/cloud-tools-tfs/docs/community
 
 
 ## Installation
@@ -40,8 +40,8 @@ The extension installs the following tasks:
   - **[Get Google Compute VM password][set-login-password]**: Gets the IP address
   and user password for a [Google Compute Engine][ComputeEngine] virtual machine
   running windows.
-  - **[Install Google Cloud SDK][install-cloud-sdk]**: Finds or installs the
-  [Google Cloud SDK][CloudSdk] on windows.
+  - **[Install Google Cloud SDK][install-cloud-sdk]**: Windows only. Finds or installs the
+  [Google Cloud SDK][CloudSdk].
   - **[Google Cloud SDK Tool Installer][cloud-sdk-tool]**: Installs the [Google Cloud SDK][CloudSdk] as a cached
   [VSTS Tool][vsts-tool].
   
@@ -57,4 +57,5 @@ The extension installs the following tasks:
 [container-build]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/container-build-task/README.md
 [set-login-password]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/set-login-build-task/README.md
 [install-cloud-sdk]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/install-cloud-sdk-build-task/README.md
+[cloud-sdk-tool]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/cloud-sdk-tool-build-task/README.md
 [vsts-tool]: https://docs.microsoft.com/en-us/vsts/build-release/concepts/process/tasks#tool-installers

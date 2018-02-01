@@ -3,7 +3,8 @@
 This extension provides a service endpoint and build tasks to make deploying to
 Google Cloud Platform a breeze.
 
-[TODO(przybjw) - Uncomment once live]: # Quickstart and How-To documentation can be found at
+Quickstart and How-To documentation can be found at [Todo Add Link]
+
 [TODO(przybjw) - Uncomment once live]: # https://cloud.google.com/tools/cloud-tools-tfs/docs/community
 
 

@@ -10,6 +10,8 @@ and allows caching of Goolge Cloud SDK versions, but requires the  [VSTS Tool In
 
 ## Usage
 
+This task only works on Windows build agents.
+
 If the Google Cloud SDK is already installed for all users on the build agent,
 this task is unnecessary. If, however, the Google Cloud SDK is installed for
 the build agent user only, or not installed at all, you can use this task to find

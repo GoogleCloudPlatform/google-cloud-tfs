@@ -36,9 +36,9 @@ import WritableStream = NodeJS.WritableStream;
  * @returns {IExecOptions} for gcloud calls.
  */
 export function getDefaultExecOptions(): IExecOptions {
-  const env: {[key: string]: string;} = {
+  const env: IExecOptions['env'] = {
     'CLOUDSDK_METRICS_ENVIRONMENT' : 'cloud-tools-tfs',
-    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.8',
+    'CLOUDSDK_METRICS_ENVIRONMENT_VERSION' : '0.0.9',
   };
   const cloudSdkPython = process.env['CLOUDSDK_PYTHON'];
   if (cloudSdkPython) {

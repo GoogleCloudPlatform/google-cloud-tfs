@@ -22,7 +22,7 @@ describe('instance-group-ips', () => {
 
   // ReSharper disable once CommonJsExternalModule
   /* tslint:disable-next-line no-require-imports */
-  require('./functional-tests');
+//  require('./functional-tests');
 
   // ReSharper disable once CommonJsExternalModule
   /* tslint:disable-next-line no-require-imports */

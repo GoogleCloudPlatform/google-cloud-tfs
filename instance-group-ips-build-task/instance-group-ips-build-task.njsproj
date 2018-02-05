@@ -9,6 +9,8 @@
     <OutputPath>.</OutputPath>
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <StartWebBrowser>False</StartWebBrowser>
+    <StartupFile>run.ts</StartupFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' " />
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " />
@@ -25,8 +27,12 @@
     <TypeScriptCompile Include="run.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="test\unit-tests.ts" />
-    <TypeScriptCompile Include="test\_suite.ts" />
+    <TypeScriptCompile Include="test\unit-tests.ts">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\_suite.ts">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="test\" />

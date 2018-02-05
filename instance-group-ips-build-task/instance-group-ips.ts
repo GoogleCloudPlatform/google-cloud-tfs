@@ -46,20 +46,25 @@ export async function getInstanceGroupIps(
       di = {task},
     }: GetInstanceGroupIpsOptions,
     ): Promise<void> {
+  console.log('before using');
   await endpoint.usingAsync(async () => {
     const instanceLines: string[] = [];
     const gcloudToolPath = di.task.which('gcloud');
-    await di.task.tool(gcloudToolPath)
-        .line('compute instance-groups list-instances')
-        .arg('--format')
-        .arg(`csv[no-heading](${instanceNameKey}, ${instanceZoneKey})`)
-        .arg(instanceGroupName)
-        .arg(`--${locationScope}`)
-        .arg(location)
-        .arg(endpoint.projectParam)
-        .arg(Endpoint.credentialParam)
-        .on('stdline', instanceLines.push)
-        .exec(getDefaultExecOptions());
+    console.log('before list-instances');
+    const toolRunner = di.task.tool(gcloudToolPath)
+                           .line('compute instance-groups list-instances');
+    const runner =
+        toolRunner.arg('--format')
+            .arg(`csv[no-heading](${instanceNameKey}, ${instanceZoneKey})`)
+            .arg(instanceGroupName)
+            .arg(`--${locationScope}`)
+            .arg(location)
+            .arg(endpoint.projectParam)
+        .arg(Endpoint.credentialParam);
+    console.log('after arg:' + runner);
+    const on = runner.on('stdline', instanceLines.push);
+    console.log('after on:' + on);
+    await on.exec(getDefaultExecOptions());
 
     const filters: string[] = [];
     for (const line of instanceLines) {

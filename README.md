@@ -7,10 +7,6 @@ This repository contains an extension for Team Foundation server and Visual
 Studio Team Services. The extension provides a new service endpoint and several
 build tasks for interacting with Google Cloud Platform.
 
-## Documentation
-
-For Documentation on using the extension, see [DETAILS.md](DETAILS.md)
-
 ## Installation
 
 The latest stable version can be found on the
@@ -20,6 +16,10 @@ The latest development version is available from [AppVeyor][AppVeyor].
 
 You can [build the vsix package from source](#Build), and then upload and
 install the extension from the extension management page of TFS.
+
+## Documentation
+
+For Documentation on using the extension, see [DETAILS.md](DETAILS.md)
 
 ## Support
 

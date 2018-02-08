@@ -42,6 +42,7 @@ function Initialize-PsTask([string]$task) {
 
 function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
+
     $jobs = $tasks | % {
         Start-Job {
             cd $using:pwd
@@ -49,10 +50,20 @@ function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$thro
             Invoke-MochaTest -task $using:_ -reporter $using:reporter
         }
     }
-    $jobErrors = $null
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
-    if ($throwOnError -and $jobErrors) {
-        throw $jobErrors
+
+    $allJobErrors = @()
+    do {
+        if ($jobs.Count -gt 1) {
+            $jobs | Wait-Job -Any | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+        } else {
+            # Stream the output of the longest test directly to the console.
+            $jobs | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+        }
+        $allJobErrors += $jobErrors
+    } while ($jobs = Get-Job)
+
+    if ($throwOnError -and $allJobErrors) {
+        throw $allJobErrors
     }
 }
 

@@ -34,9 +34,11 @@ Questions can be asked on StackOverflow
 
   - [PowerShell][PowerShell]: Installed by default on modern windows platforms.
   - [Node.js][Node]: Download and install from the website.
-  - [npm][npm]: Should be installed with the Node.js install.
+  - [npm][npm]: Installed along with Node.js.
   - [TypeScript][TypeScript]: Install with `npm install -g typescript`
   - [tfx][tfs-cli]: The tfs cli. Install with `npm install -g tfx-cli`
+  - [mocha][mocha]: A JavaScript test runner. `npm install -g mocha`
+  - [ts-node]: Used by mocha to run TypeScript directly. `npm install -g ts-node`
   - [nyc][nyc]: The Istanbul code coverage tool. Install with `npm install -g nyc`
 
 ### Build Script
@@ -55,6 +57,8 @@ into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 [npm]: https://www.npmjs.com
 [TypeScript]: https://www.typescriptlang.org
 [tfs-cli]: https://github.com/Microsoft/tfs-cli
+[mocha]: https://mochajs.org/
+[ts-node]: https://www.npmjs.com/package/ts-node
 [nyc]: https://istanbul.js.org/
 [CloudSdk]: https://cloud.google.com/sdk/downloads
 

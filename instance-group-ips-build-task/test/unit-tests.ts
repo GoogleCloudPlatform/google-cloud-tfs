@@ -15,70 +15,226 @@
 import * as assert from 'assert';
 import {Endpoint} from 'common/exec-options';
 import * as Q from 'q';
-import {It, Mock} from 'typemoq';
+import {IMock, It, Mock, MockBehavior, Times} from 'typemoq';
 import * as task from 'vsts-task-lib/task';
 import {ToolRunner} from 'vsts-task-lib/toolrunner';
 
-import {getInstanceGroupIps} from '../instance-group-ips';
+import {
+  getInstanceGroupIps,
+  GetInstanceGroupIpsOptions,
+} from '../instance-group-ips';
 
 describe('unit-tests', () => {
-  const taskMock = Mock.ofInstance(task);
+  let taskMock = Mock.ofInstance(task);
   taskMock.setup(t => t.getEndpointAuthorization(It.isAny(), It.isAny()))
       .returns(() => {
         return {
           parameters : {
-            ['certificate'] : JSON.stringify({project_id : 'mock-project-id'})
+            ['certificate'] : JSON.stringify({project_id : 'mock-project-id'}),
           },
-        } as any as task.EndpointAuthorization;
+          scheme : '',
+        } as task.EndpointAuthorization;
       });
-  const endpointMock =
-      Mock.ofInstance(new Endpoint('', {task : taskMock.object}));
-  const toolMock = Mock.ofType<ToolRunner>();
+  const endpoint = new Endpoint('', {task : taskMock.object});
+  let endpointMock: IMock<Endpoint>;
+  let gcloudToolMock: IMock<ToolRunner>;
+  let groupListInstancesToolMock: IMock<ToolRunner>;
+  let listInstancesToolMock: IMock<ToolRunner>;
   const gcloudPath = 'gcloud-path';
+  let defaultOptions: GetInstanceGroupIpsOptions;
 
   beforeEach(() => {
-    endpointMock.reset();
+    endpointMock = Mock.ofInstance(endpoint, MockBehavior.Strict);
     endpointMock.setup(e => e.usingAsync(It.isAny())).callBase();
     endpointMock.setup(e => e.initCredentials());
     endpointMock.setup(e => e.clearCredentials());
     endpointMock.setup(e => e.projectParam)
         .returns(() => '--project="mock-project-id"');
 
-    taskMock.reset();
+    taskMock = Mock.ofInstance(task);
     taskMock.setup(t => t.which('gcloud')).returns(() => gcloudPath);
-    taskMock.setup(t => t.tool(gcloudPath)).returns(() => toolMock.object);
+    taskMock.setup(t => t.tool(gcloudPath))
+        .returns(() => gcloudToolMock.object);
 
-    toolMock.reset();
-    toolMock.setup(t => t.line(It.isAny())).returns(() => toolMock.object);
-    toolMock.setup(t => t.arg(It.isAny())).returns(() => toolMock.object);
-    // ReSharper disable once TsResolvedFromInaccessibleModule
-    toolMock.setup(t => t.then).returns(() => undefined);
-    toolMock.setup(t => t.toString()).returns(() => 'toolMock');
+    groupListInstancesToolMock = Mock.ofType<ToolRunner>();
+    groupListInstancesToolMock.setup(t => t.arg(It.isAny()))
+        .returns(() => groupListInstancesToolMock.object);
+
+    listInstancesToolMock = Mock.ofType<ToolRunner>();
+    listInstancesToolMock.setup(t => t.arg(It.isAny()))
+        .returns(() => listInstancesToolMock.object);
+
+    gcloudToolMock = Mock.ofType<ToolRunner>();
+    gcloudToolMock.setup(t => t.line('compute instance-groups list-instances'))
+        .returns(() => groupListInstancesToolMock.object);
+    gcloudToolMock.setup(t => t.line('compute instances list'))
+        .returns(() => listInstancesToolMock.object);
+
+    defaultOptions = {
+      endpoint : endpointMock.object,
+      locationScope : 'zone',
+      location : 'default-zone-name',
+      instanceGroupName : 'default-instance-group-name',
+      buildVariableName : 'default.build.variable.name',
+      di : {task : taskMock.object},
+    };
   });
 
-  it('should fail on list-instances failure', async () => {
+  it('should fail on instance-groups list-instances failure', async () => {
     const error = new Error('mock-error');
-    toolMock.setup(t => t.on(It.isAny(), It.isAny))
-        .returns(() => toolMock.object);
-    toolMock.setup(t => t.exec(It.isAny()))
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .returns(() => groupListInstancesToolMock.object);
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
         .returns(() => Q.reject<number>(error));
 
-    try {
-      const p = await getInstanceGroupIps({
-        endpoint : endpointMock.object,
-        locationScope : 'zone',
-        location : 'zone-name',
-        instanceGroupName : 'instance-group-name',
-        buildVariableName : 'build.variable.name',
-        di : {task : taskMock.object},
-      });
-      assert.fail(p, '');
-    } catch (e) {
-      if (e === error) {
-        return;
-      } else {
-        throw e;
-      }
-    }
+    const promise = getInstanceGroupIps(defaultOptions);
+
+    await promise.then(() => assert.fail('', '', 'Expected an error.'))
+        .catch((e: {}) => assert.equal(error, e));
+  });
+
+  it('should fail on instances list failure', async () => {
+    const error = new Error('mock-error');
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback('instance-name,zone-name'))
+        .returns(() => groupListInstancesToolMock.object);
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .returns(() => listInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.reject<number>(error));
+
+    const promise = getInstanceGroupIps(defaultOptions);
+
+    await promise.then(() => assert.fail('', '', 'Expected an error.'))
+        .catch((e: {}) => assert.equal(error, e));
+  });
+
+  it('should set the variable for a single ip', async () => {
+    const ipaddress = 'ipaddress';
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback('instance-name,zone-name'))
+        .returns(() => groupListInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback(ipaddress))
+        .returns(() => listInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    defaultOptions.buildVariableName = 'build.variable.name';
+
+    await getInstanceGroupIps(defaultOptions);
+
+    taskMock.verify(
+        t => t.setVariable(defaultOptions.buildVariableName, ipaddress),
+        Times.once());
+  });
+
+  it('should call list-instances for the given instance group.', async () => {
+    const ipaddress = 'adderess';
+    const instanceGroupName = 'test-group-name';
+    const locationScope = 'region';
+    const regionName = 'us-central1';
+    defaultOptions.instanceGroupName = instanceGroupName;
+    defaultOptions.locationScope = locationScope;
+    defaultOptions.location = regionName;
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback('instance-name,zone-name'))
+        .returns(() => groupListInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback(ipaddress))
+        .returns(() => listInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+
+    await getInstanceGroupIps(defaultOptions);
+
+    groupListInstancesToolMock.verify(t => t.arg(instanceGroupName),
+                                      Times.once());
+    groupListInstancesToolMock.verify(t => t.arg('--region'), Times.once());
+    groupListInstancesToolMock.verify(t => t.arg(regionName), Times.once());
+  });
+
+  it('should call instances list filtering for the returned instances.',
+     async () => {
+       const ipaddress = 'adderess';
+       groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+           .returns(() => Q.resolve(0));
+       groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+           .returns((_event: string, callback: (...line: Array<{}>) => {}) => {
+             callback('test-instance-1,test-zone-1',
+                      'test-instance-2,test-zone-2');
+             return groupListInstancesToolMock.object;
+           });
+       listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+           .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                         callback(ipaddress))
+           .returns(() => listInstancesToolMock.object);
+       listInstancesToolMock.setup(t => t.exec(It.isAny()))
+           .returns(() => Q.resolve(0));
+
+       await getInstanceGroupIps(defaultOptions);
+
+       listInstancesToolMock.verify(
+           t => t.arg('(name=test-instance-1 AND zone:test-zone-1)' +
+                      ' OR ' +
+                      '(name=test-instance-2 AND zone:test-zone-2)'),
+           Times.once());
+     });
+
+  it('should set the variable for multiple ips', async () => {
+    const ipaddresses = [ 'address1', 'address2' ];
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback('instance-name,zone-name'))
+        .returns(() => groupListInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback(...ipaddresses))
+        .returns(() => listInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    defaultOptions.buildVariableName = 'other.build.variable.name';
+
+    await getInstanceGroupIps(defaultOptions);
+
+    taskMock.verify(t => t.setVariable(defaultOptions.buildVariableName,
+                                       'address1,address2'),
+                    Times.once());
+  });
+
+  it('should use the given separator for multiple ips', async () => {
+    const ipaddresses = [ '1', '2' ];
+    groupListInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    groupListInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback('instance-name,zone-name'))
+        .returns(() => groupListInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.on('stdline', It.isAny()))
+        .callback((_event: string, callback: (...line: Array<{}>) => {}) =>
+                      callback(...ipaddresses))
+        .returns(() => listInstancesToolMock.object);
+    listInstancesToolMock.setup(t => t.exec(It.isAny()))
+        .returns(() => Q.resolve(0));
+    defaultOptions.buildVariableName = 'other.build.variable.name';
+    defaultOptions.separator = ' & ';
+
+    await getInstanceGroupIps(defaultOptions);
+
+    taskMock.verify(
+        t => t.setVariable(defaultOptions.buildVariableName, '1 & 2'),
+        Times.once());
   });
 });

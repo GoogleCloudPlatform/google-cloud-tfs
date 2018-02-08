@@ -26,4 +26,3 @@ npm-debug.log
 */coverage
 /kubectl-build-task/test/resources/Cloud Tools for TFS Testing.json
 /.vscode
-*/package-lock.json

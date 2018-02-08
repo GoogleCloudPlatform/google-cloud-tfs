@@ -15,6 +15,7 @@
 import {KubeEndpoint} from 'common/exec-options';
 import {catchAll} from 'common/handle-rejection';
 import * as task from 'vsts-task-lib/task';
+import {ToolRunner} from 'vsts-task-lib/toolrunner';
 
 import {runKubectl} from './kubectl-build-task';
 
@@ -32,7 +33,7 @@ function run(): void {
   const cluster = task.getInput('cluster', true);
   const zone = task.getInput('zone');
   runKubectl({
-    kubectlTool: task.tool(kubectlPath),
+    kubectlTool: new ToolRunner(kubectlPath),
     endpoint: new KubeEndpoint(endpointId, cluster, zone),
     command: task.getInput('command', true),
     ignoreReturnCode: task.getBoolInput('ignoreReturnCode'),

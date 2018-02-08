@@ -41,13 +41,5 @@
     <Folder Include="test\resources\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
-  <Target Name="InstallCommonModule">
-    <Exec Command="npm install ../common" />
-  </Target>
-  <PropertyGroup>
-    <BuildDependsOn>
-      InstallCommonModule;
-      $(BuildDependsOn)
-    </BuildDependsOn>
-  </PropertyGroup>
+  <Import Project="..\InstallCommon.targets" />
 </Project>

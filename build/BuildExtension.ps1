@@ -16,7 +16,7 @@
 
 [CmdletBinding()]
 Param(
-    [string[]]$TasksToBuild,
+    [string[]]$TasksToTest,
     [switch]$SkipInit,
     [switch]$SkipCompile,
     [switch]$SkipTest,
@@ -26,18 +26,17 @@ Param(
 
 
 pushd (Join-Path $MyInvocation.MyCommand.Path ..)
-$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru -Verbose:$false
-$functionsModule.GetVariableFromCallersModule("VerbosePreference").Value = $VerbosePreference
+$functionsModule = Import-Module ./BuildFunctions.psm1 -PassThru -Verbose:$false -ArgumentList $VerbosePreference
 try {
     cd ..
 
     $allTasks = Get-TypeScriptTasks
 
-    if($TasksToBuild -eq $null) {
+    if($TasksToTest -eq $null) {
         $tasks = $allTasks
     } else {
-        $tasks = $allTasks | ? {$_ -in $TasksToBuild}
-        $TasksToBuild |
+        $tasks = $allTasks | ? {$_ -in $TasksToTest}
+        $TasksToTest |
             ? { $_ -notin $allTasks } |
             % { Write-Warning "$_ is not a valid task" }
     }
@@ -52,9 +51,9 @@ try {
     }
 
     if (-not $SkipCompile) {
-        Invoke-CompileAll $tasks
+        msbuild
     }
-        
+
     if (-not $SkipTest) {
         Invoke-AllMochaTests $tasks
     }
@@ -64,7 +63,7 @@ try {
     }
 
     if(-not $SkipPackage) {
-        Merge-ExtensionPackage $tasks $Publisher $Version
+        Merge-ExtensionPackage $Publisher $Version
     }
 } finally {
     popd

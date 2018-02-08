@@ -51,7 +51,7 @@ export class TaskResult {
 
   getVariable(this: TaskResult, variableName: string, secret = false): string {
     const setVariableTag =
-        `##vso[task.setvariable variable=${variableName};secret=${secret};]`;
+      `##vso[task.setvariable variable=${variableName};issecret=${secret};]`;
     let value: string = undefined;
     for (const line of this.outputData) {
       if (line.startsWith(setVariableTag)) {

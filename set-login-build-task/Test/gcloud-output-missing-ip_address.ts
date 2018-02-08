@@ -51,7 +51,7 @@ answers.exec[execString] = {
   'code': 0,
   'stdout': JSON.stringify({
     password: 'newpassword',
-    username: 'userName'
+    username: 'userName',
   }),
   'stderr': '[gcloud output]',
 };

@@ -43,9 +43,9 @@ const execString = '/mocked/tools/gcloud' + ' compute' +
 
 const answers: TaskLibAnswers = getDefaultAnswers();
 answers.exec[execString] = {
-  "code": 1,
-  "stdout": '[gcloud output]',
-  "stderr": '[gcloud error]'
+  'code': 1,
+  'stdout': '[gcloud output]',
+  'stderr': '[gcloud error]',
 };
 
 runner.setAnswers(answers);

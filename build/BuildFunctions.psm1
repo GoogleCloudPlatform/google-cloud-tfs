@@ -13,26 +13,13 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
  ##>
+Param(
+    $VerbosePreference
+)
 
 function Initialize-All([string[]]$tasks) {
     Write-Host "Initialize modules and tasks"
-    Initialize-Common
     Initialize-PsTask "install-cloud-sdk-build-task"
-    $tasks | % {
-        Initialize-TsTask $_
-    }
-}
-
-function Initialize-Common(){
-    Write-Host "Initialize common modules"
-    pushd common
-    try {
-        if (-not (Test-Path node_modules)) {
-            npm install --loglevel error | Out-Null
-        }
-    } finally {
-        popd
-    }
 }
 
 function Initialize-PsTask([string]$task) {
@@ -53,77 +40,30 @@ function Initialize-PsTask([string]$task) {
     }
 }
 
-function Initialize-TsTask([string]$task) {
-    Write-Host "Initialize TypeScript task $task"
-    pushd $task
-    try {
-        if (-not (Test-Path node_modules)) {
-            npm install --loglevel error | Out-Null
-        }
-    } finally {
-        popd
-    }
-}
-
-# Compile functions should be able to be replaced by MSBuild.
-function Invoke-CompileAll([string[]]$tasks) {
-    Write-Host "Compiling TypeScript modules and tasks"
-    Invoke-CompileCommon
-    $jobs = $tasks | % {
-        Start-Job {
-            cd $using:pwd
-            Import-Module ./build/BuildFunctions.psm1
-            Invoke-CompileTask -task $using:_
-        }
-    }
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob
-}
-
-function Invoke-CompileCommon() {
-    Write-Host "Compiling common modules"
-    pushd common
-    try {
-        Write-Verbose "Running: tsc"
-        tsc
-        if ($LASTEXITCODE -ne 0) {
-            throw "tsc failed for common modules"
-        }
-    } finally {
-        popd
-    }
-}
-
-function Invoke-CompileTask($task) {
-    Write-Host "Compiling task $task"
-    pushd $task
-    try {
-        # Common module changes as part of development.
-        # Update the common module every time.
-        npm install ../common --loglevel warn | Out-Null
-
-        Write-Verbose "Running: tsc"
-        tsc
-        if ($LASTEXITCODE -ne 0) {
-            throw "tsc failed for task $task"
-        }
-    } finally {
-        popd
-    }
-}
-
 function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$throwOnError) {
     Write-Host "Testing Tasks"
+
     $jobs = $tasks | % {
         Start-Job {
             cd $using:pwd
-            Import-Module ./build/BuildFunctions.psm1
+            Import-Module ./build/BuildFunctions.psm1 -ArgumentList $using:VerbosePreference
             Invoke-MochaTest -task $using:_ -reporter $using:reporter
         }
     }
-    $jobErrors = $null
-    $jobs | Wait-Job | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
-    if ($throwOnError -and $jobErrors) {
-        throw $jobErrors
+
+    $allJobErrors = @()
+    do {
+        if ($jobs.Count -gt 1) {
+            $jobs | Wait-Job -Any | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+        } else {
+            # Stream the output of the longest test directly to the console.
+            $jobs | Receive-Job -Wait -AutoRemoveJob -ErrorVariable jobErrors
+        }
+        $allJobErrors += $jobErrors
+    } while ($jobs = Get-Job)
+
+    if ($throwOnError -and $allJobErrors) {
+        throw $allJobErrors
     }
 }
 
@@ -159,7 +99,7 @@ function Publish-TasksLocal([string[]]$tasks) {
     $jobs = $tasks | % {
         Start-Job {
             cd $using:pwd
-            Import-Module ./build/BuildFunctions.psm1
+            Import-Module ./build/BuildFunctions.psm1 -ArgumentList $using:VerbosePreference
             Publish-TsTaskLocal -task $using:_
         }
     }
@@ -213,12 +153,13 @@ function Publish-TsTaskLocal($task) {
     }
 }
 
-function Merge-ExtensionPackage([string[]]$tasks, [string] $publisher, [string] $version) {
+function Merge-ExtensionPackage([string] $publisher, [string] $version) {
     Write-Host "Building package"
+    $tasks = Get-TypeScriptTasks
     $jobs = $tasks | % {
         Start-Job {
             cd $using:pwd
-            Import-Module ./build/BuildFunctions.psm1
+            Import-Module ./build/BuildFunctions.psm1 -ArgumentList $using:VerbosePreference
             Update-TaskBeforePackage -task $using:_
         }
     }
@@ -263,7 +204,7 @@ function Update-TaskBeforePackage([string]$task) {
         cp ..\images\cloud_32x32.png icon.png
 
         # Get the modules needed for actually running the code.
-        $productionModules = Get-ProductionModules $task
+        $productionModules = Get-ProductionModules
 
         # Create manifest.json in node_modules, so only production modules are
         # included in the final package.
@@ -281,8 +222,12 @@ function Get-TaskVersion() {
     return $parts.Value -join "."
 }
 
-function Get-ProductionModules($task) {
+function Get-ProductionModules() {
+    Write-Debug "running npm ls --prod --parseable"
     ($root, $modulePaths) = npm ls --prod --parseable
+    if(-not $root){
+        throw "npm returned no results: $LASTEXITCODE"
+    }
     $moduleRoot = Join-Path $root node_modules
     $moduleRoot += "\"
     foreach ($modulePath in $modulePaths) {

@@ -62,9 +62,10 @@ describe('functional tests', function(): void {
     assert(Number(sdkVersions[0].split('.')[0]) > 182);
   });
 
-  it('installs specific version', async () => {
+  it('updates specific cached version', async () => {
     const targetVersion = '176.0.0';
     env['INPUT_version'] = targetVersion;
+    await TaskResult.runTask('cloud-sdk-tool.js', env);
 
     taskOutput = await TaskResult.runTask('cloud-sdk-tool.js', env);
 
@@ -73,6 +74,8 @@ describe('functional tests', function(): void {
     const sdkVersions = await fs.readdir(cloudSdkToolDir);
     assert.equal(sdkVersions.length, 1);
     assert.equal(sdkVersions[0], targetVersion);
+    assert.equal(taskOutput.getDebugLines('Initializing cached version').length,
+                 1);
   });
 
   it('fails to install invalid version', async () => {
@@ -82,17 +85,5 @@ describe('functional tests', function(): void {
     taskOutput = await TaskResult.runTask('cloud-sdk-tool.js', env);
 
     assert.equal(taskOutput.getStatus()[0], 'failed');
-  });
-
-  it('updates cached version', async () => {
-    const targetVersion = '176.0.0';
-    env['INPUT_version'] = targetVersion;
-    await TaskResult.runTask('cloud-sdk-tool.js', env);
-
-    taskOutput = await TaskResult.runTask('cloud-sdk-tool.js', env);
-
-    assert.equal(taskOutput.getStatus()[0], 'succeeded');
-    assert.equal(taskOutput.getDebugLines('Initializing cached version').length,
-                 1);
   });
 });

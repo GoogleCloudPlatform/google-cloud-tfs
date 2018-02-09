@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <NpmPackage Include="package.json"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <BuildDependsOn>
+      NpmInstall;
+      NpmInstallCommon;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="NpmInstallCommon"
+          Inputs="$(MSBuildThisFileDirectory)\common\bin\common-0.0.1.tgz"
+          Outputs="$(MSBuildProjectDirectory)\node_modules\common\">
+    <Exec Command="npm install ..\common\bin\common-0.0.1.tgz"
+          WorkingDirectory="$(MSBuildProjectDirectory)"/>
+  </Target>
+  <Target Name="NpmInstall"
+          Inputs="$(MSBuildProjectDirectory)\package.json"
+          Outputs="$(MSBuildProjectDirectory)\node_modules\">
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+  </Target>
+</Project>

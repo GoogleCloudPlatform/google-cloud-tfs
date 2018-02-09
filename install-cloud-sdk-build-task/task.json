@@ -1,25 +1,23 @@
 {
-  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
   "id": "07916dae-cb7c-45ad-937e-5eb34961e47b",
   "name": "install-cloud-sdk-build-task",
   "friendlyName": "Install Google Cloud SDK",
   "author": "Google Cloud Tools",
   "description": "Installs and configures the Google Cloud SDK.",
-  "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks.",
+  "helpMarkDown": "The [Google Cloud SDK](https://cloud.google.com/sdk) is required for all Google Cloud Tools for TFS Build tasks. This task will install it on a Windows build agent.",
   "version": {
     "Major": 0,
     "Minor": 0,
     "Patch": 4
   },
   "category": "Utility",
-  "visibility": [ "Build", "Release" ],
   "demands": [],
   "groups": [
     {
       "name": "advanced",
       "displayName": "Advanced",
-      "isExpanded": false,
-      "tags": []
+      "isExpanded": false
     }
   ],
   "inputs": [

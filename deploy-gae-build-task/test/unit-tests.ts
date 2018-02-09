@@ -44,8 +44,8 @@ describe('unit tests', () => {
 
   // Inputs with defaults that can change in tests.
   let runOptions: deployGaeTypeDef.RunOptions;
-  let execResult: trTypeDef.IExecResult;
-  let checkVersionResult: trTypeDef.IExecResult;
+  let execResult: trTypeDef.IExecSyncResult;
+  let checkVersionResult: trTypeDef.IExecSyncResult;
 
   before('setup mockery', () => {
     /* tslint:disable no-require-imports */

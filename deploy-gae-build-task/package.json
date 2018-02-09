@@ -6,16 +6,16 @@
   "author": "Google Cloud Tools",
   "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
   "dependencies": {
-    "common": "file:../common",
+    "common": "file:../common/bin/common-0.0.1.tgz",
     "js-yaml": "^3.8.2",
-    "vsts-task-lib": "^1.1.0"
+    "vsts-task-lib": "^2.1.0"
   },
   "devDependencies": {
     "@types/escape-string-regexp": "0.0.30",
     "@types/js-yaml": "^3.5.29",
-    "@types/mocha": "^2.2.39",
+    "@types/mocha": "^2.2.48",
     "@types/mockery": "^1.4.29",
-    "@types/node": "^7.0.6",
+    "@types/node": "^7.0.52",
     "@types/q": "0.0.32",
     "mocha": "^3.2.0",
     "mockery": "^2.1.0",

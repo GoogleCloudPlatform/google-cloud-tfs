@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "id": "google-cloud-tfs",
   "name": "Cloud Tools for TFS",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "publisher": "GoogleCloudTools",
   "targets": [ { "id": "Microsoft.VisualStudio.Services" } ],
   "description": "Tools for deploying to Google Cloud Platform.",

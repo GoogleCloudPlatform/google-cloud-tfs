@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/AArnott/vsts-task-lib/d8a200950849839678f6e34d241f4418ed5d2678/tasks.schema.json",
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
   "id": "78A617AD-4750-499D-9A42-3A8F3F0350AA",
   "name": "gcloud-build-task",
   "friendlyName": "Gcloud Command Line",
@@ -9,10 +9,9 @@
   "version": {
     "Major": 0,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 2
   },
   "category": "Utility",
-  "visibility": [ "Build", "Release" ],
   "demands": [],
   "groups": [
     {
@@ -49,7 +48,7 @@
       "label": "Ignore Return Code",
       "type": "boolean",
       "required": true,
-      "helpMarkDown": "When checked, a non-zero return code from gcloud will not cause this task to fail.",
+      "helpMarkDown": "When checked, this task will succeed even if gcloud reports a failure.",
       "defaultValue": false,
       "groupName": "advanced"
     },
@@ -58,7 +57,7 @@
       "label": "StdOut build variable",
       "type": "string",
       "required": false,
-      "helpMarkDown": "The name of the build variable in which to store the contents of the gcloud stdout.",
+      "helpMarkDown": "The name of a build variable in which the output from gcloud is saved. `--format json` is recommended, as new lines are removed.",
       "groupName": "advanced"
     }
   ],

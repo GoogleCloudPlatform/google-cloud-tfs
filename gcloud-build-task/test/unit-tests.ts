@@ -42,7 +42,7 @@ describe('unit tests', () => {
 
   // Inputs with defaults that can change in tests.
   let runOptions: gcloudTypeDef.RunGcloudOptions;
-  let execResult: trTypeDef.IExecResult;
+  let execResult: trTypeDef.IExecSyncResult;
 
   before('setup mockery', () => {
     /* tslint:disable no-require-imports */

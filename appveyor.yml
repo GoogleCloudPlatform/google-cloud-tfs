@@ -1,6 +1,6 @@
 image: Visual Studio 2015
 environment:
-  PATH: $(APPDATA)\npm;C:\Python27;$(PATH)
+  PATH: $(LOCALAPPDATA)\Google\Cloud SDK\google-cloud-sdk\bin;$(APPDATA)\npm;C:\Python27;$(PATH)
   GCLOUD_SDK_INSTALLATION_NO_PROMPT: true
   CLOUDSDK_PYTHON: C:\Python27\python.exe
 
@@ -17,6 +17,7 @@ install:
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
   - gcloud components install kubectl --quiet
+  - gcloud components update --quiet
   - ps: Install-Product node 6.9.1
   - npm install typescript -global
   - npm install ts-node -global

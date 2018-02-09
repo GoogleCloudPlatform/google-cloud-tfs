@@ -7,6 +7,7 @@ environment:
 install:
   - ps: Import-Module .\build\BuildFunctions.psm1
   - ps: Update-AppveyorBuildVersion
+  - ps: Install-Product node LTS
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
   - gcloud components install kubectl --quiet

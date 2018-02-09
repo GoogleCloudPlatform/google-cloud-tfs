@@ -7,7 +7,7 @@ environment:
 cache:
   - $(APPDATA)\npm
   - $(APPDATA)\npm-cache
-  - $(HOME)\Documents\WindowsPowerShell\Modules
+  - $(USERPROFILE)\Documents\WindowsPowerShell\Modules
   - secure-file\tools
   - $(LOCALAPPDATA)\Google\Cloud SDK
 

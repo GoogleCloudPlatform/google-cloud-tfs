@@ -5,6 +5,7 @@ environment:
   CLOUDSDK_PYTHON: C:\Python27\python.exe
 
 cache:
+  - $(APPDATA)\npm
   - $(APPDATA)\npm-cache
   - $(USERPROFILE)\Documents\WindowsPowerShell\Modules
   - secure-file\tools

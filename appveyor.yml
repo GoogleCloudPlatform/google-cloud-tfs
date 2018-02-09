@@ -9,13 +9,13 @@ cache:
   - $(APPDATA)\npm-cache
   - $(HOME)\Documents\WindowsPowerShell\Modules
   - secure-file\tools
+  - $(LOCALAPPDATA)\Google\Cloud SDK
 
 install:
   - ps: Import-Module .\build\BuildFunctions.psm1
   - ps: Update-AppveyorBuildVersion
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
-  - ps: Get-Command gcloud
   - gcloud components install kubectl --quiet
   - ps: Install-Product node 6.9.1
   - npm install typescript -global

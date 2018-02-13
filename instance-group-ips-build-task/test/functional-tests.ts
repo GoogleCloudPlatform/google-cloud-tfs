@@ -17,7 +17,7 @@ import {TaskResult} from 'common/task-result';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { SetupHelper } from './group-setup-helper';
+import {SetupHelper} from './group-setup-helper';
 
 /**
  * @fileoverview Functional tests that run actual gcloud commands.
@@ -38,12 +38,14 @@ describeWithCredentialFile('functional tests', function(): void {
   let taskOutput: TaskResult;
   let env: {[variableName: string]: string};
 
-  const setupHelper = new SetupHelper(groupName, zoneName, credentialFile);
-  const endpointAuth = JSON.stringify({
-    parameters : {certificate : fs.readFileSync(credentialFile).toString()},
-  });
+  let setupHelper: SetupHelper;
+  let endpointAuth: string;
 
   before(async () => {
+    endpointAuth = JSON.stringify({
+      parameters : {certificate : fs.readFileSync(credentialFile).toString()},
+    });
+    setupHelper = new SetupHelper(groupName, zoneName, credentialFile);
     try {
       await setupHelper.findOrSetupTestGroupAsync();
     } catch (e) {
@@ -84,14 +86,13 @@ describeWithCredentialFile('functional tests', function(): void {
   ];
 
   for (const input of requiredParameters) {
-    it(
-      `should fail with missing required input ${input}`, async () => {
-        env[`INPUT_${input}`] = undefined;
+    it(`should fail with missing required input ${input}`, async () => {
+      env[`INPUT_${input}`] = undefined;
 
-        taskOutput = await TaskResult.runTask('run.js', env);
+      taskOutput = await TaskResult.runTask('run.js', env);
 
-        assert.equal(taskOutput.getStatus()[0], 'failed');
-      });
+      assert.equal(taskOutput.getStatus()[0], 'failed');
+    });
   }
 
   it('should fail for invalid scope', async () => {

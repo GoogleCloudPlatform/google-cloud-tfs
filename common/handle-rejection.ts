@@ -42,21 +42,20 @@ export async function catchAll<T>(promise: PromiseLike<T>|
     }
   } catch (e) {
     let message: string;
-    if (e instanceof AggregateError) {
+    if (e instanceof Error) {
       message = e.message;
-      for (const stackLine of e.stack.split(/\n/)) {
+      const stackLines = e.stack.split(/\n/);
+      for (const stackLine of stackLines) {
         task.debug(stackLine);
       }
-      for (const innerError of e.innerErrors) {
-        task.error(innerError.message);
-        for (const stackLine of innerError.stack.split(/\n/)) {
-          task.debug(stackLine);
+      if (e instanceof AggregateError) {
+        for (const innerError of e.innerErrors) {
+          task.error(innerError.message);
+          const innerStackLines = innerError.stack.split(/\n/);
+          for (const stackLine of innerStackLines) {
+            task.debug(stackLine);
+          }
         }
-      }
-    } else if (e instanceof Error) {
-      message = e.message;
-      for (const stackLine of e.stack.split(/\n/)) {
-        task.debug(stackLine);
       }
     } else {
       message = e.toString();

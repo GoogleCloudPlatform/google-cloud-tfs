@@ -59,8 +59,8 @@ export async function getInstanceGroupIps(
       locationScope,
       location,
       instanceGroupName,
-      separator = ',',
       buildVariableName,
+      separator = ',',
       di = {task},
     }: GetInstanceGroupIpsOptions,
     ): Promise<void> {

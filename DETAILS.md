@@ -40,8 +40,8 @@ The extension installs the following tasks:
   - **[Get Google Compute VM password][set-login-password]**: Gets the IP address
   and user password for a [Google Compute Engine][ComputeEngine] virtual machine
   running windows.
-  - **[Instance Group IPs][instance-group-ips]**: Collect the external IPs of an [instance group][InstanceGroup]
-  and save them to a build variable.
+  - **[Instance Group IPs][instance-group-ips]**: Collects the external IPs of an [instance group][InstanceGroup]
+  and saves them to a build variable.
   - **[Install Google Cloud SDK][install-cloud-sdk]**: Windows only. Finds or installs the
   [Google Cloud SDK][CloudSdk].
   - **[Google Cloud SDK Tool Installer][cloud-sdk-tool]**: Installs the [Google Cloud SDK][CloudSdk] as a cached

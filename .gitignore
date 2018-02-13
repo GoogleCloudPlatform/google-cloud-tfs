@@ -26,3 +26,4 @@ npm-debug.log
 */coverage
 /kubectl-build-task/test/resources/Cloud Tools for TFS Testing.json
 /.vscode
+/instance-group-ips-build-task/test/resources/Cloud Tools for TFS Testing.json

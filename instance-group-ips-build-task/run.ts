@@ -17,10 +17,11 @@
  * @author jimwp@google.com (Jim Przybylinski)
  */
 
+import {Endpoint} from 'common/exec-options';
 import {catchAll} from 'common/handle-rejection';
 import * as task from 'vsts-task-lib/task';
-import { getInstanceGroupIps} from './instance-group-ips';
-import {Endpoint} from '../common/exec-options';
+
+import {getInstanceGroupIps} from './instance-group-ips';
 
 /**
  * The entry point for the instance group ips task. Collects the inputs and
@@ -35,19 +36,17 @@ async function run(): Promise<void> {
   } else if (locationScope === 'region') {
     location = task.getInput('region', true);
   } else {
-    location = task.getInput('location', true);
+    throw new Error(`Unknown location scope: ${locationScope}`);
   }
 
-  getInstanceGroupIps(
-    {
-      endpoint: new Endpoint(endpointId),
-      locationScope,
-      location,
-      instanceGroupName: task.getInput('instanceGroupName'),
-      separator: task.getInput('separator', false) || undefined,
-      buildVariableName: task.getInput('buildVariableName', true),
-    });
-
+  getInstanceGroupIps({
+    endpoint : new Endpoint(endpointId),
+    locationScope,
+    location,
+    instanceGroupName : task.getInput('instanceGroupName'),
+    separator : task.getInput('separator', false) || undefined,
+    buildVariableName : task.getInput('buildVariableName', true),
+  });
 }
 
 catchAll(run());

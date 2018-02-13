@@ -24,6 +24,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="test\mocha.opts" />
+    <Content Include="test\resources\Cloud Tools for TFS Testing.json.enc" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="test\functional-tests.ts">
       <TestFramework>Mocha</TestFramework>

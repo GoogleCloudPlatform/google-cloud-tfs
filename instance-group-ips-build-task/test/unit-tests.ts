@@ -185,9 +185,9 @@ describe('unit-tests', () => {
        await getInstanceGroupIps(defaultOptions);
 
        listInstancesToolMock.verify(
-           t => t.arg('(name=test-instance-1 AND zone:test-zone-1)' +
+           t => t.arg('"(name=test-instance-1 AND zone:test-zone-1)' +
                       ' OR ' +
-                      '(name=test-instance-2 AND zone:test-zone-2)'),
+                      '(name=test-instance-2 AND zone:test-zone-2)"'),
            Times.once());
      });
 

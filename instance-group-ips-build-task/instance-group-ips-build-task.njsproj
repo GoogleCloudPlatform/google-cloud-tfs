@@ -15,9 +15,16 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' " />
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " />
   <ItemGroup>
+    <Content Include="manifest.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="task.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="test\mocha.opts" />
+    <Content Include="test\resources\Cloud Tools for TFS Testing.json.enc" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +34,10 @@
     <TypeScriptCompile Include="run.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\functional-tests.ts">
+      <TestFramework>Mocha</TestFramework>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="test\group-setup-helper.ts" />
     <TypeScriptCompile Include="test\unit-tests.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
@@ -36,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="test\" />
+    <Folder Include="test\resources\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
   <Import Project="..\InstallCommon.targets" />

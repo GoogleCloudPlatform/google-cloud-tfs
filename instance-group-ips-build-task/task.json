@@ -1,0 +1,79 @@
+﻿{
+  "$schema": "https://aka.ms/vsts-tasks.schema.json",
+  "id": "F15107EF-7D9C-43D5-95C9-AA826E16D116",
+  "name": "instance-group-ips",
+  "friendlyName": "Google Instance Group Ips",
+  "author": "Google Cloud Tools",
+  "description": "Get the external IPs for all virtual machines in an instance group.",
+  "helpMarkDown": "Use these external IPs as targets for the [IIS Web App Deploy task](https://docs.microsoft.com/en-us/vsts/build-release/tasks/deploy/iis-deploy).",
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 1
+  },
+  "category": "Utility",
+  "inputs": [
+    {
+      "name": "serviceEndpoint",
+      "label": "GCP connection",
+      "type": "connectedService:GoogleCloudServiceEndpoint",
+      "required": true,
+      "helpMarkDown": "The Google Cloud Platform connection to use."
+    },
+    {
+      "name": "locationScope",
+      "label": "Type:",
+      "type": "radio",
+      "options": {
+        "zone": "Zone",
+        "region": "Region"
+      },
+      "defaultValue": "zone",
+      "required": true,
+      "helpMarkDown": "Select either a zone or region instance group."
+    },
+    {
+      "name": "zone",
+      "label": "Zone",
+      "type": "string",
+      "required": true,
+      "visibleRule": "locationScope == zone",
+      "helpMarkDown": "The zone of the instance group."
+    },
+    {
+      "name": "region",
+      "label": "Region",
+      "type": "string",
+      "required": true,
+      "visibleRule": "locationScope == region",
+      "helpMarkDown": "The region of the instance group."
+    },
+    {
+      "name": "instanceGroupName",
+      "label": "Instance Group Name",
+      "type": "string",
+      "required": true,
+      "helpMarkDown": "The name of the instance group."
+    },
+    {
+      "name": "buildVariableName",
+      "label": "Build Variable Name",
+      "type": "string",
+      "required": true,
+      "defaultValue": "Build.Gcp.InstanceGroupIps",
+      "helpMarkDown": "The external ips of the VMs in the instance group will be stored in a build variable with this name."
+    },
+    {
+      "name": "separator",
+      "label": "Separator",
+      "type": "string",
+      "required": false,
+      "helpMarkDown": "The string placed between each ip in the build variable. Defaults to ',' if left empty."
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "run.js"
+    }
+  }
+}

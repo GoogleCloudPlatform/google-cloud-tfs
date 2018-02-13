@@ -80,8 +80,8 @@ export function getQuietExecOptions(): IExecOptions {
               }
               return true;
             }
-          }
-    }
+          },
+    },
   };
 
   const execOptions = getDefaultExecOptions();

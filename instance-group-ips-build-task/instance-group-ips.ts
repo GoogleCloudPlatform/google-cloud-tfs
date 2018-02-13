@@ -46,18 +46,17 @@ export async function getInstanceGroupIps(
       di = {task},
     }: GetInstanceGroupIpsOptions,
     ): Promise<void> {
-  task.debug(process.version);
   await endpoint.usingAsync(async () => {
     const gcloudToolPath = di.task.which('gcloud');
 
     const instanceLines: string[] = [];
     await di.task.tool(gcloudToolPath)
         .line('compute instance-groups list-instances')
-        .arg('--format')
-        .arg(`csv[no-heading](${instanceNameKey}, ${instanceZoneKey})`)
         .arg(instanceGroupName)
         .arg(`--${locationScope}`)
         .arg(location)
+        .arg('--format')
+        .arg(`"csv[no-heading](${instanceNameKey}, ${instanceZoneKey})"`)
         .arg(endpoint.projectParam)
         .arg(Endpoint.credentialParam)
         .on('stdline', (...lines: string[]) => instanceLines.push(...lines))
@@ -75,7 +74,7 @@ export async function getInstanceGroupIps(
         .arg('--format')
         .arg(`value(${externalIpResource})`)
         .arg('--filter')
-        .arg(filters.join(' OR '))
+        .arg(`"${filters.join(' OR ')}"`)
         .arg(endpoint.projectParam)
         .arg(Endpoint.credentialParam)
         .on('stdline', (...lines: string[]) => ips.push(...lines))

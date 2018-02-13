@@ -32,7 +32,7 @@ describeWithCredentialFile('functional tests', function(): void {
   let kubectlVersionPromise: Promise<KubectlVersion>;
   let taskOutput: TaskResult;
   let endpointAuth: string;
-  const variableName = 'outputVariable';
+  const defaultVariableName = 'default_variable';
   let env: {[variableName: string]: string};
 
   before('start kubectl version', () => {
@@ -61,7 +61,7 @@ describeWithCredentialFile('functional tests', function(): void {
       ['INPUT_cluster'] : 'test-cluster',
       ['INPUT_zone'] : 'us-central1-a',
       ['INPUT_ignoreReturnCode'] : 'false',
-      ['INPUT_outputVariable'] : variableName,
+      ['INPUT_outputVariable'] : defaultVariableName,
     };
   });
 
@@ -74,6 +74,7 @@ describeWithCredentialFile('functional tests', function(): void {
   });
 
   it('should run kubectl version', async () => {
+    const variableName = 'test_variable_name';
     env['INPUT_command'] = 'version --client --output=json';
     env['INPUT_outputVariable'] = variableName,
 
@@ -89,7 +90,7 @@ describeWithCredentialFile('functional tests', function(): void {
   });
 
   const requiredInputs = [ 'serviceEndpoint', 'command', 'cluster', 'zone' ];
-  for (let input of requiredInputs) {
+  for (const input of requiredInputs) {
     it(`should fail missing required input ${input}`, async () => {
       env[`INPUT_${input}`] = undefined;
 
@@ -105,7 +106,7 @@ describeWithCredentialFile('functional tests', function(): void {
     taskOutput = await TaskResult.runTask('run.js', env);
 
     assert.equal(taskOutput.getStatus()[0], 'succeeded');
-    assert.equal(taskOutput.getVariable(variableName), undefined);
+    assert.equal(taskOutput.getVariable(defaultVariableName), undefined);
   });
 
   it('should fail for non-existant command', async () => {

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @fileoverview This is the entry point of the instance group ips task.
- * @author jimwp@google.com (Jim Przybylinski)
- */
-
 import {Endpoint} from 'common/exec-options';
 import {catchAll} from 'common/handle-rejection';
 import * as task from 'vsts-task-lib/task';
 
 import {getInstanceGroupIps} from './instance-group-ips';
+
+/**
+ * @fileoverview This is the entry point of the instance group ips task.
+ * @author jimwp@google.com (Jim Przybylinski)
+ */
 
 /**
  * The entry point for the instance group ips task. Collects the inputs and

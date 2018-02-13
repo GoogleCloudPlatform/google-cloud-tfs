@@ -15,32 +15,68 @@
 import {exec} from 'child_process';
 import {readFileSync} from 'fs';
 
+/**
+ * @fileoverview This file provides a helper class to set up an instance group.
+ * This instance group can then have tests run against it.
+ * @author jimwp@google.com (Jim Przybylinski)
+ */
+
+/**
+ * This interface provides context for the commands run and their results in
+ * the case of an error.
+ */
 export interface Output {
   task: string;
   stdout: string;
   stderr: string;
 }
 
+/**
+ * Parts of the managed instance group json data from `gcloud --format json`.
+ */
 interface ManagedInstanceGroup {
   name: string;
   size: string|number;
 }
 
+/**
+ * Parts of the template json data from `gcloud --format-json`.
+ */
 interface Template {
   name: string;
 }
 
+/**
+ * The contents of the output streams of an executed command.
+ */
 interface StdStreams {
   stdout: string;
   stderr: string;
 }
-
+/**
+ * The name of the template to use as the base of the instance group.
+ */
 const tempateName = 'tfs-test-template';
+
+/**
+ * An argument to a gcloud command.
+ */
 const templateArg = `--template ${tempateName}`;
+
+/**
+ * The format argument to gcloud commands that return data.
+ */
 const formatArg = '--format json';
 
+/**
+ * Helper class for setting put a managed instance group.
+ */
 export class SetupHelper {
+  /**
+   * The output of the various gcloud commands run.
+   */
   readonly output: Output[] = [];
+
   private readonly projectId: string;
 
   private get zoneArg(): string { return `--zone ${this.zoneName}`; }
@@ -62,6 +98,10 @@ export class SetupHelper {
     this.projectId = JSON.parse(contents).project_id;
   }
 
+  /**
+   * Finds or creates the specified instance group. After this function
+   * resolves, the target instance group should exist and have two instances.
+   */
   async findOrSetupTestGroupAsync(): Promise<void> {
     const testGroupExists = await this.testGroupExistsAsync();
     if (!testGroupExists) {
@@ -69,7 +109,7 @@ export class SetupHelper {
     }
   }
 
-  async execAsync(command: string): Promise<StdStreams> {
+  private async execAsync(command: string): Promise<StdStreams> {
     return new Promise<StdStreams>((resolve, reject) => {
       exec(`${command} ${this.authArgs}`,
            (error: Error|null, stdout: string, stderr: string) => {
@@ -82,7 +122,7 @@ export class SetupHelper {
     });
   }
 
-  async testGroupExistsAsync(this: SetupHelper): Promise<boolean> {
+  private async testGroupExistsAsync(this: SetupHelper): Promise<boolean> {
     const listGroupsCommand = 'gcloud compute instance-groups managed list';
     const {stdout, stderr} =
         await this.execAsync(`${listGroupsCommand} ${formatArg}`);
@@ -100,7 +140,7 @@ export class SetupHelper {
     return false;
   }
 
-  async setTestGroupSizeAsync(): Promise<void> {
+  private async setTestGroupSizeAsync(): Promise<void> {
     const resizeCommand = 'gcloud compute instance-groups managed resize';
     const resizeArgs = `${this.groupName} ${this.zoneArg} --size 2`;
     const {stdout, stderr} =
@@ -109,7 +149,7 @@ export class SetupHelper {
     await this.whenStableAsync();
   }
 
-  async createTestGroupAsync(): Promise<void> {
+  private async createTestGroupAsync(): Promise<void> {
     await this.findOrSetupTestTemplateAsync();
     const createCommand = 'gcloud compute instance-groups managed create';
     const createArgs =
@@ -120,7 +160,7 @@ export class SetupHelper {
     await this.whenStableAsync();
   }
 
-  async whenStableAsync(): Promise<void> {
+  private async whenStableAsync(): Promise<void> {
     const waitCommand =
         'gcloud compute instance-groups managed wait-until-stable';
     const waitArgs = `${this.groupName} ${this.zoneArg}`;
@@ -128,14 +168,14 @@ export class SetupHelper {
     this.output.push({task : 'wait-until-stable', stdout, stderr});
   }
 
-  async findOrSetupTestTemplateAsync(): Promise<void> {
+  private async findOrSetupTestTemplateAsync(): Promise<void> {
     const templateExists = await this.findTestTemplateAsync();
     if (!templateExists) {
       await this.createTestTemplateAsync();
     }
   }
 
-  async findTestTemplateAsync(): Promise<boolean> {
+  private async findTestTemplateAsync(): Promise<boolean> {
     const listTemplatesCommand = 'gcloud compute instance-templates list';
     const {stdout, stderr} =
         await this.execAsync(`${listTemplatesCommand} ${formatArg}`);
@@ -149,7 +189,7 @@ export class SetupHelper {
     return false;
   }
 
-  async createTestTemplateAsync(): Promise<void> {
+  private async createTestTemplateAsync(): Promise<void> {
     const createTemplateCommand = 'gcloud compute instance-templates create';
     const {stdout, stderr} =
         await this.execAsync(`${createTemplateCommand} ${tempateName}`);

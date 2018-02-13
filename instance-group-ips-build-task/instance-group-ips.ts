@@ -12,19 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @fileoverview This is the i run by the instance group ips task.
- * @author jimwp@google.com (Jim Przybylinski)
- */
-
 import {Endpoint, getDefaultExecOptions} from 'common/exec-options';
 import * as task from 'vsts-task-lib/task';
 
+/**
+ * @fileoverview This is the implementation of the instance group ips task.
+ * @author jimwp@google.com (Jim Przybylinski)
+ */
+
+/**
+ * The path for retrieving the external IPs of a virtual machine.
+ * Copied from the gcloud default EXTERNAL_IP field.
+ */
 const externalIpResource =
-    'networkInterfaces[].accessConfigs[0].natIP.notnull().list()';
+  'networkInterfaces[].accessConfigs[0].natIP.notnull().list()';
+/**
+ * The path for the name of a virtual machine.
+ */
 const instanceNameKey = 'instance.scope().segment(2)';
+
+/**
+ * The path for the zone of a virtual machine.
+ */
 const instanceZoneKey = 'instance.scope().segment(0)';
 
+/**
+ * Interface describing the inputs to {@link getInstanceGroupIps}
+ */
 export interface GetInstanceGroupIpsOptions {
   endpoint: Endpoint;
   locationScope: string;
@@ -35,6 +49,10 @@ export interface GetInstanceGroupIpsOptions {
   di?: {task: typeof task};
 }
 
+/**
+ * The implementation for finding an instance group and getting the external
+ * IPs of its member virtual machines.
+ */
 export async function getInstanceGroupIps(
     {
       endpoint,

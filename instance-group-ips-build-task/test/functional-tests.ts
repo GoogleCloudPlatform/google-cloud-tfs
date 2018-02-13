@@ -17,7 +17,12 @@ import {TaskResult} from 'common/task-result';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {SetupHelper} from './group-setup-helper';
+import { SetupHelper } from './group-setup-helper';
+
+/**
+ * @fileoverview Functional tests that run actual gcloud commands.
+ * @author jimwp@google.com (Jim Przybylinski)
+ */
 
 const credentialFile =
     path.join('test', 'resources', 'Cloud Tools for TFS Testing.json');
@@ -71,6 +76,24 @@ describeWithCredentialFile('functional tests', function(): void {
     }
   });
 
+  const requiredParameters = [
+    'locationScope',
+    'instanceGroupName',
+    'buildVariableName',
+    'serviceEndpoint',
+  ];
+
+  for (const input of requiredParameters) {
+    it(
+      `should fail with missing required input ${input}`, async () => {
+        env[`INPUT_${input}`] = undefined;
+
+        taskOutput = await TaskResult.runTask('run.js', env);
+
+        assert.equal(taskOutput.getStatus()[0], 'failed');
+      });
+  }
+
   it('should fail for invalid scope', async () => {
     env['INPUT_locationScope'] = 'invalid';
 
@@ -78,22 +101,6 @@ describeWithCredentialFile('functional tests', function(): void {
 
     assert.equal(taskOutput.getStatus()[0], 'failed');
   });
-
-  const requiredParameters = [
-    'locationScope',
-    'instanceGroupName',
-    'buildVariableName',
-    'serviceEndpoint',
-  ];
-  for (const input of requiredParameters) {
-    it(`should fail with missing required input ${input}`, async () => {
-      env[`INPUT_${input}`] = undefined;
-
-      taskOutput = await TaskResult.runTask('run.js', env);
-
-      assert.equal(taskOutput.getStatus()[0], 'failed');
-    });
-  }
 
   it('should fail with missing region input given region scope', async () => {
     env['INPUT_locationScope'] = 'region';

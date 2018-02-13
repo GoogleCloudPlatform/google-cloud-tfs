@@ -15,7 +15,7 @@
 /**
  * @fileoverview This is a test suite to run test scripts and assert their
  *   outputs.
- * @author przybjw@google.com (Jim Przybylinski)
+ * @author jimwp@google.com (Jim Przybylinski)
  */
 
 describe('instance-group-ips', () => {

@@ -24,6 +24,11 @@ import {
   GetInstanceGroupIpsOptions,
 } from '../instance-group-ips';
 
+/**
+ * @fileoverview Unit tests that mock gcloud tool invocations.
+ * @author jimwp@google.com (Jim Przybylinski)
+ */
+
 describe('unit-tests', () => {
   let taskMock = Mock.ofInstance(task);
   taskMock.setup(t => t.getEndpointAuthorization(It.isAny(), It.isAny()))

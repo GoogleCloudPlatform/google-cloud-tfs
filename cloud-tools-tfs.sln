@@ -63,6 +63,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "cloud-sdk-tool-build-task",
 		{8ABCF5FE-EC92-4FFB-96E5-821790941E57} = {8ABCF5FE-EC92-4FFB-96E5-821790941E57}
 	EndProjectSection
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "instance-group-ips-build-task", "instance-group-ips-build-task\instance-group-ips-build-task.njsproj", "{5B1CBB3B-4E53-4C54-B935-02E447EC1A9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{50D73809-62B3-485F-9211-0AB681CCEFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50D73809-62B3-485F-9211-0AB681CCEFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50D73809-62B3-485F-9211-0AB681CCEFFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B1CBB3B-4E53-4C54-B935-02E447EC1A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B1CBB3B-4E53-4C54-B935-02E447EC1A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B1CBB3B-4E53-4C54-B935-02E447EC1A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B1CBB3B-4E53-4C54-B935-02E447EC1A9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

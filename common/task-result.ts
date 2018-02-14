@@ -33,8 +33,10 @@ export class TaskResult {
         env[variableName] = process.env[variableName];
       }
     }
-    const options:
-        ForkOptions = {env, stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ]};
+    const options: ForkOptions = {
+      env,
+      stdio : [ 'pipe', 'pipe', 'pipe', 'ipc' ],
+    };
     const taskProcess = fork(taskScript, [], options);
     const stdoutPromise = new Promise<string[]>((resolve) => {
       const allChunks: string[] = [];
@@ -51,7 +53,7 @@ export class TaskResult {
 
   getVariable(this: TaskResult, variableName: string, secret = false): string {
     const setVariableTag =
-      `##vso[task.setvariable variable=${variableName};issecret=${secret};]`;
+        `##vso[task.setvariable variable=${variableName};issecret=${secret};]`;
     let value: string = undefined;
     for (const line of this.outputData) {
       if (line.startsWith(setVariableTag)) {
@@ -80,7 +82,7 @@ export class TaskResult {
     return [ 'succeeded', successMessage ];
   }
 
-  getDebugLines(this: TaskResult, match: string | RegExp | null = null): string[] {
+  getDebugLines(this: TaskResult, match: string|RegExp|null = null): string[] {
     const taskDebugTag = '##vso[task.debug]';
     const debugLines: string[] = [];
     for (const chunk of this.outputData) {

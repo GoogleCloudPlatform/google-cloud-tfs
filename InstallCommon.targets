@@ -1,7 +1,4 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <NpmPackage Include="package.json"/>
-  </ItemGroup>
   <PropertyGroup>
     <BuildDependsOn>
       NpmInstall;

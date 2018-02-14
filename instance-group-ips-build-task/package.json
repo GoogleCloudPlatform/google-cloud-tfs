@@ -1,0 +1,19 @@
+{
+  "name": "instance-group-ips-build-task",
+  "version": "0.0.1",
+  "description": "A TFS build task to retrieve the IP addresses of an Google Compute Engine instance group.",
+  "license": "Apache-2.0",
+  "author": "Google Cloud Tools",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
+  "dependencies": {
+    "common": "file:../common/bin/common-0.0.1.tgz",
+    "vsts-task-lib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^8.5.9",
+    "@types/q": "0.0.32",
+    "mocha": "^3.2.0",
+    "typemoq": "^2.1.0"
+  }
+}

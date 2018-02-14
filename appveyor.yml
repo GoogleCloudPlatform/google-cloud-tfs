@@ -17,7 +17,7 @@ install:
   - ps: Install-Module "GoogleCloud"
   - ps: Import-Module "GoogleCloud"
   - gcloud components install kubectl --quiet
-  - ps: Install-Product node LTS
+  - ps: Install-Product node 6.10.3 # The Node version currently used by VSTS agents.
   - npm install typescript -global
   - npm install ts-node -global
   - npm install tfx-cli -global

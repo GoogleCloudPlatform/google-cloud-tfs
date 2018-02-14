@@ -42,13 +42,21 @@ export async function catchAll<T>(promise: PromiseLike<T>|
     }
   } catch (e) {
     let message: string;
-    if (e instanceof AggregateError) {
+    if (e instanceof Error) {
       message = e.message;
-      for (const innerError of e.innerErrors) {
-        task.error(innerError.message);
+      const stackLines = e.stack.split(/\n/);
+      for (const stackLine of stackLines) {
+        task.debug(stackLine);
       }
-    } else if (e instanceof Error) {
-      message = e.message;
+      if (e instanceof AggregateError) {
+        for (const innerError of e.innerErrors) {
+          task.error(innerError.message);
+          const innerStackLines = innerError.stack.split(/\n/);
+          for (const stackLine of innerStackLines) {
+            task.debug(stackLine);
+          }
+        }
+      }
     } else {
       message = e.toString();
     }
@@ -62,18 +70,17 @@ function addUnhandled(reason: Error, promise: PromiseLike<{}>): void {
   unhandledRejections.set(promise, reason);
 }
 
-function removeUnhandled(_: any, promise: PromiseLike<{}>): void {
+function removeUnhandled(_: {}, promise: PromiseLike<{}>): void {
   if (!unhandledRejections.delete(promise)) {
-    task.debug(s.unremovedRejectionMessage);
-    for (let i = 0; i < arguments.length; i++) {
-      console.log(arguments[i]);
+    task.warning(s.unremovedRejectionMessage);
+    for (const arg of arguments) {
+      console.log(arg);
     }
   }
 }
 
 function failUnhandled(): void {
   for (const reason of unhandledRejections.values()) {
-    task.error(s.unhandledRejectionErrorMessage);
     task.setResult(task.TaskResult.Failed, reason.message);
   }
 }

@@ -80,8 +80,8 @@ export function getQuietExecOptions(): IExecOptions {
               }
               return true;
             }
-          }
-    }
+          },
+    },
   };
 
   const execOptions = getDefaultExecOptions();
@@ -100,8 +100,8 @@ export class Endpoint {
   readonly projectId: string;
   readonly jsonKeyValue: string;
 
-  constructor(endpointId: string) {
-    const endpointAuth = task.getEndpointAuthorization(endpointId, false);
+  constructor(endpointId: string, di = {task}) {
+    const endpointAuth = di.task.getEndpointAuthorization(endpointId, false);
     this.jsonKeyValue = endpointAuth.parameters['certificate'];
     this.projectId = JSON.parse(this.jsonKeyValue).project_id;
   }

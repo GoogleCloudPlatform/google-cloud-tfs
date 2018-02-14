@@ -1,20 +1,20 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProjectGuid>612403b0-ec0e-402a-ae7e-6499faf9ab16</ProjectGuid>
+    <Name>instance-group-ips-build-task</Name>
+    <ProjectGuid>5b1cbb3b-4e53-4c54-b935-02e447ec1a9e</ProjectGuid>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <OutputPath>.</OutputPath>
     <EnableTypeScript>true</EnableTypeScript>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>kubectl-build-task</Name>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <StartWebBrowser>False</StartWebBrowser>
+    <StartupFile>run.ts</StartupFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' " />
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " />
   <ItemGroup>
-    <TypeScriptCompile Include="kubectl-build-task.ts" />
-    <TypeScriptCompile Include="run.ts" />
     <Content Include="manifest.json">
       <SubType>Code</SubType>
     </Content>
@@ -26,14 +26,22 @@
     <Content Include="test\mocha.opts" />
     <Content Include="test\resources\Cloud Tools for TFS Testing.json.enc" />
     <Content Include="tsconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="instance-group-ips.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="run.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\functional-tests.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\group-setup-helper.ts" />
     <TypeScriptCompile Include="test\unit-tests.ts">
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
     <TypeScriptCompile Include="test\_suite.ts">
-      <SubType>Code</SubType>
       <TestFramework>Mocha</TestFramework>
     </TypeScriptCompile>
   </ItemGroup>

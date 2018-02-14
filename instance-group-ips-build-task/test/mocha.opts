@@ -1,0 +1,3 @@
+﻿--require ts-node/register
+--timeout 10000
+test\_suite.ts

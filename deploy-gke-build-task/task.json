@@ -12,7 +12,6 @@
     "Patch": 0
   },
   "category": "Deploy",
-  "visibility": [ "Build", "Release" ],
   "demands": [],
   "groups": [],
   "inputs": [

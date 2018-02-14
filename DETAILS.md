@@ -40,6 +40,8 @@ The extension installs the following tasks:
   - **[Get Google Compute VM password][set-login-password]**: Gets the IP address
   and user password for a [Google Compute Engine][ComputeEngine] virtual machine
   running windows.
+  - **[Instance Group IPs][instance-group-ips]**: Collects the external IPs of an [instance group][InstanceGroup]
+  and saves them to a build variable.
   - **[Install Google Cloud SDK][install-cloud-sdk]**: Windows only. Finds or installs the
   [Google Cloud SDK][CloudSdk].
   - **[Google Cloud SDK Tool Installer][cloud-sdk-tool]**: Installs the [Google Cloud SDK][CloudSdk] as a cached
@@ -51,6 +53,8 @@ The extension installs the following tasks:
 [ContainerEngine]: https://cloud.google.com/container-engine
 [ContainerBuilder]: https://cloud.google.com/container-builder
 [ComputeEngine]: https://cloud.google.com/compute
+[InstanceGroup]: https://cloud.google.com/compute/docs/instance-groups
+[vsts-tool]: https://docs.microsoft.com/en-us/vsts/build-release/concepts/process/tasks#tool-installers
 
 [deploy-gae]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/deploy-gae-build-task/README.md
 [deploy-gke]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/deploy-gke-build-task/README.md
@@ -58,4 +62,4 @@ The extension installs the following tasks:
 [set-login-password]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/set-login-build-task/README.md
 [install-cloud-sdk]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/install-cloud-sdk-build-task/README.md
 [cloud-sdk-tool]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/cloud-sdk-tool-build-task/README.md
-[vsts-tool]: https://docs.microsoft.com/en-us/vsts/build-release/concepts/process/tasks#tool-installers
+[instance-group-ips]: https://github.com/GoogleCloudPlatform/google-cloud-tfs/blob/master/instance-group-ips-build-task/README.md

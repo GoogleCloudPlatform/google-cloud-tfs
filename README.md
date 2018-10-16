@@ -9,9 +9,9 @@ build tasks for interacting with Google Cloud Platform.
 
 ## Installation
 
-The latest stable version can be found on the
-[Visual Studio Marketplace][Marketplace] or in the [GitHub Releases][GitHubReleases]
-
+This extension is in private alpha. Approved users can get the latest version
+on the [Visual Studio Marketplace][Marketplace].
+Anyone can get the source and package of the latest release from [GitHub Releases][GitHubReleases].
 The latest development version is available from [AppVeyor][AppVeyor].
 
 You can [build the vsix package from source](#Build), and then upload and

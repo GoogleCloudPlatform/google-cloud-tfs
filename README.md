@@ -43,13 +43,9 @@ $msbuildPath = (ls ((vswhere -latest -property InstallationPath) + "\MSBuild\*\B
 New-Alias msbuild $msbuildPath
 ```
 
-### Node Modules
-
-Install the required node modules by running `npm install` in this directory.
-
 ### Build Script
 
-Execute build script `pwsh ./build/BuildExtension.ps1`. It will download needed
+Execute build script `npm run-script build`. It will download needed
 modules, build the common files and build tasks, and then package everything
 into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 

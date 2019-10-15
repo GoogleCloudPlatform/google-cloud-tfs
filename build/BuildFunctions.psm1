@@ -1,21 +1,22 @@
-<##
- # Copyright 2017 Google Inc.
- # 
- # Licensed under the Apache License, Version 2.0 (the "License");
- # you may not use this file except in compliance with the License.
- # You may obtain a copy of the License at
- # 
- #     http://www.apache.org/licenses/LICENSE-2.0
- # 
- # Unless required by applicable law or agreed to in writing, software
- # distributed under the License is distributed on an "AS IS" BASIS,
- # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- # See the License for the specific language governing permissions and
- # limitations under the License.
- ##>
+# Copyright 2017 Google Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 Param(
     $VerbosePreference
 )
+
+$env:PATH = "$PSScriptRoot\..\node_modules\.bin\;${env:PATH}"
 
 function Initialize-All([string[]]$tasks) {
     Write-Host "Initialize modules and tasks"
@@ -70,21 +71,23 @@ function Invoke-AllMochaTests([string[]]$tasks, [string]$reporter, [switch]$thro
 function Invoke-MochaTest([string]$task, [string]$reporter) {
     Write-Host "Testing TypeScript task $task"
     pushd $task
-    try {
-        # nyc is the javascript code coverage checker.
-        # mocha is the javascript test runner.
-        $nycArgs = "--reporter", "json", "mocha"
-        if ($reporter) {
-            $nycArgs += "--reporter", $reporter
-        }
-        Write-Verbose "Running: nyc $nycArgs"
-        nyc $nycArgs
 
-        if ($LASTEXITCODE -ne 0) {
-            throw "mocha failed for task $task"
-        }
-    } finally {
-        popd
+    echo $env:path
+    which mocha
+    which nyc
+
+    # nyc is the javascript code coverage checker.
+    # mocha is the javascript test runner.
+    $nycArgs = "--reporter", "json", "mocha"
+    if ($reporter) {
+        $nycArgs += "--reporter", $reporter
+    }
+    pwd
+    Write-Host "Running: nyc $nycArgs"
+    nyc @nycArgs
+    
+    if ($LASTEXITCODE -ne 0) {
+        throw "mocha failed for task $task"
     }
 }
 
@@ -178,7 +181,7 @@ function Merge-ExtensionPackage([string] $publisher, [string] $version) {
         $tfxArgs += "--overrides-file", $overridesFile
     }
     Write-Verbose "Running: tfx $tfxArgs"
-    tfx $tfxArgs
+    & tfx @tfxArgs
     if ($overridesFile) {
         rm $overridesFile
     }

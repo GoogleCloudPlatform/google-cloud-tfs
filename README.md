@@ -35,15 +35,21 @@ Questions can be asked on StackOverflow
   - [PowerShell][PowerShell]: Installed by default on modern windows platforms.
   - [Node.js][Node]: Download and install from the website.
   - [npm][npm]: Installed along with Node.js.
-  - [TypeScript][TypeScript]: Install with `npm install -g typescript`
-  - [tfx][tfs-cli]: The tfs cli. Install with `npm install -g tfx-cli`
-  - [mocha][mocha]: A JavaScript test runner. `npm install -g mocha`
-  - [ts-node]: Used by mocha to run TypeScript directly. `npm install -g ts-node`
-  - [nyc][nyc]: The Istanbul code coverage tool. Install with `npm install -g nyc`
+  - [MSBuild][https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild?view=vs-2019]: Installed with Visual Studio. Visual Studio does not add MSBuild to the path. You can make msbuild resolve in powershell by doing this:
+
+```  
+New-Alias vswhere "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$msbuildPath = (ls ((vswhere -latest -property InstallationPath) + "\MSBuild\*\Bin\MSBuild.exe"))[0].FullName
+New-Alias msbuild $msbuildPath
+```
+
+### Node Modules
+
+Install the required node modules by running `npm install` in this directory.
 
 ### Build Script
 
-Execute build script `./build/BuildExtension.ps1`. It will download needed
+Execute build script `pwsh ./build/BuildExtension.ps1`. It will download needed
 modules, build the common files and build tasks, and then package everything
 into `./bin/Google Cloud Tools.google-cloud-tfs-<version>.vsix`.
 

@@ -2,7 +2,7 @@
 obj/
 *.taskkey
 bin/
-*/node_modules/
+node_modules
 typings.json
 */typings/
 deploy-gae-build-task/#task.json#

@@ -1,0 +1,28 @@
+{
+  "name": "GoogleCloudPlatform.google-cloud-tfs",
+  "version": "0.0.9",
+  "description": "A collection of TFS build tasks to run Google Cloud Platform tools.",
+  "license": "Apache-2.0",
+  "author": "Google Cloud Tools",
+  "repository": "https://github.com/GoogleCloudPlatform/google-cloud-tfs.git",
+  "main": "run.js",
+  "dependencies": {
+    "typescript": "^3.6.4"
+  },
+  "scripts": {
+    "build": "pwsh ./build/BuildExtension.ps1"
+  },
+  "devDependencies": {
+    "typescript": "^3.6.4",
+    "tfx-cli": "^0.7",
+    "ts-node": "^8.4.1",
+    "@types/mocha": "^2.2.40",
+    "@types/mockery": "^1.4.29",
+    "@types/node": "^7.0.6",
+    "@types/q": "0.0.32",
+    "mocha": "^3.2.0",
+    "mockery": "^2.1.0",
+    "typemoq": "^2.0.1",
+    "nyc": "^14.1.1"
+  }
+}

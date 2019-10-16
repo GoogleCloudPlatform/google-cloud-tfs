@@ -79,14 +79,13 @@ function Invoke-MochaTest([string]$task, [string]$reporter) {
             $nycArgs += "--reporter", $reporter
         }
 
+        if ($LASTEXITCODE -ne 0) {
+            throw "mocha failed for task $task"
+        }
         Write-Host "Running: nyc $nycArgs"
         nyc @nycArgs
     } finally {
-     popd
-    }
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "mocha failed for task $task"
+        popd
     }
 }
 
